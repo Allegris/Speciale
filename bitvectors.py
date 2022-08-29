@@ -1,21 +1,4 @@
 from bitarray import bitarray
-import time
-
-def old_one_hot_encoding(x, alpha):
-	# Initiate dict {char: bitvector}
-	# s.t. bitvectors are just all zeros
-	d = {}
-	for c in alpha:
-		bv = bitarray(len(x))
-		bv.setall(0)
-		d[c] = bv
-
-	# Iterate chars of x to set bits in dict
-	# corresponding to the chars
-	for i, c in enumerate(x):
-		bv = d[c]
-		bv[i] = True
-	return d
 
 '''
 Return a tuple (len(x), bitarray) where the bitarray is
@@ -41,23 +24,15 @@ def one_hot_encoding(x, alpha):
 
 	return (len_x, bv)
 
-def test_length(x):
-	#b = len(x)
-	start = time.time()
-	for _ in range(10000000):
-		#a = b
-		a = len(x)
-	end = time.time()
-	print(end-start)
 
 
-# Code to run
+
+########## Code to run ##########
 
 x = "mississippi$"
-#alpha = ["$", "i", "m", "s", "p"]
-#print(one_hot_encoding(x, alpha))
+alpha = ["$", "i", "m", "s", "p"]
+print(one_hot_encoding(x, alpha))
 
-test_length(x)
 
 
 
