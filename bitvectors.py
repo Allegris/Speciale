@@ -1,9 +1,11 @@
 from bitarray import bitarray
 
 '''
-Return a tuple (len(x), bitarray) where the bitarray is
+Return a tuple (dict, bitarray) where the bitarray is
 a one hot encoding of x of size len(alpha)*len(x).
 The first len(x) bits correspond to the first letter in alpha, etc.
+Dict is the starting positions of the letters in the bitarray,
+e.g. {'$': 0, 'i': 12, 'm': 24, 's': 36, 'p': 48}.
 '''
 def one_hot_encoding(x, alpha):
 	len_x = len(x)
@@ -22,7 +24,7 @@ def one_hot_encoding(x, alpha):
 	for i, c in enumerate(x):
 		bv[d[c] + i] = 1
 
-	return (len_x, bv)
+	return (d, bv)
 
 
 
@@ -32,6 +34,7 @@ def one_hot_encoding(x, alpha):
 x = "mississippi$"
 alpha = ["$", "i", "m", "s", "p"]
 print(one_hot_encoding(x, alpha))
+
 
 
 
