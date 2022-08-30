@@ -24,25 +24,24 @@ def one_hot_encoding(x, n, alpha, a_size):
 	for i, c in enumerate(x):
 		bv[d[c] + i] = 1
 
-	return bv
+	return bv, d
 
 
-def preprocess_rank_one_hot(bv, n, a_size):
-	ranks = [[] for _ in range(a_size)]
-	for idx, offset in enumerate(range(0, a_size*n, n)):
+def preprocess_rank_one_hot(bv, d, n, alpha):
+	ranks = {char: [] for char in alpha}
+	for char, offset in d.items():
 		word_size = floor(log2(n))
 		no_of_words = n // word_size
 		for i in range(no_of_words):
 			count = bv[offset + i*word_size : offset + (i+1)*word_size].count(1)
 			if i == 0:
-				ranks[idx].append(count)
+				ranks[char].append(count)
 			else:
-				c = ranks[idx][i-1] + count
-				ranks[idx].append(c)
+				ranks[char].append(ranks[char][i-1] + count)
 	return ranks
 
 
-def rank_one_hot(rank_ls, n, a_size c, i):
+#def rank_one_hot(rank_ls, n, a_size c, i):
 
 
 
@@ -54,9 +53,10 @@ x = "mississippi$"
 n = len(x)
 alpha = ["$", "i", "m", "p", "s"]
 a_size = len(alpha)
-bv = one_hot_encoding(x, n, alpha, a_size)
-rank_ls = preprocess_rank_one_hot(bv, n, a_size)
-rank_one_hot(rank_ls, n, a_size c, i)
+bv, d = one_hot_encoding(x, n, alpha, a_size)
+rank_ls = preprocess_rank_one_hot(bv, d, n, alpha)
+
+#rank_one_hot(rank_ls, n, a_size c, i)
 
 
 
