@@ -58,6 +58,10 @@ def rank_one_hot(ranks, bv, d, n, c, i):
 	return "TO DO"
 
 
+################## NEW ######################################
+
+
+
 def new_one_hot_encoding(x, n, alpha, a_size):
 	# Initiate dict {letter: bitarray} of all zeros
 	# e.g., {'$': bitarray('000000000000'), 'i': bitarray('000000000000'), ...}
@@ -70,6 +74,37 @@ def new_one_hot_encoding(x, n, alpha, a_size):
 		d[char][i] = 1
 	return d
 
+def new_preprocess_rank_one_hot(d, n, alpha):
+	ranks = {char: [] for char in alpha}
+	word_size = floor(log2(n))
+	no_of_words = n // word_size
+	for char in d.keys():
+		for i in range(no_of_words):
+			count = d[char][i*word_size : (i+1)*word_size].count(1)
+			if i == 0:
+				ranks[char].append(count)
+			else:
+				ranks[char].append(ranks[char][i-1] + count)
+	return ranks
+
+def new_rank_one_hot(ranks, bv, d, n, c, i):
+	word_size = floor(log2(n))
+	if i == 0:
+		return 0
+	word_no = (i // word_size)
+	scan_len = i % word_size
+
+	print(word_no)
+
+
+	if i % word_size == 0:
+		word = int((i / word_size) - 1)
+		return ranks[c][word]
+	else:
+		word = int((i / word_size) - 1)
+	return "TO DO"
+
+
 
 
 
@@ -79,14 +114,16 @@ x = "mississippi$"
 n = len(x)
 alpha = ["$", "i", "m", "p", "s"]
 a_size = len(alpha)
+'''
 bv, d = one_hot_encoding(x, n, alpha, a_size)
 ranks = preprocess_rank_one_hot(bv, d, n, alpha)
 print(ranks, "\n")
 print(rank_one_hot(ranks, bv, d, n, "p", 9))
+'''
 
-new_one_hot_encoding(x, n, alpha, a_size)
-
-
+d = new_one_hot_encoding(x, n, alpha, a_size)
+ranks = new_preprocess_rank_one_hot(d, n, alpha)
+new_rank_one_hot(ranks, d, n, c, i)
 
 
 
