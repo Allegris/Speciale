@@ -8,8 +8,7 @@ The first len(x) bits correspond to the first letter in alpha, etc.
 Dict is the starting positions of the letters in the bitarray,
 e.g. {'$': 0, 'i': 12, 'm': 24, 's': 36, 'p': 48}.
 '''
-def one_hot_encoding(x, alpha):
-	n = len(x)
+def one_hot_encoding(x, n, alpha, a_size):
 
 	# Initiate dict for {letter: start_pos_in_bitvector}
 	# e.g., {'$': 0, 'i': 12, 'm': 24, 's': 36, 'p': 48}
@@ -18,22 +17,19 @@ def one_hot_encoding(x, alpha):
 		d[c] = i * n
 
 	# Bit vector, all zeros
-	bv = bitarray(n * len(alpha))
+	bv = bitarray(n * a_size)
 	bv.setall(0)
 
 	# Iterate chars in x and set bits in bv correspondingly
 	for i, c in enumerate(x):
 		bv[d[c] + i] = 1
 
-	return (n, d, bv)
+	return bv
 
 
-def preprocess_rank_one_hot(d_bv):
-	n = d_bv[0]
-	d = d_bv[1]
-	bv = d_bv[2]
-	ranks = [[] for _ in range(len(d.values()))]
-	for idx, offset in enumerate(d.values()):
+def preprocess_rank_one_hot(bv, n, a_size):
+	ranks = [[] for _ in range(a_size)]
+	for idx, offset in enumerate(range(0, a_size*n, n)):
 		word_size = floor(log2(n))
 		no_of_words = n // word_size
 		for i in range(no_of_words):
@@ -43,11 +39,10 @@ def preprocess_rank_one_hot(d_bv):
 			else:
 				c = ranks[idx][i-1] + count
 				ranks[idx].append(c)
-	return (n, ranks)
+	return ranks
 
 
-def rank_one_hot(rank_ls, c, i):
-
+def rank_one_hot(rank_ls, n, a_size c, i):
 
 
 
@@ -56,10 +51,12 @@ def rank_one_hot(rank_ls, c, i):
 ########## Code to run ##########
 
 x = "mississippi$"
+n = len(x)
 alpha = ["$", "i", "m", "p", "s"]
-d_bv = one_hot_encoding(x, alpha)
-rank_ls = preprocess_rank_one_hot(d_bv)
-rank_one_hot(rank_ls)
+a_size = len(alpha)
+bv = one_hot_encoding(x, n, alpha, a_size)
+rank_ls = preprocess_rank_one_hot(bv, n, a_size)
+rank_one_hot(rank_ls, n, a_size c, i)
 
 
 
