@@ -41,8 +41,14 @@ def preprocess_rank_one_hot(bv, d, n, alpha):
 	return ranks
 
 
-#def rank_one_hot(rank_ls, n, a_size c, i):
-
+def rank_one_hot(ranks, d, n, c, i):
+	word_size = floor(log2(n))
+	if i == 0:
+		return 0
+	if i % word_size == 0:
+		word = int((i / word_size) - 1)
+		return ranks[c][word]
+	return "TO DO"
 
 
 
@@ -54,9 +60,9 @@ n = len(x)
 alpha = ["$", "i", "m", "p", "s"]
 a_size = len(alpha)
 bv, d = one_hot_encoding(x, n, alpha, a_size)
-rank_ls = preprocess_rank_one_hot(bv, d, n, alpha)
-
-#rank_one_hot(rank_ls, n, a_size c, i)
+ranks = preprocess_rank_one_hot(bv, d, n, alpha)
+print(ranks, "\n")
+print(rank_one_hot(ranks, d, n, "p", 9))
 
 
 
