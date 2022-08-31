@@ -56,7 +56,7 @@ def preprocess_rank_one_hot(d, n, alpha):
 			count = d[char][i*word_size : (i+1)*word_size].count(1)
 			if i == 0:
 				ranks[char].append(count)
-			else: # last word rank + this word rank
+			else: # Last word rank + this word rank
 				ranks[char].append(ranks[char][i-1] + count)
 	return ranks
 
@@ -73,43 +73,36 @@ Inputs are:
 	 i: query index
 '''
 def rank_one_hot(ranks, d, n, c, i):
-	print("ranks", ranks)
 	word_size = floor(log2(n))
 	word_no = (i // word_size)
 	scan_len = i % word_size
-	print("word_no", word_no)
-	print("scan", scan_len)
 	# If in first word, just scan
 	if word_no == 0:
-		print("case A")
 		return d[c][0:scan_len].count(1)
 	# If we do not need to scan, look-up the rank directly in ranks
 	if scan_len == 0:
-		print("case B")
 		return ranks[c][word_no - 1]
 	# If we both need to look-up in ranks and scan
 	else:
 		start = word_no * word_size
 		end = start + scan_len
-		print("case C")
-		print("test", ranks[c][word_no - 1])
 		return ranks[c][word_no - 1] + d[c][start:end].count(1)
 
 
-
+def get_alphabet(x):
+	letters = ''.join(set(x))
+	return sorted(letters)
 
 
 ########## Code to run ##########
 
 x = "mississippi$"
 n = len(x)
-alpha = ["$", "i", "m", "p", "s"]
+alpha = get_alphabet(x) # ["$", "i", "m", "p", "s"]
 a_size = len(alpha)
 
 d = one_hot_encoding(x, n, alpha, a_size)
 ranks = preprocess_rank_one_hot(d, n, alpha)
-#print(ranks)
-#print(d)
 print(rank_one_hot(ranks, d, n, "i", 6))
 
 
