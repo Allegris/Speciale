@@ -73,19 +73,26 @@ Inputs are:
 	 i: query index
 '''
 def rank_one_hot(ranks, d, n, c, i):
+	print("ranks", ranks)
 	word_size = floor(log2(n))
 	word_no = (i // word_size)
 	scan_len = i % word_size
+	print("word_no", word_no)
+	print("scan", scan_len)
 	# If in first word, just scan
 	if word_no == 0:
+		print("case A")
 		return d[c][0:scan_len].count(1)
 	# If we do not need to scan, look-up the rank directly in ranks
 	if scan_len == 0:
+		print("case B")
 		return ranks[c][word_no - 1]
 	# If we both need to look-up in ranks and scan
 	else:
 		start = word_no * word_size
 		end = start + scan_len
+		print("case C")
+		print("test", ranks[c][word_no - 1])
 		return ranks[c][word_no - 1] + d[c][start:end].count(1)
 
 

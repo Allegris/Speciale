@@ -1,14 +1,14 @@
 import bitvectors as bv
-
+'''
 global x
 global n
 global alpha
 global a_size
 global d
 global ranks
+'''
 
-
-
+# Words "mis sis sip pi$"
 x = "mississippi$"
 n = len(x)
 alpha = ["$", "i", "m", "p", "s"]
@@ -54,6 +54,29 @@ def test_mississippi_s_6():
 	assert bv.rank_one_hot(ranks, d, n, "s", 6) == 3
 
 
+# Words "mis sis sip pii $" (the rank of last non-full word is not calculated - must scan)
+x2 = "mississippii$"
+n2 = len(x2)
+d2 = bv.one_hot_encoding(x2, n2, alpha, a_size)
+ranks2 = bv.preprocess_rank_one_hot(d2, n2, alpha)
+
+def test_mississippii_sentinel_13():
+	assert bv.rank_one_hot(ranks2, d2, n2, "$", 13) == 1
+
+def test_mississippii_i_13():
+	assert bv.rank_one_hot(ranks2, d2, n2, "i", 13) == 5
+
+def test_mississippii_i_12():
+	assert bv.rank_one_hot(ranks2, d2, n2, "i", 12) == 5
+
+def test_mississippii_i_11():
+	assert bv.rank_one_hot(ranks2, d2, n2, "i", 11) == 4
+
+def test_mississippii_i_10():
+	assert bv.rank_one_hot(ranks2, d2, n2, "i", 10) == 3
+
+def test_mississippii_i_9():
+	assert bv.rank_one_hot(ranks2, d2, n2, "i", 9) == 3
 
 
 
