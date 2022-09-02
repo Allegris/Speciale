@@ -1,6 +1,6 @@
 from bitarray import bitarray
-from math import log2, floor
 
+global codes
 
 '''
 Keep track of queue of x strings to partition and encode,
@@ -13,18 +13,19 @@ and encode them recursively. E.g. for x = "mississippi", the queue would be:
 	pp
 	ssss
 
-Yields the...
+Returns (len(x), wt) where wt is a level order representation of a wavelet tree
+of x (i.e., a bitvector), so returns e.g., (11, bitarray('0011011011010000111100'))
 '''
-def wavelet_queue(x, n, alpha, a_size):
-	res = bitarray()
+def wavelet_queue(x):
+	wt = bitarray()
 	q = [x]
 	while q:
 		xx = q.pop(0)
 		triple = construct_wavelet_tree(xx)
 		if triple:
-			res += triple[0]
+			wt += triple[0]
 			q += [triple[1], triple[2]]
-	return res
+	return (len(x), wt)
 
 '''
 Assigns binary values to all chars of input string x, by splitting the alphabet
@@ -35,7 +36,6 @@ Returns
 	x1: the 1 chars of x, e.g., sssspp
 '''
 def construct_wavelet_tree(x):
-	#print("x", x)
 	alpha = get_alphabet(x)
 	a_size = len(alpha)
 	if a_size == 1:
@@ -45,6 +45,8 @@ def construct_wavelet_tree(x):
 	d = {letter: 0 for letter in alpha}
 	for letter in alpha[a_size // 2:]: # assign last half of alphabet to 1
 		d[letter] = 1
+	for letter in alpha:
+		codes[letter].append(d[letter])
 	# Binary representation of x
 	bin_x = bitarray()
 	# The part of x corresponding to 0s and 1s, respectively
@@ -58,6 +60,11 @@ def construct_wavelet_tree(x):
 	return bin_x, x0, x1
 
 
+#def rank_wavelet(wt, n, alpha):
+
+
+
+
 def get_alphabet(x):
 	letters = ''.join(set(x))
 	return sorted(letters)
@@ -66,10 +73,12 @@ def get_alphabet(x):
 ########## Code to run ##########
 
 x = "mississippi"
-n = len(x)
+#n = len(x)
 alpha = get_alphabet(x) # ["i", "m", "p", "s"]
-a_size = len(alpha)
+#a_size = len(alpha)
 
-print(wavelet_queue(x, n, alpha, a_size))
-#print(construct_wavelet_tree(x, n, alpha, a_size))
+# Codes, e.g., {'i': bitarray('00'), 'm': bitarray('01'), 'p': bitarray('10'), 's': bitarray('11')}
+codes = {letter: bitarray() for letter in alpha}
+print(wavelet_queue(x))
+print(codes)
 
