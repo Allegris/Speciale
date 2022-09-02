@@ -2,7 +2,19 @@ from bitarray import bitarray
 from math import log2, floor
 
 
+'''
+Keep track of queue of x strings to partition and encode,
+and encode them recursively. E.g. for x = "mississippi", the queue would be:
+	mississippi    alpha0 = {i, m},  alpha1 = {p, s}
+	miii           alpha0 = {i},     alpha1 = {m}
+	sssspp         alpha0 = {p},     alpha1 = {s}
+	iiii
+	m
+	pp
+	ssss
 
+Yields the
+'''
 def wavelet_rec(x, n, alpha, a_size):
 	q = [x]
 	while q:
@@ -14,18 +26,19 @@ def wavelet_rec(x, n, alpha, a_size):
 
 
 def construct_wavelet_tree(x):
-	print("x", x)
+	#print("x", x)
 	alpha = get_alphabet(x)
 	a_size = len(alpha)
 	if a_size == 1:
-		return None #(bitarray(0), "", "")
-	# Partition alphabet in two halves
-	# d = {letter: binary} where binary is the binary value assigned to letter
+		return None
+	# Assign binary value to each letter: d = {letter: binary},
+	# (split alphabet in half)
 	d = {letter: 0 for letter in alpha}
 	for letter in alpha[a_size // 2:]: # assign last half of alphabet to 1
 		d[letter] = 1
 	# Binary representation of x
 	bin_x = bitarray(0) # empty
+	# The part of x corresponding to 0s and 1s, respectively
 	x0, x1 = "", ""
 	for char in x:
 		bin_x.append(d[char])
@@ -34,9 +47,6 @@ def construct_wavelet_tree(x):
 		else:
 			x1 += char
 	return bin_x, x0, x1
-
-def partition_string(x, alpha, a_size):
-	alpha_0, alpha_1 = alpha[:a_size // 2], alpha[a_size // 2:]
 
 
 def get_alphabet(x):
