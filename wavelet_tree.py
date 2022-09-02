@@ -45,6 +45,7 @@ def construct_wavelet_tree(x):
 	d = {letter: 0 for letter in alpha}
 	for letter in alpha[a_size // 2:]: # assign last half of alphabet to 1
 		d[letter] = 1
+	# Update codes for letters
 	for letter in alpha:
 		codes[letter].append(d[letter])
 	# Binary representation of x
