@@ -13,8 +13,8 @@ and encode them recursively. E.g. for x = "mississippi", the queue would be:
 	pp
 	ssss
 
-Returns (len(x), wt) where wt is a level order representation of a wavelet tree
-of x (i.e., a bitvector), so returns e.g., (11, bitarray('0011011011010000111100'))
+Returns a level order representation of a wavelet tree of x (i.e., a bitvector),
+e.g., bitarray('0011011011010000111100')
 '''
 def wavelet_queue(x):
 	wt = bitarray()
@@ -25,7 +25,7 @@ def wavelet_queue(x):
 		if triple:
 			wt += triple[0]
 			q += [triple[1], triple[2]]
-	return (len(x), wt)
+	return wt
 
 '''
 Assigns binary values to all chars of input string x, by splitting the alphabet
@@ -61,8 +61,8 @@ def construct_wavelet_tree(x):
 	return bin_x, x0, x1
 
 
-#def rank_wavelet(wt, n, alpha):
-
+def rank_wavelet(wt, n, codes):
+	print("test")
 
 
 
@@ -74,12 +74,21 @@ def get_alphabet(x):
 ########## Code to run ##########
 
 x = "mississippi"
-#n = len(x)
+n = len(x)
 alpha = get_alphabet(x) # ["i", "m", "p", "s"]
 #a_size = len(alpha)
 
 # Codes, e.g., {'i': bitarray('00'), 'm': bitarray('01'), 'p': bitarray('10'), 's': bitarray('11')}
 codes = {letter: bitarray() for letter in alpha}
-print(wavelet_queue(x))
-print(codes)
+#print(codes)
+wt = wavelet_queue(x)
+#print(wt)
+rank_wavelet(wt, n, codes)
+
+
+
+
+
+
+
 
