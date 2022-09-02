@@ -26,7 +26,14 @@ def wavelet_rec(x, n, alpha, a_size):
 			q += [triple[1], triple[2]]
 	return res
 
-
+'''
+Assigns binary values to all chars of input string x, by splitting the alphabet
+of x in half. Then splits x into substrings corresponding to only 0s vs only 1s.
+Returns
+	bin_x: a bitarray representation of x, e.g., bitarray('00110110110').
+	x0: the 0 chars of x, e.g., miiii
+	x1: the 1 chars of x, e.g., sssspp
+'''
 def construct_wavelet_tree(x):
 	#print("x", x)
 	alpha = get_alphabet(x)
@@ -48,6 +55,7 @@ def construct_wavelet_tree(x):
 			x0 += char
 		else:
 			x1 += char
+	print(bin_x, x0, x1)
 	return bin_x, x0, x1
 
 
