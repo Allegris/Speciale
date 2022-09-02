@@ -15,7 +15,7 @@ and encode them recursively. E.g. for x = "mississippi", the queue would be:
 
 Yields the...
 '''
-def wavelet_rec(x, n, alpha, a_size):
+def wavelet_queue(x, n, alpha, a_size):
 	res = bitarray()
 	q = [x]
 	while q:
@@ -55,7 +55,6 @@ def construct_wavelet_tree(x):
 			x0 += char
 		else:
 			x1 += char
-	print(bin_x, x0, x1)
 	return bin_x, x0, x1
 
 
@@ -71,6 +70,6 @@ n = len(x)
 alpha = get_alphabet(x) # ["i", "m", "p", "s"]
 a_size = len(alpha)
 
-print(wavelet_rec(x, n, alpha, a_size))
+print(wavelet_queue(x, n, alpha, a_size))
 #print(construct_wavelet_tree(x, n, alpha, a_size))
 
