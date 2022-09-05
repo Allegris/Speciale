@@ -1,12 +1,4 @@
-import bitvectors as bv
-'''
-global x
-global n
-global alpha
-global a_size
-global d
-global ranks
-'''
+import one_hot_encoding as bv
 
 # Words "mis sis sip pi$"
 x = "mississippi$"
