@@ -27,6 +27,15 @@ def wavelet_queue(x):
 			q += [triple[1], triple[2]]
 	return wt
 
+def yield_wavelet_queue(x):
+	q = [x]
+	while q:
+		xx = q.pop(0)
+		triple = construct_wavelet_tree(xx)
+		if triple:
+			yield bitarray(triple[0])
+			q += [triple[1], triple[2]]
+
 
 '''
 Assigns binary values to all chars of input string x, by splitting the alphabet
@@ -62,10 +71,10 @@ def construct_wavelet_tree(x):
 	return bin_x, x0, x1
 
 
-def rank_wavelet(wt, n, codes, c, i):
-	print(n)
-	print(wt)
-	print(codes)
+def preprocess_rank_wavelet(wt, n, code, i):
+	for node in wt:
+		yield(node, preprocess_word_ranks(node, len(node)))
+
 
 
 def preprocess_word_ranks(bv, n):
@@ -73,12 +82,13 @@ def preprocess_word_ranks(bv, n):
 	word_size = floor(log2(n))
 	for i in range(n // word_size):
 		#print("word", bv[i*word_size: (i+1)*word_size])
+		word = bv[i*word_size: (i+1)*word_size]
 		if i == 0:
-			ranks[0].append(bv[i*word_size: (i+1)*word_size].count(0))
-			ranks[1].append(bv[i*word_size: (i+1)*word_size].count(1))
+			ranks[0].append(word.count(0))
+			ranks[1].append(word.count(1))
 		else:
-			ranks[0].append(ranks[0][i-1] + bv[i*word_size: (i+1)*word_size].count(0))
-			ranks[1].append(ranks[1][i-1] + bv[i*word_size: (i+1)*word_size].count(1))
+			ranks[0].append(ranks[0][i-1] + word.count(0))
+			ranks[1].append(ranks[1][i-1] + word.count(1))
 	return ranks
 
 
@@ -97,8 +107,6 @@ def rank_bitvector(bv, ranks, n, c, i):
 		start = word_no * word_size
 		end = start + scan_len
 		return ranks[c][word_no - 1] + bv[start:end].count(c)
-
-
 
 
 def get_alphabet(x):
@@ -123,11 +131,10 @@ ranks = preprocess_word_ranks(wt, len(wt))
 #print(ranks)
 r = rank_bitvector(wt, ranks, len(wt), 0, 22)
 #print(r)
+wt2 = yield_wavelet_queue(x)
+#print(list(wt2))
+preprocess_rank_wavelet(wt2, n, codes["i"], 8)
 
-
-
-
-
-
+print(list(preprocess_rank_wavelet(wt2, n, codes["i"], 8)))
 
 
