@@ -1,6 +1,6 @@
 from bitarray import bitarray
+from math import log2, floor
 
-global codes
 
 '''
 Keep track of queue of x strings to partition and encode,
@@ -26,6 +26,7 @@ def wavelet_queue(x):
 			wt += triple[0]
 			q += [triple[1], triple[2]]
 	return wt
+
 
 '''
 Assigns binary values to all chars of input string x, by splitting the alphabet
@@ -61,8 +62,42 @@ def construct_wavelet_tree(x):
 	return bin_x, x0, x1
 
 
-def rank_wavelet(wt, n, codes):
-	print("test")
+def rank_wavelet(wt, n, codes, c, i):
+	print(n)
+	print(wt)
+	print(codes)
+
+
+def preprocess_word_ranks(bv, n):
+	ranks = {0: [], 1: []}
+	word_size = floor(log2(n))
+	for i in range(n // word_size):
+		#print("word", bv[i*word_size: (i+1)*word_size])
+		if i == 0:
+			ranks[0].append(bv[i*word_size: (i+1)*word_size].count(0))
+			ranks[1].append(bv[i*word_size: (i+1)*word_size].count(1))
+		else:
+			ranks[0].append(ranks[0][i-1] + bv[i*word_size: (i+1)*word_size].count(0))
+			ranks[1].append(ranks[1][i-1] + bv[i*word_size: (i+1)*word_size].count(1))
+	return ranks
+
+
+def rank_bitvector(bv, ranks, n, c, i):
+	word_size = floor(log2(n))
+	word_no = (i // word_size)
+	scan_len = i % word_size
+	# If in first word, just scan
+	if word_no == 0:
+		return bv[0:scan_len].count(c)
+	# If we do not need to scan, look-up the rank directly in ranks
+	if scan_len == 0:
+		return ranks[c][word_no - 1]
+	# If we both need to look-up in ranks and scan
+	else:
+		start = word_no * word_size
+		end = start + scan_len
+		return ranks[c][word_no - 1] + bv[start:end].count(c)
+
 
 
 
@@ -79,11 +114,15 @@ alpha = get_alphabet(x) # ["i", "m", "p", "s"]
 #a_size = len(alpha)
 
 # Codes, e.g., {'i': bitarray('00'), 'm': bitarray('01'), 'p': bitarray('10'), 's': bitarray('11')}
+global codes
 codes = {letter: bitarray() for letter in alpha}
 #print(codes)
 wt = wavelet_queue(x)
 #print(wt)
-rank_wavelet(wt, n, codes)
+ranks = preprocess_word_ranks(wt, len(wt))
+#print(ranks)
+r = rank_bitvector(wt, ranks, len(wt), 0, 22)
+#print(r)
 
 
 
