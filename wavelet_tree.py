@@ -21,9 +21,9 @@ class WaveletTreeNode:
 
 		# Split alphabet to create children
 		bv, left, right, leaf = self.split_node(x)
+		self.bitvector = bv
+		self.ranks = self.preprocess_node_ranks(self.bitvector, self.n)
 		if not leaf:
-			self.bitvector = bv
-			self.ranks = self.preprocess_word_ranks(self.bitvector, self.n)
 			self.left_child = WaveletTreeNode(left, self)
 			self.right_child = WaveletTreeNode(right, self)
 		else:
@@ -62,7 +62,7 @@ class WaveletTreeNode:
 		return bin_x, x0, x1, child_leaves
 
 
-	def preprocess_word_ranks(self, bitvector, n):
+	def preprocess_node_ranks(self, bitvector, n):
 		ranks = {0: [], 1: []}
 		word_size = floor(log2(n))
 		for i in range(n // word_size):
@@ -100,7 +100,6 @@ class WaveletTreeLeaf:
 		self.letter = letter
 
 
-
 ######################################################################################################
 
 
@@ -115,12 +114,6 @@ def rank_query(root, c, i):
 		else:
 			node = node.right_child
 	return ii
-
-
-
-
-
-
 
 
 

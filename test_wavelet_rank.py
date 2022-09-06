@@ -1,9 +1,7 @@
-from bitarray import bitarray
-import wavelet_tree_new as wt
+import wavelet_tree as wt
 
 x = "mississippi"
-alpha = wt.get_alphabet(x) # ["i", "m", "p", "s"]
-root = wt.WaveletTreeNode(x, True)
+root = wt.WaveletTreeNode(x, False)
 
 
 def test_mississippi_m_0():
@@ -11,9 +9,9 @@ def test_mississippi_m_0():
 
 def test_mississippi_m_11():
 	assert wt.rank_query(root, "m", 11) == 1
-'''
+
 def test_mississippi_i_1():
-	assert wt.rank_query(root, "i", 11) == 0
+	assert wt.rank_query(root, "i", 1) == 0
 
 def test_mississippi_i_2():
 	assert wt.rank_query(root, "i", 2) == 1
@@ -35,5 +33,5 @@ def test_mississippi_i_11():
 
 def test_mississippi_s_6():
 	assert wt.rank_query(root, "s", 6) == 3
-'''
+
 
