@@ -1,28 +1,30 @@
 from bitarray import bitarray
 from math import log2, floor
 
+
 class WaveletTreeNode:
 	def __init__(self, x, root):
-		#print("Node", x)
-		self.x = x
 		self.n = len(x)
-		self.alpha = self.get_alphabet(x)
 		self.bitvector = None
 		self.ranks = None
 		self.left_child = None
 		self.right_child = None
 
+		alpha = self.get_alphabet(x)
+
 		if root:
 			self.root = root
 		else: # If node has no root: it IS the root
 			self.root = self
-			self.codes = {letter: bitarray() for letter in self.alpha}
+			self.codes = {letter: bitarray() for letter in alpha}
 
+		# Split alphabet to child nodes
+		bv, left, right, leaf = self.split_node(x, alpha)
 
-		# Split alphabet to create children
-		bv, left, right, leaf = self.split_node(x)
 		self.bitvector = bv
 		self.ranks = self.preprocess_node_ranks(self.bitvector, self.n)
+
+		# If children are not leaves
 		if not leaf:
 			self.left_child = WaveletTreeNode(left, self)
 			self.right_child = WaveletTreeNode(right, self)
@@ -36,8 +38,7 @@ class WaveletTreeNode:
 		return sorted(letters)
 
 
-	def split_node(self, x):
-		alpha = self.alpha
+	def split_node(self, x, alpha):
 		a_size = len(alpha)
 		# Assign binary value to each letter: d = {letter: binary},
 		# (split alphabet in half)
@@ -75,8 +76,8 @@ class WaveletTreeNode:
 				ranks[1].append(ranks[1][i-1] + word.count(1))
 		return ranks
 
+
 	def node_rank(self, bitvector, ranks, n, c, i):
-		print("X", self.x)
 		word_size = floor(log2(n))
 		word_no = (i // word_size)
 		scan_len = i % word_size
@@ -96,7 +97,6 @@ class WaveletTreeNode:
 
 class WaveletTreeLeaf:
 	def __init__(self, letter):
-		#print("Leaf", letter)
 		self.letter = letter
 
 

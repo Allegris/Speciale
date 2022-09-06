@@ -34,4 +34,11 @@ def test_mississippi_i_11():
 def test_mississippi_s_6():
 	assert wt.rank_query(root, "s", 6) == 3
 
+def test_mississippi_p_8():
+	assert wt.rank_query(root, "p", 8) == 0
 
+def test_mississippi_p_9():
+	assert wt.rank_query(root, "p", 9) == 1
+
+def test_mississippi_p_10():
+	assert wt.rank_query(root, "p", 10) == 2
