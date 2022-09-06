@@ -18,14 +18,17 @@ class WaveletTreeNode:
 			self.codes = {letter: bitarray() for letter in alpha}
 
 		# Split alphabet to create child nodes
-		bv, left, right, children_are_leaves = self.split_node(x, alpha)
+		bv, left, right, no_of_children = self.split_node(x, alpha)
 
 		self.bitvector = bv
 		self.ranks = self.preprocess_node_ranks(self.bitvector, self.n)
 
-		if not children_are_leaves:
-			self.left_child = WaveletTreeNode(left, self)
-			self.right_child = WaveletTreeNode(right, self)
+		if no_of_children >= 4:
+			self.left_child = WaveletTreeNode(left, self.root)
+			self.right_child = WaveletTreeNode(right, self.root)
+		elif no_of_children == 3:
+			self.left_child = WaveletTreeLeaf(left[0])
+			self.right_child = WaveletTreeNode(right, self.root)
 		else:
 			self.left_child = WaveletTreeLeaf(left[0])
 			self.right_child = WaveletTreeLeaf(right[0])
@@ -46,21 +49,18 @@ class WaveletTreeNode:
 		bin_x: The binary representation of x (wrt. the alphabet split)
 		x0: The part of x that corresponds to 0s
 		x1: The part of x that corresponds to 1s
-		children_are_leaves: True if the direct children of the node are leaves
+		a_size: Size of the alphabet of x
 	Examples of return:
-		1) bitarray('00110110110') miiii sssspp False
-		2) bitarray('10000') iiii m True
-		3) bitarray('111100') pp ssss True
+		1) bitarray('00110110110') miiii sssspp 4
+		2) bitarray('10000') iiii m 2
+		3) bitarray('111100') pp ssss 2
 	'''
 	def split_node(self, x, alpha):
-		print("X", x)
 		a_size = len(alpha)
 		d = {letter: 0 for letter in alpha}
 
-
 		for letter in alpha[a_size // 2:]: # assign second half of alphabet to 1
 			d[letter] = 1
-		print(d)
 		for letter in alpha: # Update codes for letters
 			self.root.codes[letter].append(d[letter])
 
@@ -72,9 +72,8 @@ class WaveletTreeNode:
 				x0 += char
 			else:
 				x1 += char
-
-		children_are_leaves = False if a_size > 2 else True
-		return bin_x, x0, x1, children_are_leaves
+		print(bin_x, x0, x1, a_size)
+		return bin_x, x0, x1, a_size
 
 
 	'''
@@ -139,12 +138,9 @@ def rank_query(root, c, i):
 
 ##### Code to run #####
 
-x = "AGTCCTGAANCTGAGCCTTNAGG" #"mississippi"
+x = "mississippi"
 wt_root = WaveletTreeNode(x, False)
-print(rank_query(wt_root, "A", 0))
+print(rank_query(wt_root, "i", 8))
 
-'''
-dna = "AGTCCTGAANCTGAGCCTTNAGG"
-dna_root = wt.WaveletTreeNode(dna, False)
-'''
+
 

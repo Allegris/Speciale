@@ -44,6 +44,27 @@ def test_mississippi_p_10():
 	assert wt.rank_query(root, "p", 10) == 2
 
 
+x2 = "mississippii$"
+root2 = wt.WaveletTreeNode(x2, False)
+
+def test_mississippii_sentinel_13():
+	assert wt.rank_query(root2, "$", 13) == 1
+
+def test_mississippii_i_13():
+	assert wt.rank_query(root2, "i", 13) == 5
+
+def test_mississippii_i_12():
+	assert wt.rank_query(root2, "i", 12) == 5
+
+def test_mississippii_i_11():
+	assert wt.rank_query(root2, "i", 11) == 4
+
+def test_mississippii_i_10():
+	assert wt.rank_query(root2, "i", 10) == 3
+
+def test_mississippii_i_9():
+	assert wt.rank_query(root2, "i", 9) == 3
+
 
 
 dna = "AGTCCTGAANCTGAGCCTTNAGG"
@@ -51,29 +72,27 @@ dna_root = wt.WaveletTreeNode(dna, False)
 
 def test_dna_a_0():
 	assert wt.rank_query(dna_root, "A", 0) == 0
-'''
+
 def test_dna_a_1():
-	assert bv.rank_one_hot(dna_ranks, dna_d, dna_n, "A", 1) == 1
+	assert wt.rank_query(dna_root, "A", 1) == 1
 
 def test_dna_c_5():
-	assert bv.rank_one_hot(dna_ranks, dna_d, dna_n, "C", 5) == 2
+	assert wt.rank_query(dna_root, "C", 5) == 2
 
 def test_dna_G_21():
-	assert bv.rank_one_hot(dna_ranks, dna_d, dna_n, "G", 21) == 4
+	assert wt.rank_query(dna_root, "G", 21) == 4
 
 def test_dna_G_22():
-	assert bv.rank_one_hot(dna_ranks, dna_d, dna_n, "G", 22) == 5
+	assert wt.rank_query(dna_root, "G", 22) == 5
 
 def test_dna_G_23():
-	assert bv.rank_one_hot(dna_ranks, dna_d, dna_n, "G", 23) == 6
+	assert wt.rank_query(dna_root, "G", 23) == 6
 
 def test_dna_C_4():
-	assert bv.rank_one_hot(dna_ranks, dna_d, dna_n, "C", 4) == 1
+	assert wt.rank_query(dna_root, "C", 4) == 1
 
 def test_dna_C_5():
-	assert bv.rank_one_hot(dna_ranks, dna_d, dna_n, "C", 5) == 2
-
-	'''
+	assert wt.rank_query(dna_root, "C", 5) == 2
 
 
 
