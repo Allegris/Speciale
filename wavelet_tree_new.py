@@ -2,24 +2,29 @@ from bitarray import bitarray
 from math import log2, floor
 
 class WaveletTreeNode:
-	def __init__(self, x):
+	def __init__(self, x, is_root):
 		self.n = len(x)
 		self.bv = None
 		self.ranks = None
 		self.leftChild = None
 		self.rightChild = None
+		self.alpha = get_alphabet(x)
+		self.codes = None
 		self.label = None
+		if is_root: self.codes = {letter: bitarray() for letter in self.alpha}
 
-		triple = self.split(x)
+		triple = self.split(x, is_root)
 		if triple:
+			#print("isroot", is_root, triple[3])
 			self.bv = bitarray(triple[0])
 			self.ranks = preprocess_word_ranks(self.bv, self.n)
-			self.leftChild = WaveletTreeNode(triple[1])
-			self.rightChild = WaveletTreeNode(triple[2])
+			self.leftChild = WaveletTreeNode(triple[1], False)
+			self.rightChild = WaveletTreeNode(triple[2], False)
+			#if(is_root): self.codes = triple[3]
 		else:
 			self.label = x[0]
 
-	def split(self, x):
+	def split(self, x, is_root):
 		alpha = get_alphabet(x)
 		a_size = len(alpha)
 		if a_size == 1:
@@ -30,8 +35,10 @@ class WaveletTreeNode:
 		for letter in alpha[a_size // 2:]: # assign last half of alphabet to 1
 			d[letter] = 1
 		# Update codes for letters
+		#if is_root:
 		for letter in alpha:
-			codes[letter].append(d[letter])
+			self.codes[letter].append(d[letter])
+			print("update codes", letter, d[letter])
 		# Binary representation of x
 		bin_x = bitarray()
 		# The part of x corresponding to 0s and 1s, respectively
@@ -86,21 +93,23 @@ def node_rank(node, c, i):
 		return ranks[c][word_no - 1] + bv[start:end].count(c)
 
 
-def rank_query(root, codes, c, i):
-	code = codes[c]
+def rank_query(root, c, i):
+	code = root.codes[c]
+	print(root.codes)
 	node = root
 	ii = i
 	for char in code:
-		#print("char", char)
-		#print("ii", ii)
-		#print("node.bv", node.bv)
+		print("char", char)
+		print("ii", ii)
+		print("node.bv", node.bv)
 		ii = node_rank(node, char, ii)
 		#node = node.leftChild if code == 0 else node.rightChild
 		if char == 0:
-			#print("go left")
+			print("go left")
 			node = node.leftChild
+			print("NODE CODES", node.codes)
 		else:
-			#print("go right")
+			print("go right")
 			node = node.rightChild
 
 	return ii
@@ -111,15 +120,16 @@ def rank_query(root, codes, c, i):
 ##### Code to run #####
 x = "mississippi"
 #n = len(x)
-alpha = get_alphabet(x) # ["i", "m", "p", "s"]
-global codes
-codes = {letter: bitarray() for letter in alpha}
+#alpha = get_alphabet(x) # ["i", "m", "p", "s"]
+#global codes
+#codes = {letter: bitarray() for letter in alpha}
 
-wt = WaveletTreeNode(x)
+wt = WaveletTreeNode(x, True)
+#codes = wt.codes
 #r = node_rank(wt.leftChild, 1, 5)
 #print(codes)
 #print(codes["i"])
-print(rank_query(wt, codes, "m", 0))
+print(rank_query(wt, "m", 11))
 
 
 

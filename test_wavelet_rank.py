@@ -3,20 +3,15 @@ import wavelet_tree_new as wt
 
 x = "mississippi"
 alpha = wt.get_alphabet(x) # ["i", "m", "p", "s"]
-#global codes
-#codes = {letter: bitarray() for letter in alpha}
-
-root = wt.WaveletTreeNode(x)
-#codes = wt. codes
+root = wt.WaveletTreeNode(x, True)
 
 
 def test_mississippi_m_0():
-	print(wt.codes)
-	assert wt.rank_query(root, wt.codes, "m", 0) == 0
-'''
+	assert wt.rank_query(root, "m", 0) == 0
+
 def test_mississippi_m_11():
 	assert wt.rank_query(root, "m", 11) == 1
-
+'''
 def test_mississippi_i_1():
 	assert wt.rank_query(root, "i", 11) == 0
 
