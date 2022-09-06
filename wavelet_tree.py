@@ -23,6 +23,7 @@ class WaveletTreeNode:
 		bv, left, right, leaf = self.split_node(x)
 		if not leaf:
 			self.bitvector = bv
+			self.ranks = self.preprocess_word_ranks(self.bitvector, self.n)
 			self.left_child = WaveletTreeNode(left, self)
 			self.right_child = WaveletTreeNode(right, self)
 		else:
@@ -61,6 +62,37 @@ class WaveletTreeNode:
 		return bin_x, x0, x1, child_leaves
 
 
+	def preprocess_word_ranks(self, bitvector, n):
+		ranks = {0: [], 1: []}
+		word_size = floor(log2(n))
+		for i in range(n // word_size):
+			word = bitvector[i*word_size: (i+1)*word_size]
+			if i == 0:
+				ranks[0].append(word.count(0))
+				ranks[1].append(word.count(1))
+			else:
+				ranks[0].append(ranks[0][i-1] + word.count(0))
+				ranks[1].append(ranks[1][i-1] + word.count(1))
+		return ranks
+
+	def node_rank(self, bitvector, ranks, n, c, i):
+		print("X", self.x)
+		word_size = floor(log2(n))
+		word_no = (i // word_size)
+		scan_len = i % word_size
+		# If in first word, just scan
+		if word_no == 0:
+			return bitvector[0:scan_len].count(c)
+		# If we do not need to scan, look-up the rank directly in ranks
+		if scan_len == 0:
+			return ranks[c][word_no - 1]
+		# If we both need to look-up in ranks and scan
+		else:
+			start = word_no * word_size
+			end = start + scan_len
+			return ranks[c][word_no - 1] + bitvector[start:end].count(c)
+
+
 
 class WaveletTreeLeaf:
 	def __init__(self, letter):
@@ -68,9 +100,34 @@ class WaveletTreeLeaf:
 		self.letter = letter
 
 
+
+######################################################################################################
+
+
+def rank_query(root, c, i):
+	code = root.codes[c]
+	node = root
+	ii = i
+	for char in code:
+		ii = node.node_rank(node.bitvector, node.ranks, node.n, char, ii)
+		if char == 0:
+			node = node.left_child
+		else:
+			node = node.right_child
+	return ii
+
+
+
+
+
+
+
+
+
+
+
 ##### Code to run #####
 x = "mississippi"
-wt = WaveletTreeNode(x, False)
-print(wt.left_child.left_child.letter)
-
+wt_root = WaveletTreeNode(x, False)
+print(rank_query(wt_root, "i", 8))
 

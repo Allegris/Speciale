@@ -125,6 +125,7 @@ x = "mississippi"
 #codes = {letter: bitarray() for letter in alpha}
 
 wt = WaveletTreeNode(x, True)
+print(wt.ranks)
 #codes = wt.codes
 #r = node_rank(wt.leftChild, 1, 5)
 #print(codes)

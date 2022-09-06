@@ -128,13 +128,13 @@ codes = {letter: bitarray() for letter in alpha}
 wt = wavelet_queue(x)
 #print(wt)
 ranks = preprocess_word_ranks(wt, len(wt))
-#print(ranks)
+print(ranks)
 r = rank_bitvector(wt, ranks, len(wt), 0, 22)
 #print(r)
 wt2 = yield_wavelet_queue(x)
 #print(list(wt2))
 preprocess_rank_wavelet(wt2, n, codes["i"], 8)
 
-print(list(preprocess_rank_wavelet(wt2, n, codes["i"], 8)))
+#print(list(preprocess_rank_wavelet(wt2, n, codes["i"], 8)))
 
 
