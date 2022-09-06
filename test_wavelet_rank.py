@@ -42,3 +42,43 @@ def test_mississippi_p_9():
 
 def test_mississippi_p_10():
 	assert wt.rank_query(root, "p", 10) == 2
+
+
+
+
+dna = "AGTCCTGAANCTGAGCCTTNAGG"
+dna_root = wt.WaveletTreeNode(dna, False)
+
+def test_dna_a_0():
+	assert wt.rank_query(dna_root, "A", 0) == 0
+'''
+def test_dna_a_1():
+	assert bv.rank_one_hot(dna_ranks, dna_d, dna_n, "A", 1) == 1
+
+def test_dna_c_5():
+	assert bv.rank_one_hot(dna_ranks, dna_d, dna_n, "C", 5) == 2
+
+def test_dna_G_21():
+	assert bv.rank_one_hot(dna_ranks, dna_d, dna_n, "G", 21) == 4
+
+def test_dna_G_22():
+	assert bv.rank_one_hot(dna_ranks, dna_d, dna_n, "G", 22) == 5
+
+def test_dna_G_23():
+	assert bv.rank_one_hot(dna_ranks, dna_d, dna_n, "G", 23) == 6
+
+def test_dna_C_4():
+	assert bv.rank_one_hot(dna_ranks, dna_d, dna_n, "C", 4) == 1
+
+def test_dna_C_5():
+	assert bv.rank_one_hot(dna_ranks, dna_d, dna_n, "C", 5) == 2
+
+	'''
+
+
+
+
+
+
+
+

@@ -53,12 +53,14 @@ class WaveletTreeNode:
 		3) bitarray('111100') pp ssss True
 	'''
 	def split_node(self, x, alpha):
+		print("X", x)
 		a_size = len(alpha)
 		d = {letter: 0 for letter in alpha}
 
+
 		for letter in alpha[a_size // 2:]: # assign second half of alphabet to 1
 			d[letter] = 1
-
+		print(d)
 		for letter in alpha: # Update codes for letters
 			self.root.codes[letter].append(d[letter])
 
@@ -137,7 +139,12 @@ def rank_query(root, c, i):
 
 ##### Code to run #####
 
-x = "mississippi"
+x = "AGTCCTGAANCTGAGCCTTNAGG" #"mississippi"
 wt_root = WaveletTreeNode(x, False)
-print(rank_query(wt_root, "i", 8))
+print(rank_query(wt_root, "A", 0))
+
+'''
+dna = "AGTCCTGAANCTGAGCCTTNAGG"
+dna_root = wt.WaveletTreeNode(dna, False)
+'''
 
