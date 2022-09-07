@@ -11,8 +11,7 @@ tracemalloc.start()
 x = "mississippi$"
 n = len(x)
 alpha = bv.get_alphabet(x) #["$", "i", "m", "p", "s"]
-a_size = len(alpha)
-d = bv.one_hot_encoding(x, n, alpha, a_size)
+d = bv.one_hot_encoding(x, alpha)
 ranks = bv.preprocess_rank_one_hot(d, n, alpha)
 
 
@@ -56,7 +55,7 @@ def test_mississippi_s_6():
 # Words "mis sis sip pii $" (the rank of last non-full word is not calculated - must scan)
 x2 = "mississippii$"
 n2 = len(x2)
-d2 = bv.one_hot_encoding(x2, n2, alpha, a_size)
+d2 = bv.one_hot_encoding(x2, alpha)
 ranks2 = bv.preprocess_rank_one_hot(d2, n2, alpha)
 
 def test_mississippii_sentinel_13():
@@ -82,8 +81,7 @@ def test_mississippii_i_9():
 dna = "AGTCCTGAANCTGAGCCTTNAGG"
 dna_n = len(dna)
 dna_alpha = bv.get_alphabet(dna) #["A", "C", "G", "N", "T"]
-dna_alpha_size = len(dna_alpha)
-dna_d = bv.one_hot_encoding(dna, dna_n, dna_alpha, dna_alpha_size)
+dna_d = bv.one_hot_encoding(dna, dna_alpha)
 dna_ranks = bv.preprocess_rank_one_hot(dna_d, dna_n, dna_alpha)
 
 def test_dna_a_0():
@@ -114,8 +112,7 @@ def test_dna_C_5():
 big_a = "ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ123456789"
 big_a_n = len(big_a)
 big_a_alpha = bv.get_alphabet(big_a) #["A", "C", "G", "N", "T"]
-big_a_alpha_size = len(big_a_alpha)
-big_a_d = bv.one_hot_encoding(big_a, big_a_n, big_a_alpha, big_a_alpha_size)
+big_a_d = bv.one_hot_encoding(big_a, big_a_alpha)
 big_a_ranks = bv.preprocess_rank_one_hot(big_a_d, big_a_n, big_a_alpha)
 
 

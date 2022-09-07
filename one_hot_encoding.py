@@ -14,9 +14,9 @@ Inputs are:
 	x: input string
 	n = length of x
 	alpha: alphabet
-	a_size = size of alphabet
 '''
-def one_hot_encoding(x, n, alpha, a_size):
+def one_hot_encoding(x, alpha):
+	n = len(x)
 	# Initiate dict {letter: bitarray} of all zeros
 	# e.g., {'$': bitarray('000000000000'), 'i': bitarray('000000000000'), ...}
 	d = {char: bitarray(n) for char in alpha}
@@ -99,9 +99,9 @@ def get_alphabet(x):
 x = "mississippi$"
 n = len(x)
 alpha = get_alphabet(x) # ["$", "i", "m", "p", "s"]
-a_size = len(alpha)
+#a_size = len(alpha)
 
-d = one_hot_encoding(x, n, alpha, a_size)
+d = one_hot_encoding(x, alpha)
 ranks = preprocess_rank_one_hot(d, n, alpha)
 print(rank_one_hot(ranks, d, n, "i", 6))
 
