@@ -72,7 +72,6 @@ class WaveletTreeNode:
 				x0 += char
 			else:
 				x1 += char
-		print(bin_x, x0, x1, a_size)
 		return bin_x, x0, x1, a_size
 
 
@@ -138,9 +137,37 @@ def rank_query(root, c, i):
 
 ##### Code to run #####
 
+#x = "mississippi"
+#wt_root = WaveletTreeNode(x, False)
+#print(rank_query(wt_root, "i", 8))
+
+'''
+# starting the monitoring
+tracemalloc.start()
+
+# function call
 x = "mississippi"
 wt_root = WaveletTreeNode(x, False)
-print(rank_query(wt_root, "i", 8))
+rank_query(wt_root, "i", 8)
+
+# displaying the memory
+print(tracemalloc.get_traced_memory())
+
+# stopping the library
+tracemalloc.stop()
+'''
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

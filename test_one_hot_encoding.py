@@ -1,4 +1,11 @@
 import one_hot_encoding as bv
+import tracemalloc
+
+
+
+# starting the monitoring
+tracemalloc.start()
+
 
 # Words "mis sis sip pi$"
 x = "mississippi$"
@@ -104,3 +111,16 @@ def test_dna_C_5():
 	assert bv.rank_one_hot(dna_ranks, dna_d, dna_n, "C", 5) == 2
 
 
+big_a = "ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ123456789"
+big_a_n = len(big_a)
+big_a_alpha = bv.get_alphabet(big_a) #["A", "C", "G", "N", "T"]
+big_a_alpha_size = len(big_a_alpha)
+big_a_d = bv.one_hot_encoding(big_a, big_a_n, big_a_alpha, big_a_alpha_size)
+big_a_ranks = bv.preprocess_rank_one_hot(big_a_d, big_a_n, big_a_alpha)
+
+
+# displaying the memory
+print(tracemalloc.get_traced_memory())
+
+# stopping the library
+tracemalloc.stop()

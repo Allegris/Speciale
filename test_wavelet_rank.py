@@ -1,4 +1,10 @@
 import wavelet_tree as wt
+import tracemalloc
+
+
+# starting the monitoring
+tracemalloc.start()
+
 
 x = "mississippi"
 root = wt.WaveletTreeNode(x, False)
@@ -95,8 +101,15 @@ def test_dna_C_5():
 	assert wt.rank_query(dna_root, "C", 5) == 2
 
 
+big_a = "ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ123456789"
+big_a_root = wt.WaveletTreeNode(big_a, False)
 
 
+# displaying the memory
+print(tracemalloc.get_traced_memory())
+
+# stopping the library
+tracemalloc.stop()
 
 
 
