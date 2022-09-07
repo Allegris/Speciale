@@ -21,6 +21,7 @@ class WaveletTreeNode:
 		bv, left, right, no_of_children = self.split_node(x, alpha)
 
 		self.bitvector = bv
+		print(bv)
 		self.ranks = self.preprocess_node_ranks(self.bitvector, self.n)
 
 		if no_of_children >= 4:
@@ -137,9 +138,10 @@ def rank_query(root, c, i):
 
 ##### Code to run #####
 
-#x = "mississippi"
-#wt_root = WaveletTreeNode(x, False)
-#print(rank_query(wt_root, "i", 8))
+x = "mississippi"
+#x = "mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiissssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiisssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssiiiiiiiiiiiiiiiiissssssssssssssssssiiiiiiiiiiiiiiiiiippppppppppppppppppppppppppppppppppppppppppppppppppppppiiiiiiiiiiiiiiiiiiiiiii"
+wt_root = WaveletTreeNode(x, False)
+print(rank_query(wt_root, "i", 8))
 
 '''
 # starting the monitoring
