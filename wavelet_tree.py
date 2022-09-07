@@ -64,7 +64,7 @@ class WaveletTreeNode:
 			d[letter] = 1
 		for letter in alpha: # Update codes for letters
 			self.root.codes[letter].append(d[letter])
-
+		print("d", d)
 		bin_x = bitarray() # Binary representation of x
 		x0, x1 = "", "" # The 0 / 1 parts of x
 		for char in x:
@@ -138,8 +138,7 @@ def rank_query(root, c, i):
 
 ##### Code to run #####
 
-x = "mississippi"
-#x = "mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiissssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiisssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssiiiiiiiiiiiiiiiiissssssssssssssssssiiiiiiiiiiiiiiiiiippppppppppppppppppppppppppppppppppppppppppppppppppppppiiiiiiiiiiiiiiiiiiiiiii"
+x = "mississippialpha"
 wt_root = WaveletTreeNode(x, False)
 print(rank_query(wt_root, "i", 8))
 
