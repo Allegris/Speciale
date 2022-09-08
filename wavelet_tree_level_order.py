@@ -89,7 +89,9 @@ def preprocess_node_ranks(wt, n):
 
 def node_word_ranks(bitvector, n):
 	ranks = {0: [], 1: []}
+	if n == 0: return ranks
 	word_size = max(floor(log2(n)), 1)
+	#word_size = floor(log2(n)) if floor(log2(n)) < 0 else 1  # BLOWS SPACE USAGE UP???
 	for i in range(n // word_size): # Iterate words
 		word = bitvector[i*word_size: (i+1)*word_size]
 		prev_0s = 0 if i == 0 else ranks[0][i-1]

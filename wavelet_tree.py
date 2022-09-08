@@ -29,9 +29,11 @@ class WaveletTreeNode:
 		elif no_of_children == 3:
 			self.left_child = WaveletTreeLeaf(left[0])
 			self.right_child = WaveletTreeNode(right, self.root)
-		else:
+		elif no_of_children == 2:
 			self.left_child = WaveletTreeLeaf(left[0])
 			self.right_child = WaveletTreeLeaf(right[0])
+		else:
+			self.left_child = WaveletTreeLeaf(left[0])
 
 
 	'''
@@ -58,9 +60,9 @@ class WaveletTreeNode:
 	def split_node(self, x, alpha):
 		a_size = len(alpha)
 		d = {letter: 0 for letter in alpha}
-
-		for letter in alpha[a_size // 2:]: # assign second half of alphabet to 1
-			d[letter] = 1
+		if a_size > 1:
+			for letter in alpha[a_size // 2:]: # assign second half of alphabet to 1
+				d[letter] = 1
 		for letter in alpha: # Update codes for letters
 			self.root.codes[letter].append(d[letter])
 		bin_x = bitarray() # Binary representation of x
@@ -127,7 +129,11 @@ def rank_query(root, c, i):
 	ii = i
 	for char in code:
 		ii = node.node_rank(node.bitvector, node.ranks, node.n, char, ii)
-		node = node.left_child if char == 0 else node.right_child
+		#node = node.left_child if char == 0 else node.right_child
+		if char == 0:
+			node = node.left_child
+		else:
+			node = node.right_child
 	return ii
 
 
