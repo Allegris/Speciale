@@ -1,5 +1,5 @@
 from bitarray import bitarray
-from math import log2, floor
+from math import log2, floor, ceil
 
 '''
 mississippi
@@ -41,45 +41,89 @@ bitarray('
 00000001101100011100000101111011111111111111101110101110001101011100111111111111111110110000000011101000110110
 00000000001100100100101000000000000000000000000001100110100010011111100000000000000000000111110101011001010110
 mississippialphaaaaaiiiiiiiiiiiiiiipppppppppppppabcdefghijklmnopqrstuvwxyzøæåjkfadnkcdnoeuhritnodhnijsbdakflne
+
+
+sub_bv bitarray('1011011011001100')
+{0: [1, 3, 5, 7], 1: [3, 5, 7, 9]}
+
+sub_bv bitarray('1111010')
+{0: [0, 2, 2, 2], 1: [4, 5, 5, 5]}
+
+sub_bv bitarray('011111101')
+{0: [1, 2, 2, 2], 1: [3, 6, 7, 7]}
+
+sub_bv bitarray('00')
+{0: [2, 2, 2, 2], 1: [0, 0, 0, 0]}
+
+sub_bv bitarray('11110')
+{0: [0, 1, 1, 1], 1: [4, 4, 4, 4]}
+
+sub_bv bitarray('10')
+{0: [1, 1, 1, 1], 1: [1, 1, 1, 1]}
+
+sub_bv bitarray('1111000')
+{0: [0, 3, 3, 3], 1: [4, 4, 4, 4]}
+
 '''
 
-
-def get_alphabet(x):
-	letters = ''.join(set(x))
-	return sorted(letters)
+##############################################################################################################
 
 
-def wavelet_queue(x):
+def node_ranks(bitvector, n):
+	ranks = {0: [], 1: []}
+	word_size = floor(log2(n))
+	for i in range(n // word_size): # Iterate words
+		word = bitvector[i*word_size: (i+1)*word_size]
+		prev_0s = 0 if i == 0 else ranks[0][i-1]
+		prev_1s = 0 if i == 0 else ranks[1][i-1]
+		ranks[0].append(prev_0s + word.count(0))
+		ranks[1].append(prev_1s + word.count(1))
+	return ranks
+
+
+'''
+Returns a wavelet tree and letter codes, e.g., for mississippi:
+(bitarray('
+00110110110
+10000111100'),
+
+{'i': bitarray('00'),
+ 'm': bitarray('01'),
+ 'p': bitarray('10'),
+ 's': bitarray('11')})
+
+'''
+def wavelet_tree(x):
 	wt = bitarray()
+	alpha = get_alphabet(x)
+	codes = {letter: bitarray() for letter in alpha}
 	q = [x]
 	while q:
 		xx = q.pop(0)
-		triple = construct_wavelet_tree(xx)
-		if triple[0]:
-			wt += triple[0]
-		if triple[1]:
+		triple = split_node(xx, codes)
+		codes = triple[3]
+		wt += triple[0]
+		if triple[1] and triple[2]:
 			q += [triple[1], triple[2]]
-
-	alpha = get_alphabet(x)
-	last = len(x) * (floor(log2(len(alpha))) + 1)
-	return wt[0:last]
+	last = len(x) * (ceil(log2(len(alpha))))
+	return wt[0:last], codes
 
 
-def construct_wavelet_tree(x):
+def split_node(x, codes):
 	alpha = get_alphabet(x)
 	a_size = len(alpha)
 	if a_size == 1:
 		bv = bitarray(len(x))
 		bv.setall(0)
-		return bv, None, None
+		return bv, None, None, codes
 	# Assign binary value to each letter: d = {letter: binary},
 	# (split alphabet in half)
 	d = {letter: 0 for letter in alpha}
 	for letter in alpha[a_size // 2:]: # assign last half of alphabet to 1
 		d[letter] = 1
 	# Update codes for letters
-	#for letter in alpha:
-	#	codes[letter].append(d[letter])
+	for letter in alpha:
+		codes[letter].append(d[letter])
 	# Binary representation of x
 	bin_x = bitarray()
 	# The part of x corresponding to 0s and 1s, respectively
@@ -90,7 +134,7 @@ def construct_wavelet_tree(x):
 			x0 += char
 		else:
 			x1 += char
-	return bin_x, x0, x1
+	return bin_x, x0, x1, codes
 
 
 def rank(wt, n, c, i):
@@ -109,18 +153,56 @@ def go_left(sub_bv, n, i):
 def go_right(sub_bv, n, i):
 	return i+n+sub_bv.count(0), i+n+sub_bv.count(0)+sub_bv.count(1)
 
-#bv = bitarray('0011011011010000111100')
-#sub_bv = bv[0:11]
-#print(go_left(sub_bv, len(bv), 0, len(sub_bv)))
+
+def get_alphabet(x):
+	letters = ''.join(set(x))
+	return sorted(letters)
+
+
+def preprocess_node_ranks(wt, n):
+	wt_len = len(wt)
+	q = [(0, n)]
+	while q:
+		(L, R) = q.pop(0) # interval
+		sub_bv = wt[L:R]
+		print("sub_bv", sub_bv)
+		print(node_ranks(sub_bv, n))
+		yield node_ranks(sub_bv, n)
+		left_child = go_left(sub_bv, n, L)
+		right_child = go_right(sub_bv, n, L)
+		if right_child[1] <= wt_len:
+			q.append(left_child)
+			q.append(right_child)
+
+
+def rank_query(root, c, i):
+	code = root.codes[c] # code of c, e.g., "00" (left, left) for i in mississippi
+	node = root
+	ii = i
+	for char in code:
+		ii = node.node_rank(node.bitvector, node.ranks, node.n, char, ii)
+		node = node.left_child if char == 0 else node.right_child
+	return ii
+
+def rank_query():
+
+
+##### Code to run #####
 
 #x = "mississippialphaaaaaiiiiiiiiiiiiiiipppppppppppppabcdefghijklmnopqrstuvwxyzøæåjkfadnkcdnoeuhritnodhnijsbdakflne"
 x = "mississippialpha"
+#x = "mississippi"
 n = len(x)
-#wt = bitarray('0011011011010000111100')
-#rank(wt, n, "i", 8)
+
+wt, codes = wavelet_tree(x)
+print(wt)
+#preprocess_node_ranks(bitvector, n)
+#rank(wt, n, 0, n)
 
 
-wt = wavelet_queue(x)
-print(rank(wt, n, 0, n))
+#print(go_left(bitarray("1111010"), 16, 16))
 
+#print(go_left(bitarray("00"), 16, 32))
+
+print(list(traverse_wavelet_tree(wt, n)))
 
