@@ -103,7 +103,7 @@ big_n = len(big)
 big_wt, big_codes = lo.wavelet_tree(big)
 big_ranks = lo.preprocess_node_ranks(big_wt, big_n)
 
-'''
+
 def test_big_a_0():
 	assert lo.rank_query(big_wt, big_n, big_ranks, big_codes, "A", 0) == 0
 
@@ -127,7 +127,7 @@ def test_big_9_37():
 
 def test_big_9_38():
 	assert lo.rank_query(big_wt, big_n, big_ranks, big_codes, "9", 38) == 1
-'''
+
 
 # displaying the memory
 print(tracemalloc.get_traced_memory())

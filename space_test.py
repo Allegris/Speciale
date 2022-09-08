@@ -39,3 +39,9 @@ print("Type, min, max, avr")
 print("Tre", min(tree_ls), max(tree_ls), sum(tree_ls)/len(tree_ls))
 print("Lev", min(lo_ls), max(lo_ls), sum(lo_ls)/len(lo_ls))
 print("Ohe", min(ohe_ls), max(ohe_ls), sum(ohe_ls)/len(ohe_ls))
+
+
+'''
+tracemalloc.get_traced_memory()
+Get the current size and peak size of memory blocks traced by the tracemalloc module as a tuple: (current: int, peak: int).
+'''

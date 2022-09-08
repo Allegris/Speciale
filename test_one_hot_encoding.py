@@ -115,7 +115,7 @@ big_alpha = bv.get_alphabet(big) #["A", "C", "G", "N", "T"]
 big_d = bv.one_hot_encoding(big, big_alpha)
 big_ranks = bv.preprocess_rank_one_hot(big_d, big_n, big_alpha)
 
-'''
+
 def test_big_a_0():
 	assert bv.rank_one_hot(big_ranks, big_d, big_n, "A", 0) == 0
 
@@ -139,7 +139,7 @@ def test_big_9_37():
 
 def test_big_9_38():
 	assert bv.rank_one_hot(big_ranks, big_d, big_n, "9", 38) == 1
-'''
+
 
 
 # displaying the memory

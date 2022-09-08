@@ -196,17 +196,6 @@ def rank_query(wt, n, ranks, codes, c, i):
 	return ii
 
 
-def old_rank_query(root, c, i):
-	code = root.codes[c] # code of c, e.g., "00" (left, left) for i in mississippi
-	node = root
-	ii = i
-	for char in code:
-		ii = node.node_rank(node.bitvector, node.ranks, node.n, char, ii)
-		node = node.left_child if char == 0 else node.right_child
-	return ii
-
-
-
 
 ##### Code to run #####
 '''
