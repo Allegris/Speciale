@@ -68,19 +68,6 @@ sub_bv bitarray('1111000')
 
 ##############################################################################################################
 
-
-def node_ranks(bitvector, n):
-	ranks = {0: [], 1: []}
-	word_size = floor(log2(n))
-	for i in range(n // word_size): # Iterate words
-		word = bitvector[i*word_size: (i+1)*word_size]
-		prev_0s = 0 if i == 0 else ranks[0][i-1]
-		prev_1s = 0 if i == 0 else ranks[1][i-1]
-		ranks[0].append(prev_0s + word.count(0))
-		ranks[1].append(prev_1s + word.count(1))
-	return ranks
-
-
 '''
 Returns a wavelet tree and letter codes, e.g., for mississippi:
 (bitarray('
@@ -137,15 +124,6 @@ def split_node(x, codes):
 	return bin_x, x0, x1, codes
 
 
-def rank(wt, n, c, i):
-	root = wt[0:n]
-	print(root)
-	print(go_left(root, n, 0))
-	print(go_right(root, n, 0))
-	print(go_left(wt[23:32], n, 23))
-	print(go_right(wt[23:32], n, 23))
-
-
 def go_left(sub_bv, n, i):
 	return i+n, i+n+sub_bv.count(0)
 
@@ -160,22 +138,65 @@ def get_alphabet(x):
 
 
 def preprocess_node_ranks(wt, n):
+	ranks = {}
 	wt_len = len(wt)
 	q = [(0, n)]
 	while q:
 		(L, R) = q.pop(0) # interval
 		sub_bv = wt[L:R]
-		print("sub_bv", sub_bv)
-		print(node_ranks(sub_bv, n))
-		yield node_ranks(sub_bv, n)
+		ranks[L] = node_word_ranks(sub_bv, len(sub_bv))
 		left_child = go_left(sub_bv, n, L)
 		right_child = go_right(sub_bv, n, L)
 		if right_child[1] <= wt_len:
 			q.append(left_child)
 			q.append(right_child)
+	return ranks
 
 
-def rank_query(root, c, i):
+def node_word_ranks(bitvector, n):
+	ranks = {0: [], 1: []}
+	word_size = floor(log2(n))
+	for i in range(n // word_size): # Iterate words
+		word = bitvector[i*word_size: (i+1)*word_size]
+		prev_0s = 0 if i == 0 else ranks[0][i-1]
+		prev_1s = 0 if i == 0 else ranks[1][i-1]
+		ranks[0].append(prev_0s + word.count(0))
+		ranks[1].append(prev_1s + word.count(1))
+	return ranks
+
+
+def node_rank(bitvector, ranks, c, i):
+	n = len(bitvector)
+	word_size = floor(log2(n))
+	word_no = (i // word_size)
+	scan_len = i % word_size
+	# If in first word, just scan
+	if word_no == 0:
+		return bitvector[0:scan_len].count(c)
+	# If we do not need to scan, look-up the rank directly in ranks
+	if scan_len == 0:
+		return ranks[c][word_no - 1]
+	# If we need to look-up in ranks AND scan
+	else:
+		start = word_no * word_size
+		end = start + scan_len
+		return ranks[c][word_no - 1] + bitvector[start:end].count(c)
+
+
+def rank_query(wt, n, ranks, codes, c, i):
+	code = codes[c]
+	L, R = 0, n
+	ii = i
+	for char in code:
+		ii = node_rank(wt[L:R], ranks[L], char, ii)
+		if char == 0:
+			L, R = go_left(wt[L:R], n, L)
+		if char == 1:
+			L, R = go_right(wt[L:R], n, L)
+	return ii
+
+
+def old_rank_query(root, c, i):
 	code = root.codes[c] # code of c, e.g., "00" (left, left) for i in mississippi
 	node = root
 	ii = i
@@ -184,25 +205,27 @@ def rank_query(root, c, i):
 		node = node.left_child if char == 0 else node.right_child
 	return ii
 
-def rank_query():
+
 
 
 ##### Code to run #####
 
 #x = "mississippialphaaaaaiiiiiiiiiiiiiiipppppppppppppabcdefghijklmnopqrstuvwxyzøæåjkfadnkcdnoeuhritnodhnijsbdakflne"
-x = "mississippialpha"
-#x = "mississippi"
+#x = "mississippialpha"
+x = "mississippi"
 n = len(x)
 
 wt, codes = wavelet_tree(x)
-print(wt)
-#preprocess_node_ranks(bitvector, n)
-#rank(wt, n, 0, n)
+#print(wt)
+ranks = preprocess_node_ranks(wt, n)
+#print(ranks)
+print(rank_query(wt, n, ranks, codes, "i", 0))
 
 
-#print(go_left(bitarray("1111010"), 16, 16))
 
-#print(go_left(bitarray("00"), 16, 32))
 
-print(list(traverse_wavelet_tree(wt, n)))
+
+
+
+
 
