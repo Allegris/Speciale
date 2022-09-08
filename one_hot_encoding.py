@@ -95,7 +95,7 @@ def get_alphabet(x):
 
 
 ########## Code to run ##########
-
+'''
 x = "mississippi$"
 n = len(x)
 alpha = get_alphabet(x) # ["$", "i", "m", "p", "s"]
@@ -104,7 +104,7 @@ alpha = get_alphabet(x) # ["$", "i", "m", "p", "s"]
 d = one_hot_encoding(x, alpha)
 ranks = preprocess_rank_one_hot(d, n, alpha)
 print(rank_one_hot(ranks, d, n, "i", 6))
-
+'''
 
 
 

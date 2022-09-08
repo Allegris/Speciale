@@ -155,7 +155,7 @@ def preprocess_node_ranks(wt, n):
 
 def node_word_ranks(bitvector, n):
 	ranks = {0: [], 1: []}
-	word_size = floor(log2(n))
+	word_size = max(floor(log2(n)), 1)
 	for i in range(n // word_size): # Iterate words
 		word = bitvector[i*word_size: (i+1)*word_size]
 		prev_0s = 0 if i == 0 else ranks[0][i-1]
@@ -209,7 +209,7 @@ def old_rank_query(root, c, i):
 
 
 ##### Code to run #####
-
+'''
 #x = "mississippialphaaaaaiiiiiiiiiiiiiiipppppppppppppabcdefghijklmnopqrstuvwxyzøæåjkfadnkcdnoeuhritnodhnijsbdakflne"
 #x = "mississippialpha"
 x = "mississippi"
@@ -220,7 +220,7 @@ wt, codes = wavelet_tree(x)
 ranks = preprocess_node_ranks(wt, n)
 #print(ranks)
 print(rank_query(wt, n, ranks, codes, "i", 0))
-
+'''
 
 
 

@@ -98,10 +98,36 @@ def test_dna_C_5():
 	assert lo.rank_query(dna_wt, dna_n, dna_ranks, dna_codes, "C", 5) == 2
 
 
-big_a = "ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ123456789"
-big_a_n = len(big_a)
-big_a_wt, big_a_codes = lo.wavelet_tree(big_a)
-big_a_ranks = lo.preprocess_node_ranks(big_a_wt, big_a_n)
+big = "ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ123456789"
+big_n = len(big)
+big_wt, big_codes = lo.wavelet_tree(big)
+big_ranks = lo.preprocess_node_ranks(big_wt, big_n)
+
+'''
+def test_big_a_0():
+	assert lo.rank_query(big_wt, big_n, big_ranks, big_codes, "A", 0) == 0
+
+def test_big_a_1():
+	assert lo.rank_query(big_wt, big_n, big_ranks, big_codes, "A", 1) == 1
+
+def test_big_b_1():
+	assert lo.rank_query(big_wt, big_n, big_ranks, big_codes, "B", 1) == 0
+
+def test_big_b_2():
+	assert lo.rank_query(big_wt, big_n, big_ranks, big_codes, "B", 2) == 1
+
+def test_big_z_25():
+	assert lo.rank_query(big_wt, big_n, big_ranks, big_codes, "Z", 25) == 0
+
+def test_big_z_26():
+	assert lo.rank_query(big_wt, big_n, big_ranks, big_codes, "Z", 26) == 1
+
+def test_big_9_37():
+	assert lo.rank_query(big_wt, big_n, big_ranks, big_codes, "9", 37) == 0
+
+def test_big_9_38():
+	assert lo.rank_query(big_wt, big_n, big_ranks, big_codes, "9", 38) == 1
+'''
 
 # displaying the memory
 print(tracemalloc.get_traced_memory())

@@ -76,6 +76,7 @@ def test_mississippii_i_9():
 dna = "AGTCCTGAANCTGAGCCTTNAGG"
 dna_root = wt.WaveletTreeNode(dna, False)
 
+
 def test_dna_a_0():
 	assert wt.rank_query(dna_root, "A", 0) == 0
 
@@ -101,8 +102,34 @@ def test_dna_C_5():
 	assert wt.rank_query(dna_root, "C", 5) == 2
 
 
-big_a = "ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ123456789"
-big_a_root = wt.WaveletTreeNode(big_a, False)
+big = "ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ123456789"
+big_root = wt.WaveletTreeNode(big, False)
+
+
+def test_big_a_0():
+	assert wt.rank_query(big_root, "A", 0) == 0
+
+def test_big_a_1():
+	assert wt.rank_query(big_root, "A", 1) == 1
+
+def test_big_b_1():
+	assert wt.rank_query(big_root, "B", 1) == 0
+
+def test_big_b_2():
+	assert wt.rank_query(big_root, "B", 2) == 1
+
+def test_big_z_25():
+	assert wt.rank_query(big_root, "Z", 25) == 0
+
+def test_big_z_26():
+	assert wt.rank_query(big_root, "Z", 26) == 1
+
+def test_big_9_37():
+	assert wt.rank_query(big_root, "9", 37) == 0
+
+def test_big_9_38():
+	assert wt.rank_query(big_root, "9", 38) == 1
+
 
 
 # displaying the memory

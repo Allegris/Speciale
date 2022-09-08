@@ -21,7 +21,6 @@ class WaveletTreeNode:
 		bv, left, right, no_of_children = self.split_node(x, alpha)
 
 		self.bitvector = bv
-		print(bv)
 		self.ranks = self.preprocess_node_ranks(self.bitvector, self.n)
 
 		if no_of_children >= 4:
@@ -64,7 +63,6 @@ class WaveletTreeNode:
 			d[letter] = 1
 		for letter in alpha: # Update codes for letters
 			self.root.codes[letter].append(d[letter])
-		print("d", d)
 		bin_x = bitarray() # Binary representation of x
 		x0, x1 = "", "" # The 0 / 1 parts of x
 		for char in x:
@@ -137,12 +135,12 @@ def rank_query(root, c, i):
 
 
 ##### Code to run #####
-
+'''
 x = "mississippialpha"
 wt_root = WaveletTreeNode(x, False)
 print(rank_query(wt_root, "i", 8))
 
-'''
+
 # starting the monitoring
 tracemalloc.start()
 
