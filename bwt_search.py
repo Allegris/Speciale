@@ -96,36 +96,15 @@ def bwt(x, sa):
 	return bwt
 
 
-'''
-
-$AACGTAAACGTAAC  0
-AAACGTAAC$AACGT  1
-AAC$AACGTAAACGT  2
-AACGTAAACGTAAC$  3
-AACGTAAC$AACGTA  4
-AC$AACGTAAACGTA  5
-ACGTAAACGTAAC$A  6
-ACGTAAC$AACGTAA  7
-C$AACGTAAACGTAA  8
-CGTAAACGTAAC$AA  9
-CGTAAC$AACGTAAA  10
-GTAAACGTAAC$AAC  11
-GTAAC$AACGTAAAC  12
-TAAACGTAAC$AACG  13
-TAAC$AACGTAAACG  14
-
-btw(x) = CTT$AAAAAAACCGG
-
-'''
-
-
-x = "AACGTAAACGTAAC"
+#x = "AACGTAAACGTAAC"
+x = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sit amet justo donec enim diam vulputate. Id eu nisl nunc mi ipsum. Eget est lorem ipsum dolor sit amet consectetur adipiscing. Nisl pretium fusce id velit ut tortor pretium viverra. Felis eget velit aliquet sagittis id. Orci porta non pulvinar neque laoreet. Nulla pellentesque dignissim enim sit amet. Dui sapien eget mi proin sed libero. Arcu ac tortor dignissim convallis aenean et tortor at. Eu tincidunt tortor aliquam nulla facilisi cras fermentum odio. Consectetur adipiscing elit duis tristique sollicitudin nibh sit amet. Laoreet suspendisse interdum consectetur libero. Dictum at tempor commodo ullamcorper a lacus. Integer feugiat scelerisque varius morbi enim nunc faucibus a pellentesque. Auctor augue mauris augue neque gravida in fermentum et sollicitudin. Tortor id aliquet lectus proin. Adipiscing enim eu turpis egestas pretium aenean pharetra magna. Tristique nulla aliquet enim tortor at auctor."
+#x = x.replace(" ", "")
 x += "$"
-n = len(x)
-p = "AAC"
+#p = "AAC"
+p = "dolor"
 sa = construct_sa_skew(x)
-#sa = construct_sa_slow(x)
 num_to_letter_dict, letter_to_num_dict, num_ls = map_string_to_ints(x)
+
 
 # BW search with Occ table
 C = construct_C(x)
@@ -135,7 +114,7 @@ print(bw_search(x, sa, p, C, O, letter_to_num_dict))
 # BW search with wavelet tree rank query (level order wt)
 bwt_x = bwt(x, sa)
 wt, codes = lo.wavelet_tree(bwt_x)
-ranks = lo.preprocess_node_ranks(wt, n)
+ranks = lo.preprocess_node_ranks(wt, len(bwt_x))
 print(bw_seach_rank(bwt_x, sa, p, C, letter_to_num_dict, wt, ranks, codes))
 
 
@@ -160,3 +139,26 @@ tracemalloc.stop()
 '''
 
 
+
+
+'''
+x: AACGTAAACGTAAC
+
+$AACGTAAACGTAAC  0
+AAACGTAAC$AACGT  1
+AAC$AACGTAAACGT  2
+AACGTAAACGTAAC$  3
+AACGTAAC$AACGTA  4
+AC$AACGTAAACGTA  5
+ACGTAAACGTAAC$A  6
+ACGTAAC$AACGTAA  7
+C$AACGTAAACGTAA  8
+CGTAAACGTAAC$AA  9
+CGTAAC$AACGTAAA  10
+GTAAACGTAAC$AAC  11
+GTAAC$AACGTAAAC  12
+TAAACGTAAC$AACG  13
+TAAC$AACGTAAACG  14
+
+btw(x) = CTT$AAAAAAACCGG
+'''
