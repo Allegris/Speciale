@@ -1,4 +1,5 @@
 import numpy as np
+import tracemalloc
 import skew
 import wavelet_tree_level_order as lo
 
@@ -85,6 +86,15 @@ def bw_seach_rank(x, sa, p, C, l_to_n, wt, ranks, codes):
 	matches = [sa[i] for i in range(l, r)]
 	return sorted(matches)
 
+def bwt(x, sa):
+	bwt = ""
+	for i in range(len(x)):
+		if sa[i] == 0:
+			bwt += "$"
+		else:
+			bwt += x[sa[i]-1]
+	return bwt
+
 
 '''
 
@@ -109,7 +119,6 @@ btw(x) = CTT$AAAAAAACCGG
 '''
 
 
-
 x = "AACGTAAACGTAAC"
 x += "$"
 n = len(x)
@@ -118,17 +127,36 @@ sa = construct_sa_skew(x)
 #sa = construct_sa_slow(x)
 num_to_letter_dict, letter_to_num_dict, num_ls = map_string_to_ints(x)
 
+# BW search with Occ table
 C = construct_C(x)
 O = construct_O(x, sa, num_to_letter_dict)
 print(bw_search(x, sa, p, C, O, letter_to_num_dict))
 
+# BW search with wavelet tree rank query (level order wt)
+bwt_x = bwt(x, sa)
+wt, codes = lo.wavelet_tree(bwt_x)
+ranks = lo.preprocess_node_ranks(wt, n)
+print(bw_seach_rank(bwt_x, sa, p, C, letter_to_num_dict, wt, ranks, codes))
+
+
+
+##### space test #####
+'''
+tracemalloc.start()
+C = construct_C(x)
+O = construct_O(x, sa, num_to_letter_dict)
+bw_search(x, sa, p, C, O, letter_to_num_dict)
+print(tracemalloc.get_traced_memory()[1])
+tracemalloc.stop()
+
 
 x = "CTT$AAAAAAACCGG"
+tracemalloc.start()
 wt, codes = lo.wavelet_tree(x)
 ranks = lo.preprocess_node_ranks(wt, n)
-print(bw_seach_rank(x, sa, p, C, letter_to_num_dict, wt, ranks, codes))
+bw_seach_rank(x, sa, p, C, letter_to_num_dict, wt, ranks, codes)
+print(tracemalloc.get_traced_memory()[1])
+tracemalloc.stop()
+'''
 
-#print(lo.rank_query(wt, n, ranks, codes, "A", 3))
 
-#l_to_n = {"$":0, "A":1, "C":2, "G":3, "T":4}
-#n_to_l = {0:"$", 1:"A", 2:"C", 3:"G", 4:"T"}
