@@ -71,20 +71,44 @@ def bw_search(x, sa, p, C, O, l_to_n):
 	return sorted(matches)
 
 
-def bw_seach_rank(x, sa, p, C, l_to_n, wt, ranks, codes):
+def bw_seach_rank(x, sa, p, select, wt, ranks, codes):
 	n = len(x)
 	l = 0
 	r = len(x)
 	for i in range(len(p)-1, -1, -1):
 		if l < r:
-			a = l_to_n[p[i]]
-			#print(lo.rank_query(wt, n, ranks, codes, p[i], l))
-			l = C[a] + lo.rank_query(wt, n, ranks, codes, p[i], l)
-			r = C[a] + lo.rank_query(wt, n, ranks, codes, p[i], r)
+			l = select[p[i]] + lo.rank_query(wt, n, ranks, codes, p[i], l)
+			r = select[p[i]] + lo.rank_query(wt, n, ranks, codes, p[i], r)
 		else:
 			break
 	matches = [sa[i] for i in range(l, r)]
 	return sorted(matches)
+
+
+def construct_select_dict(x):
+	alpha = get_alphabet(x)
+	# Map between letters and ints
+	letter_to_int = {}
+	int_to_letter = {}
+	for i in range(len(alpha)):
+		letter_to_int[alpha[i]] = i
+		int_to_letter[i] = alpha[i]
+	# Count chars in x
+	counts = [0] * len(alpha)
+	for char in x:
+		counts[letter_to_int[char]] += 1
+	# Cumulated counts
+	cum_counts = [0] * len(alpha)
+	val = 0
+	for i in range(len(counts)):
+		cum_counts[i] = val
+		val += counts[i]
+	# Put cumulated counts into dict: {letter: start_idx_of_letter_block}
+	d = {letter: 0 for letter in alpha}
+	for i, val in enumerate(cum_counts):
+		d[int_to_letter[i]] = val
+	return d
+
 
 def bwt(x, sa):
 	bwt = ""
@@ -95,13 +119,13 @@ def bwt(x, sa):
 			bwt += x[sa[i]-1]
 	return bwt
 
+###########################################################
 
-#x = "AACGTAAACGTAAC"
-x = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sit amet justo donec enim diam vulputate. Id eu nisl nunc mi ipsum. Eget est lorem ipsum dolor sit amet consectetur adipiscing. Nisl pretium fusce id velit ut tortor pretium viverra. Felis eget velit aliquet sagittis id. Orci porta non pulvinar neque laoreet. Nulla pellentesque dignissim enim sit amet. Dui sapien eget mi proin sed libero. Arcu ac tortor dignissim convallis aenean et tortor at. Eu tincidunt tortor aliquam nulla facilisi cras fermentum odio. Consectetur adipiscing elit duis tristique sollicitudin nibh sit amet. Laoreet suspendisse interdum consectetur libero. Dictum at tempor commodo ullamcorper a lacus. Integer feugiat scelerisque varius morbi enim nunc faucibus a pellentesque. Auctor augue mauris augue neque gravida in fermentum et sollicitudin. Tortor id aliquet lectus proin. Adipiscing enim eu turpis egestas pretium aenean pharetra magna. Tristique nulla aliquet enim tortor at auctor."
-x = x.replace(" ", "")
+'''
+x = "AACGTAAACGTAAC"
 x += "$"
-#p = "AAC"
-p = "dolor"
+p = "AAC"
+
 sa = construct_sa_skew(x)
 num_to_letter_dict, letter_to_num_dict, num_ls = map_string_to_ints(x)
 
@@ -113,11 +137,24 @@ print(bw_search(x, sa, p, C, O, letter_to_num_dict))
 
 # BW search with wavelet tree rank query (level order wt)
 bwt_x = bwt(x, sa)
+
+
+select = construct_select_dict(x)
 wt, codes = lo.wavelet_tree(bwt_x)
 ranks = lo.preprocess_node_ranks(wt, len(bwt_x))
-print(bw_seach_rank(bwt_x, sa, p, C, letter_to_num_dict, wt, ranks, codes))
+print(bw_seach_rank(bwt_x, sa, p, select, wt, ranks, codes))
+'''
+
+###########################################################
 
 
+'''
+# Lorem ipsum test
+x = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sit amet justo donec enim diam vulputate. Id eu nisl nunc mi ipsum. Eget est lorem ipsum dolor sit amet consectetur adipiscing. Nisl pretium fusce id velit ut tortor pretium viverra. Felis eget velit aliquet sagittis id. Orci porta non pulvinar neque laoreet. Nulla pellentesque dignissim enim sit amet. Dui sapien eget mi proin sed libero. Arcu ac tortor dignissim convallis aenean et tortor at. Eu tincidunt tortor aliquam nulla facilisi cras fermentum odio. Consectetur adipiscing elit duis tristique sollicitudin nibh sit amet. Laoreet suspendisse interdum consectetur libero. Dictum at tempor commodo ullamcorper a lacus. Integer feugiat scelerisque varius morbi enim nunc faucibus a pellentesque. Auctor augue mauris augue neque gravida in fermentum et sollicitudin. Tortor id aliquet lectus proin. Adipiscing enim eu turpis egestas pretium aenean pharetra magna. Tristique nulla aliquet enim tortor at auctor."
+x += "$"
+x = x.replace(" ", "_")
+p = "dolor"
+'''
 
 ##### space test #####
 '''
