@@ -2,6 +2,12 @@ from bitarray import bitarray
 from math import log2, floor
 from shared import get_alphabet
 
+
+########################################################
+# Classes for wavelet tree leaves and internal nodes
+########################################################
+
+
 class WaveletTreeLeaf:
 	def __init__(self, letter):
 		self.letter = letter
@@ -35,7 +41,6 @@ class WaveletTreeNode:
 			self.right_child = WaveletTreeLeaf(right[0])
 		else:
 			self.left_child = WaveletTreeLeaf(left[0])
-
 
 
 	'''
@@ -88,6 +93,7 @@ class WaveletTreeNode:
 			ranks[1].append(prev_1s + word.count(1))
 		return ranks
 
+
 	'''
 	Finds the rank of a char c and an index i in a bitvector of length n,
 	by looking up in ranks and/or scanning the bits in the bitvector.
@@ -109,9 +115,9 @@ class WaveletTreeNode:
 			return ranks[c][word_no - 1] + bitvector[start:end].count(c)
 
 
-
-
-######################################################################################################
+########################################################
+# Rank query using wavelet tree
+########################################################
 
 '''
 Iterates a wavelet tree, starting from the root, and returns the rank of a
@@ -131,10 +137,11 @@ def rank_query(root, c, i):
 	return ii
 
 
+########################################################
+# Code to run
+########################################################
 
 
-
-##### Code to run #####
 '''
 x = "mississippialpha"
 wt_root = WaveletTreeNode(x, False)
