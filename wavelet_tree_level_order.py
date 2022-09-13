@@ -28,15 +28,24 @@ def wavelet_tree_and_codes(x):
 	q = [x]
 	while q:
 		xx = q.pop(0)
-		triple = split_node(xx, codes)
-		codes = triple[3]
-		wt += triple[0]
-		if triple[1] and triple[2]:
-			q += [triple[1], triple[2]]
+		bin_x, x0, x1, codes = split_node(xx, codes)
+		wt += bin_x
+		if x0 and x1:
+			q += [x0, x1]
+	# A bit hacky: remove last useless 0s
 	last = len(x) * (ceil(log2(len(alpha))))
 	return wt[0:last], codes
 
-
+'''
+Takes a string, x, and a code dict {letter: code} as input.
+Assigns a binary value to every character of x, by splitting the alphabet of x
+in half.
+Then returns:
+	 - The binary representation of x
+	 - The substring of x corresponding to 0s
+	 - The substring of x corresponding to 1s
+	 - An updated code dict
+'''
 def split_node(x, codes):
 	alpha = get_alphabet(x)
 	a_size = len(alpha)
@@ -69,7 +78,12 @@ def split_node(x, codes):
 # Preprocess wavelet tree ranks
 ########################################################
 
-
+'''
+Preprocesses word ranks of every "node" in the (implicit) wavelet tree.
+Returns a dict {idx: {0: [], 1: []}} where the lists contain the word ranks
+for 0 and 1, respectively. Idx is the starting index of the "node" in the
+bitvector for the entire wavelet tree.
+'''
 def preprocess_tree_node_ranks(wt, n):
 	ranks = {}
 	wt_len = len(wt)
@@ -78,14 +92,19 @@ def preprocess_tree_node_ranks(wt, n):
 		(L, R) = q.pop(0) # interval
 		sub_bv = wt[L:R]
 		ranks[L] = node_word_ranks(sub_bv, len(sub_bv))
-		left_child = go_left(sub_bv, n, L)
-		right_child = go_right(sub_bv, n, L)
-		if right_child[1] <= wt_len:
-			q.append(left_child)
-			q.append(right_child)
+		left = left_child(sub_bv, n, L)
+		right = right_child(sub_bv, n, L)
+		if right[1] <= wt_len:
+			q.append(left)
+			q.append(right)
 	return ranks
 
 
+'''
+Computes word ranks of a "node" in the (implicit) wavelet tree.
+Returns a dict, {0: [], 1: []} where the lists contain the word ranks
+for 0 and 1, respectively.
+'''
 def node_word_ranks(bitvector, n):
 	ranks = {0: [], 1: []}
 	if n == 0: return ranks
@@ -105,6 +124,9 @@ def node_word_ranks(bitvector, n):
 ########################################################
 
 
+'''
+Rank query using a wavelet tree in level order format (a single bitvector).
+'''
 def rank_query(wt, n, ranks, codes, c, i):
 	code = codes[c]
 	L, R = 0, n
@@ -112,12 +134,16 @@ def rank_query(wt, n, ranks, codes, c, i):
 	for char in code:
 		ii = node_rank_query(wt[L:R], ranks[L], char, ii)
 		if char == 0:
-			L, R = go_left(wt[L:R], n, L)
+			L, R = left_child(wt[L:R], n, L)
 		if char == 1:
-			L, R = go_right(wt[L:R], n, L)
+			L, R = right_child(wt[L:R], n, L)
 	return ii
 
 
+'''
+Rank query on a given node in the wavelet tree (as a bitvector).
+I.e., look-up in ranks and/or scan.
+'''
 def node_rank_query(bitvector, ranks, c, i):
 	n = len(bitvector)
 	word_size = floor(log2(n))
@@ -141,11 +167,18 @@ def node_rank_query(bitvector, ranks, c, i):
 ########################################################
 
 
-def go_left(sub_bv, n, i):
+'''
+Computes the index of the left child of a given "node" in a level order
+wavelet tree.
+'''
+def left_child(sub_bv, n, i):
 	return i+n, i+n+sub_bv.count(0)
 
-
-def go_right(sub_bv, n, i):
+'''
+Computes the index of the right child of a given "node" in a level order
+wavelet tree.
+'''
+def right_child(sub_bv, n, i):
 	return i+n+sub_bv.count(0), i+n+sub_bv.count(0)+sub_bv.count(1)
 
 
@@ -162,10 +195,10 @@ n = len(x)
 wt, codes = wavelet_tree_and_codes(x)
 #print(wt)
 ranks = preprocess_tree_node_ranks(wt, n)
-#print(ranks)
-print(rank_query(wt, n, ranks, codes, "i", 0))
-'''
+print(ranks)
+#print(rank_query(wt, n, ranks, codes, "i", 0))
 
+'''
 
 
 
