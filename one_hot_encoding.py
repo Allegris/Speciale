@@ -1,5 +1,12 @@
 from bitarray import bitarray
 from math import log2, floor
+from shared import get_alphabet
+
+
+########################################################
+# Construct one hot encoding
+########################################################
+
 
 '''
 Returns a dict {letter: bitarray} where the set bits correspond to the places
@@ -28,6 +35,12 @@ def one_hot_encoding(x, alpha):
 		d[char][i] = 1
 	return d
 
+
+########################################################
+# Preprocess ranks for one hot encoding
+########################################################
+
+
 '''
 Returns a dict {letter: [word_ranks]} where the list contains the rank of each
 word of x (x is split into log(n) words).
@@ -46,7 +59,7 @@ Inputs are:
 	 n: length of x
 	 alpha: alphabet
 '''
-def preprocess_rank_one_hot(d, n, alpha):
+def preprocess_ranks(d, n, alpha):
 	ranks = {char: [] for char in alpha}
 	word_size = floor(log2(n))
 	for char in d.keys():
@@ -60,6 +73,12 @@ def preprocess_rank_one_hot(d, n, alpha):
 				ranks[char].append(ranks[char][i-1] + count)
 	return ranks
 
+
+########################################################
+# Rank query for one hot encoding
+########################################################
+
+
 '''
 Returns the rank of a given letter and index in string x.
 
@@ -72,7 +91,7 @@ Inputs are:
 	 c: query letter
 	 i: query index
 '''
-def rank_one_hot(ranks, d, n, c, i):
+def rank_query(ranks, d, n, c, i):
 	word_size = floor(log2(n))
 	word_no = (i // word_size)
 	scan_len = i % word_size
@@ -89,12 +108,11 @@ def rank_one_hot(ranks, d, n, c, i):
 		return ranks[c][word_no - 1] + d[c][start:end].count(1)
 
 
-def get_alphabet(x):
-	letters = ''.join(set(x))
-	return sorted(letters)
+########################################################
+# Code to run
+########################################################
 
 
-########## Code to run ##########
 '''
 x = "mississippi$"
 n = len(x)

@@ -1,13 +1,62 @@
-import numpy as np
-import tracemalloc
 import skew
-import wavelet_tree_level_order as lo
-
-def get_alphabet(x):
-	letters = ''.join(set(x))
-	return sorted(letters)
+import numpy as np
+from shared import get_alphabet
+import tracemalloc
 
 
+########################################################
+# BW search with C and O tables
+########################################################
+
+'''
+Constructs C table for BW search
+'''
+def construct_C(x):
+	alpha = get_alphabet(x)
+	C = [0, 1]
+	for i in range(2, len(alpha)):
+		C.append(C[i-1] + x.count(alpha[i-1]))
+	return C
+
+'''
+Constructs O table for BW search
+'''
+def construct_O(x, sa, n_to_l):
+	alpha = get_alphabet(x)
+	O = np.zeros((len(alpha), len(x)+1), dtype=int)
+	for r in range(len(alpha)):
+		for c in range(1, len(x)+1):
+			a = n_to_l[r]
+			O[r, c] = O[r, c-1] + (x[sa[c-1]-1] == a)
+	return O
+
+'''
+Patterb natch for p in x (x: implicitly as sa, n, C, O, and l_to_n)
+'''
+def bw_search(p, sa, C, O, l_to_n):
+	# Init L and R
+	L, R = 0, len(sa)
+	# Update L and R
+	for i in range(len(p)-1, -1, -1):
+		if L < R:
+			a = l_to_n[p[i]]
+			L = C[a] + O[a, L]
+			R = C[a] + O[a, R]
+		else:
+			break
+	# Find and return corresponding match indices
+	matches = [sa[i] for i in range(L, R)]
+	return sorted(matches)
+
+
+########################################################
+# Helper functions
+########################################################
+
+'''
+Returns a mapping between numbers and letter, eg. {0: "0", 1: "A", 2: "C", 3: "G", 4: "T"}, 0 is the sentinel
+and a list of the string, eg. for "ACGT" we get [1, 2, 3, 4]
+'''
 def map_string_to_ints(x):
 	letters = ''.join(set(x))
 	letters = sorted(letters)
@@ -23,29 +72,16 @@ def map_string_to_ints(x):
 		num_ls.append(letter_to_num_dict[char])
 	return num_to_letter_dict, letter_to_num_dict, num_ls
 
-
-def construct_C(x):
-	alpha = get_alphabet(x)
-	C = [0, 1]
-	for i in range(2, len(alpha)):
-		C.append(C[i-1] + x.count(alpha[i-1]))
-	return C
-
-
-def construct_O(x, sa, n_to_l):
-	alpha = get_alphabet(x)
-	O = np.zeros((len(alpha), len(x)+1), dtype=int)
-	for r in range(len(alpha)):
-		for c in range(1, len(x)+1):
-			a = n_to_l[r]
-			O[r, c] = O[r, c-1] + (x[sa[c-1]-1] == a)
-	return O
-
-
+'''
+Constructs the suffix array of x, using the Skew algorithm; time O(n)
+'''
 def construct_sa_skew(x):
 	alpha, indices = skew.map_string_to_ints(x)
 	return skew.skew_rec(indices, len(alpha))
 
+'''
+Slow, naïve suffix array construction algorithm
+'''
 def construct_sa_slow(x):
 	suffixes = [x[i:] for i in range(len(x))]
 	suffixes_sorted = sorted(suffixes)
@@ -54,74 +90,12 @@ def construct_sa_slow(x):
 
 
 
-def bw_search(x, sa, p, C, O, l_to_n):
-	# Init L and R
-	l = 0
-	r = len(x)
-	# Update L and R
-	for i in range(len(p)-1, -1, -1):
-		if l < r:
-			a = l_to_n[p[i]]
-			l = C[a] + O[a, l]
-			r = C[a] + O[a, r]
-		else:
-			break
-	# Find and return corresponding match indices
-	matches = [sa[i] for i in range(l, r)]
-	return sorted(matches)
-
-
-def bw_seach_rank(x, sa, p, select, wt, ranks, codes):
-	n = len(x)
-	l = 0
-	r = len(x)
-	for i in range(len(p)-1, -1, -1):
-		if l < r:
-			l = select[p[i]] + lo.rank_query(wt, n, ranks, codes, p[i], l)
-			r = select[p[i]] + lo.rank_query(wt, n, ranks, codes, p[i], r)
-		else:
-			break
-	matches = [sa[i] for i in range(l, r)]
-	return sorted(matches)
-
-
-def construct_select_dict(x):
-	alpha = get_alphabet(x)
-	# Map between letters and ints
-	letter_to_int = {}
-	int_to_letter = {}
-	for i in range(len(alpha)):
-		letter_to_int[alpha[i]] = i
-		int_to_letter[i] = alpha[i]
-	# Count chars in x
-	counts = [0] * len(alpha)
-	for char in x:
-		counts[letter_to_int[char]] += 1
-	# Cumulated counts
-	cum_counts = [0] * len(alpha)
-	val = 0
-	for i in range(len(counts)):
-		cum_counts[i] = val
-		val += counts[i]
-	# Put cumulated counts into dict: {letter: start_idx_of_letter_block}
-	d = {letter: 0 for letter in alpha}
-	for i, val in enumerate(cum_counts):
-		d[int_to_letter[i]] = val
-	return d
-
-
-def bwt(x, sa):
-	bwt = ""
-	for i in range(len(x)):
-		if sa[i] == 0:
-			bwt += "$"
-		else:
-			bwt += x[sa[i]-1]
-	return bwt
-
-###########################################################
+########################################################
+# Code to run
+########################################################
 
 '''
+tracemalloc.start()
 x = "AACGTAAACGTAAC"
 x += "$"
 p = "AAC"
@@ -133,17 +107,12 @@ num_to_letter_dict, letter_to_num_dict, num_ls = map_string_to_ints(x)
 # BW search with Occ table
 C = construct_C(x)
 O = construct_O(x, sa, num_to_letter_dict)
-print(bw_search(x, sa, p, C, O, letter_to_num_dict))
+print(bw_search(p, sa, C, O, letter_to_num_dict))
 
-# BW search with wavelet tree rank query (level order wt)
-bwt_x = bwt(x, sa)
-
-
-select = construct_select_dict(x)
-wt, codes = lo.wavelet_tree(bwt_x)
-ranks = lo.preprocess_node_ranks(wt, len(bwt_x))
-print(bw_seach_rank(bwt_x, sa, p, select, wt, ranks, codes))
+print(tracemalloc.get_traced_memory()[1])
+tracemalloc.stop()
 '''
+
 
 ###########################################################
 
@@ -154,31 +123,12 @@ x = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tem
 x += "$"
 x = x.replace(" ", "_")
 p = "dolor"
-'''
-
-##### space test #####
-'''
-tracemalloc.start()
-C = construct_C(x)
-O = construct_O(x, sa, num_to_letter_dict)
-bw_search(x, sa, p, C, O, letter_to_num_dict)
-print(tracemalloc.get_traced_memory()[1])
-tracemalloc.stop()
-
-
-x = "CTT$AAAAAAACCGG"
-tracemalloc.start()
-wt, codes = lo.wavelet_tree(x)
-ranks = lo.preprocess_node_ranks(wt, n)
-bw_seach_rank(x, sa, p, C, letter_to_num_dict, wt, ranks, codes)
-print(tracemalloc.get_traced_memory()[1])
-tracemalloc.stop()
+n = len(x)
 '''
 
 
-
-
 '''
+# BWT example:
 x: AACGTAAACGTAAC
 
 $AACGTAAACGTAAC  0

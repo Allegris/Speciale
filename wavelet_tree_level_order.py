@@ -1,5 +1,12 @@
 from bitarray import bitarray
 from math import log2, floor, ceil
+from shared import get_alphabet
+
+
+
+########################################################
+# Construct level order wavelet tree
+########################################################
 
 
 '''
@@ -14,7 +21,7 @@ Returns a wavelet tree and letter codes, e.g., for mississippi:
  's': bitarray('11')})
 
 '''
-def wavelet_tree(x):
+def wavelet_tree_and_codes(x):
 	wt = bitarray()
 	alpha = get_alphabet(x)
 	codes = {letter: bitarray() for letter in alpha}
@@ -58,20 +65,12 @@ def split_node(x, codes):
 	return bin_x, x0, x1, codes
 
 
-def go_left(sub_bv, n, i):
-	return i+n, i+n+sub_bv.count(0)
+########################################################
+# Preprocess wavelet tree ranks
+########################################################
 
 
-def go_right(sub_bv, n, i):
-	return i+n+sub_bv.count(0), i+n+sub_bv.count(0)+sub_bv.count(1)
-
-
-def get_alphabet(x):
-	letters = ''.join(set(x))
-	return sorted(letters)
-
-
-def preprocess_node_ranks(wt, n):
+def preprocess_tree_node_ranks(wt, n):
 	ranks = {}
 	wt_len = len(wt)
 	q = [(0, n)]
@@ -101,7 +100,25 @@ def node_word_ranks(bitvector, n):
 	return ranks
 
 
-def node_rank(bitvector, ranks, c, i):
+########################################################
+# Rank query using wavelet tree
+########################################################
+
+
+def rank_query(wt, n, ranks, codes, c, i):
+	code = codes[c]
+	L, R = 0, n
+	ii = i
+	for char in code:
+		ii = node_rank_query(wt[L:R], ranks[L], char, ii)
+		if char == 0:
+			L, R = go_left(wt[L:R], n, L)
+		if char == 1:
+			L, R = go_right(wt[L:R], n, L)
+	return ii
+
+
+def node_rank_query(bitvector, ranks, c, i):
 	n = len(bitvector)
 	word_size = floor(log2(n))
 	word_no = (i // word_size)
@@ -119,30 +136,37 @@ def node_rank(bitvector, ranks, c, i):
 		return ranks[c][word_no - 1] + bitvector[start:end].count(c)
 
 
-def rank_query(wt, n, ranks, codes, c, i):
-	code = codes[c]
-	L, R = 0, n
-	ii = i
-	for char in code:
-		ii = node_rank(wt[L:R], ranks[L], char, ii)
-		if char == 0:
-			L, R = go_left(wt[L:R], n, L)
-		if char == 1:
-			L, R = go_right(wt[L:R], n, L)
-	return ii
+########################################################
+# Helper functions
+########################################################
+
+
+def go_left(sub_bv, n, i):
+	return i+n, i+n+sub_bv.count(0)
+
+
+def go_right(sub_bv, n, i):
+	return i+n+sub_bv.count(0), i+n+sub_bv.count(0)+sub_bv.count(1)
 
 
 
-##### Code to run #####
+
+
+
+
+########################################################
+# Code to run
+########################################################
+
 '''
 #x = "mississippialphaaaaaiiiiiiiiiiiiiiipppppppppppppabcdefghijklmnopqrstuvwxyzøæåjkfadnkcdnoeuhritnodhnijsbdakflne"
 #x = "mississippialpha"
 x = "mississippi"
 n = len(x)
 
-wt, codes = wavelet_tree(x)
+wt, codes = wavelet_tree_and_codes(x)
 #print(wt)
-ranks = preprocess_node_ranks(wt, n)
+ranks = preprocess_tree_node_ranks(wt, n)
 #print(ranks)
 print(rank_query(wt, n, ranks, codes, "i", 0))
 '''

@@ -1,5 +1,6 @@
 from bitarray import bitarray
 from math import log2, floor
+from shared import get_alphabet
 
 class WaveletTreeLeaf:
 	def __init__(self, letter):
@@ -9,7 +10,7 @@ class WaveletTreeLeaf:
 class WaveletTreeNode:
 	def __init__(self, x, root):
 		self.n = len(x)
-		alpha = self.get_alphabet(x)
+		alpha = get_alphabet(x)
 
 		if root:
 			self.root = root
@@ -35,13 +36,6 @@ class WaveletTreeNode:
 		else:
 			self.left_child = WaveletTreeLeaf(left[0])
 
-
-	'''
-	Returns a sorted list of the set of letters used in x.
-	'''
-	def get_alphabet(self, x):
-		letters = ''.join(set(x))
-		return sorted(letters)
 
 
 	'''
