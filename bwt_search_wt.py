@@ -25,7 +25,7 @@ def bwt(x, sa):
 '''
 Construct C table as a dict {letter: start_idx_of_letter_block}
 '''
-def construct_select_dict(x):
+def construct_offset_dict(x):
 	alpha = get_alphabet(x)
 	# Map between letters and ints
 	letter_to_int = {}
@@ -93,10 +93,10 @@ p = "AAC"
 # BW search with wavelet tree rank query (level order wt)
 bwt_x = bwt(x, sa)
 
-select = construct_select_dict(x)
+offset = construct_offset_dict(x)
 wt, codes = lo.wavelet_tree(bwt_x)
 ranks = lo.preprocess_node_ranks(wt, len(bwt_x))
-print(bw_search(p, n, sa, select, wt, ranks, codes))
+print(bw_search(p, n, sa, offset, wt, ranks, codes))
 
 print(tracemalloc.get_traced_memory()[1])
 tracemalloc.stop()
