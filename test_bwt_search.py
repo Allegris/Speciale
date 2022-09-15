@@ -16,7 +16,7 @@ O = bw.construct_O(x, sa, num_to_letter_dict)
 
 # BW search with wavelet tree rank query (level order wt)
 bwt_x = bwt_wt.bwt(x, sa)
-offset = bwt_wt.construct_offset_dict(x)
+offset = bwt_wt.construct_C_dict(x)
 wt, codes = lo.wavelet_tree_and_codes(bwt_x)
 ranks = lo.preprocess_tree_node_ranks(wt, len(bwt_x))
 

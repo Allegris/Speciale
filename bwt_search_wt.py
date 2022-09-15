@@ -25,7 +25,7 @@ def bwt(x, sa):
 '''
 Construct C table as a dict {letter: start_idx_of_letter_block}
 '''
-def construct_offset_dict(x):
+def construct_C_dict(x):
 	alpha = get_alphabet(x)
 	# Map between letters and ints
 	letter_to_int = {}
@@ -53,12 +53,12 @@ def construct_offset_dict(x):
 '''
 Pattern match using wavelet tree of BWT(x)
 '''
-def bw_search(p, n, sa, select, wt, ranks, codes):
+def bw_search(p, n, sa, C, wt, ranks, codes):
 	L, R = 0, n # keeping n as arg, because SA will be changed to sparse, so cannot use n = len(sa)
 	for c in reversed(p):
 		if L < R:
-			L = select[c] + lo.rank_query(wt, n, ranks, codes, c, L)
-			R = select[c] + lo.rank_query(wt, n, ranks, codes, c, R)
+			L = C[c] + lo.rank_query(wt, n, ranks, codes, c, L)
+			R = C[c] + lo.rank_query(wt, n, ranks, codes, c, R)
 		else:
 			break
 	matches = [sa[i] for i in range(L, R)]
