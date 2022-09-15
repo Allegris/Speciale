@@ -55,10 +55,10 @@ Pattern match using wavelet tree of BWT(x)
 '''
 def bw_search(p, n, sa, select, wt, ranks, codes):
 	L, R = 0, n # keeping n as arg, because SA will be changed to sparse, so cannot use n = len(sa)
-	for i in range(len(p)-1, -1, -1):
+	for c in reversed(p):
 		if L < R:
-			L = select[p[i]] + lo.rank_query(wt, n, ranks, codes, p[i], L)
-			R = select[p[i]] + lo.rank_query(wt, n, ranks, codes, p[i], R)
+			L = select[c] + lo.rank_query(wt, n, ranks, codes, c, L)
+			R = select[c] + lo.rank_query(wt, n, ranks, codes, c, R)
 		else:
 			break
 	matches = [sa[i] for i in range(L, R)]

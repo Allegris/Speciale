@@ -37,9 +37,9 @@ def bw_search(p, sa, C, O, l_to_n):
 	# Init L and R
 	L, R = 0, len(sa)
 	# Update L and R
-	for i in range(len(p)-1, -1, -1):
+	for c in reversed(p):
 		if L < R:
-			a = l_to_n[p[i]]
+			a = l_to_n[c]
 			L = C[a] + O[a, L]
 			R = C[a] + O[a, R]
 		else:
