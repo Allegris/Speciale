@@ -25,18 +25,17 @@ class WaveletTreeNode:
 			self.codes = {letter: bitarray() for letter in alpha}
 
 		# Split alphabet to create child nodes
-		bv, left, right, no_of_children = self.split_node(x, alpha)
-		print(bv)
+		bv, left, right, no_of_descendants = self.split_node(x, alpha)
 		self.bitvector = bv
 		self.ranks = self.preprocess_node_ranks(self.bitvector, self.n)
 
-		if no_of_children >= 4:
+		if no_of_descendants >= 4:
 			self.left_child = WaveletTreeNode(left, self.root)
 			self.right_child = WaveletTreeNode(right, self.root)
-		elif no_of_children == 3:
+		elif no_of_descendants == 3:
 			self.left_child = WaveletTreeLeaf(left[0])
 			self.right_child = WaveletTreeNode(right, self.root)
-		elif no_of_children == 2:
+		elif no_of_descendants == 2:
 			self.left_child = WaveletTreeLeaf(left[0])
 			self.right_child = WaveletTreeLeaf(right[0])
 		else:
