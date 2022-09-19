@@ -26,7 +26,7 @@ class WaveletTreeNode:
 
 		# Split alphabet to create child nodes
 		bv, left, right, no_of_children = self.split_node(x, alpha)
-
+		print(bv)
 		self.bitvector = bv
 		self.ranks = self.preprocess_node_ranks(self.bitvector, self.n)
 
@@ -142,14 +142,18 @@ def rank_query(root, c, i):
 ########################################################
 
 
-'''
-x = "mississippialpha"
+
+#x = "mississippialpha"
+x = "ississippi"
 wt_root = WaveletTreeNode(x, False)
+#print(wt_root.__dict__)
+
+'''
 print(rank_query(wt_root, "i", 8))
 
 
 # starting the monitoring
-tracemalloc.start()
+#tracemalloc.start()
 
 # function call
 x = "mississippi"
@@ -157,10 +161,10 @@ wt_root = WaveletTreeNode(x, False)
 rank_query(wt_root, "i", 8)
 
 # displaying the memory
-print(tracemalloc.get_traced_memory())
+#print(tracemalloc.get_traced_memory())
 
 # stopping the library
-tracemalloc.stop()
+#tracemalloc.stop()
 '''
 
 

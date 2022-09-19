@@ -15,6 +15,8 @@ Returns a wavelet tree and letter codes, e.g., for mississippi:
 00110110110
 10000111100'),
 
+
+
 {'i': bitarray('00'),
  'm': bitarray('01'),
  'p': bitarray('10'),
@@ -186,19 +188,19 @@ def right_child(sub_bv, n, i):
 # Code to run
 ########################################################
 
-'''
+
 #x = "mississippialphaaaaaiiiiiiiiiiiiiiipppppppppppppabcdefghijklmnopqrstuvwxyzøæåjkfadnkcdnoeuhritnodhnijsbdakflne"
 #x = "mississippialpha"
-x = "mississippi"
+x = "ississippi"
 n = len(x)
 
 wt, codes = wavelet_tree_and_codes(x)
-#print(wt)
-ranks = preprocess_tree_node_ranks(wt, n)
-print(ranks)
+print(len(wt))
+#ranks = preprocess_tree_node_ranks(wt, n)
+#print(ranks)
 #print(rank_query(wt, n, ranks, codes, "i", 0))
 
-'''
+
 
 
 
