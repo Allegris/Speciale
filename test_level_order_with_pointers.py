@@ -40,7 +40,6 @@ def test_mississippi_s_6():
 
 
 
-
 x2 = "mississippii"
 n2 = len(x2)
 wt2, pointers2, codes2 = lop.wavelet_tree_and_pointers_and_codes(x2)
@@ -54,7 +53,6 @@ def test_mississippii_i_10():
 
 def test_mississippii_i_9():
 	assert lop.rank_query(wt, n, pointers, ranks, codes, "i", 9) == 3
-
 
 
 

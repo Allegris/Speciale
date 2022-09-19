@@ -195,7 +195,7 @@ x = "ississippi"
 n = len(x)
 
 wt, codes = wavelet_tree_and_codes(x)
-print(len(wt))
+#print(len(wt))
 #ranks = preprocess_tree_node_ranks(wt, n)
 #print(ranks)
 #print(rank_query(wt, n, ranks, codes, "i", 0))

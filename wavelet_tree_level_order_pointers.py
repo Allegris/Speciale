@@ -10,18 +10,17 @@ from shared import get_alphabet
 
 
 '''
-Returns a wavelet tree and letter codes, e.g., for mississippi:
-(bitarray('
-00110110110
-10000111100'),
+bitarray('0011011011010000111100')
 
+{0: {'left': (11, 16), 'right': (16, 22)},
+11: {'left': (None, None), 'right': (None, None)},
+16: {'left': (None, None), 'right': (None, None)}}
 
-
-{'i': bitarray('00'),
- 'm': bitarray('01'),
- 'p': bitarray('10'),
- 's': bitarray('11')})
-
+{
+'i': bitarray('00'),
+'m': bitarray('01'),
+'p': bitarray('10'),
+'s': bitarray('11')}
 '''
 def wavelet_tree_and_pointers_and_codes(x):
 	wt = bitarray()
@@ -214,20 +213,23 @@ def right_child(sub_bv, n, i):
 ########################################################
 
 
-
+'''
 #x = "mississippialphaaaaaiiiiiiiiiiiiiiipppppppppppppabcdefghijklmnopqrstuvwxyzøæåjkfadnkcdnoeuhritnodhnijsbdakflne"
 #x = "mississippialpha"
-x = "mississippialpha"
+x = "mississippi"
 n = len(x)
 
 wt, pointers, codes = wavelet_tree_and_pointers_and_codes(x)
+print(wt)
+print(pointers)
+print(codes)
 #print("pointer dict:\n", pointers)
 #print(wt)
 ranks = preprocess_tree_node_ranks(wt, n, pointers)
 #print(ranks)
-print(rank_query(wt, n, pointers, ranks, codes, "i", 15))
+#print(rank_query(wt, n, pointers, ranks, codes, "i", 15))
 
-
+'''
 
 
 
