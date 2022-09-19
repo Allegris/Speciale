@@ -23,30 +23,36 @@ Returns a wavelet tree and letter codes, e.g., for mississippi:
  's': bitarray('11')})
 
 '''
-def wavelet_tree_and_codes(x):
+def wavelet_tree_and_pointers_and_codes(x):
 	wt = bitarray()
 	n = len(x)
 	pointer_dict = {}
 	alpha = get_alphabet(x)
 	codes = {letter: bitarray() for letter in alpha}
 	q = [(x, (0, n))]
+	correction = 0
 	while q:
 		s, (i, j) = q.pop(0)
 		bin_x, x0, x1, a_size, codes = split_node(s, codes)
-		pointer_dict[i] = {}
 		if a_size > 1:
 			wt += bin_x
-		if a_size >= 4:
-			left = left_child(bin_x, i, n)
+			pointer_dict[i] = {"left": (None, None), "right": (None, None)}
+		if a_size == 3:
+			start = left_child(bin_x, i, n)[0]
 			right = right_child(bin_x, i, n)
+			diff = right[1] - right[0]
+			#pointer_dict[i]["left"] = None #x0[0]
+			pointer_dict[i]["right"] = (start, start+diff)
+			q += [(x1, (start, start+diff))]
+			correction += len(x0)
+		if a_size >= 4:
+			left = left_child(bin_x, i-correction, n)
+			right = right_child(bin_x, i-correction, n)
+			pointer_dict[i] = {}
 			pointer_dict[i]["left"] = left
 			pointer_dict[i]["right"] = right
 			q += [(x0, left), (x1, right)]
-		if a_size == 3:
-			right = left_child(bin_x, i, n)
-			pointer_dict[i]["left"] = None
-			pointer_dict[i]["right"] = right
-			q += [(x1, right)]
+
 	return wt, pointer_dict, codes
 
 
@@ -94,7 +100,7 @@ Returns a dict {idx: {0: [], 1: []}} where the lists contain the word ranks
 for 0 and 1, respectively. Idx is the starting index of the "node" in the
 bitvector for the entire wavelet tree.
 '''
-def preprocess_tree_node_ranks(wt, n):
+def old_preprocess_tree_node_ranks(wt, n, pointers):
 	ranks = {}
 	wt_len = len(wt)
 	q = [(0, n)]
@@ -102,11 +108,23 @@ def preprocess_tree_node_ranks(wt, n):
 		(L, R) = q.pop(0) # interval
 		sub_bv = wt[L:R]
 		ranks[L] = node_word_ranks(sub_bv, len(sub_bv))
-		left = left_child(sub_bv, n, L)
-		right = right_child(sub_bv, n, L)
+		left = pointers[L]["left"] #left_child(sub_bv, n, L)
+		right = pointers[L]["right"] #right_child(sub_bv, n, L)
 		if right[1] <= wt_len:
 			q.append(left)
 			q.append(right)
+	return ranks
+
+def preprocess_tree_node_ranks(wt, n, pointers):
+	ranks = {idx: {0: [], 1: []} for idx in pointers.keys()}
+	ranks[0] = node_word_ranks(wt[0:n], len(wt[0:n]))
+	for idx, lr in pointers.items():
+		if lr["left"]:
+			L, R = lr["left"]
+			ranks[L] = node_word_ranks(wt[L:R], len(wt[L:R]))
+		if lr["right"]:
+			L, R = lr["right"]
+			ranks[L] = node_word_ranks(wt[L:R], len(wt[L:R]))
 	return ranks
 
 
@@ -135,18 +153,18 @@ def node_word_ranks(bitvector, n):
 
 
 '''
-Rank query using a wavelet tree in level order format (a single bitvector).
+Rank query using a wavelet tree in level order format.
 '''
-def rank_query(wt, n, ranks, codes, c, i):
+def rank_query(wt, n, pointers, ranks, codes, c, i):
 	code = codes[c]
 	L, R = 0, n
 	ii = i
 	for char in code:
 		ii = node_rank_query(wt[L:R], ranks[L], char, ii)
 		if char == 0:
-			L, R = left_child(wt[L:R], n, L)
+			L, R = pointers[L]["left"] #left_child(wt[L:R], n, L)
 		if char == 1:
-			L, R = right_child(wt[L:R], n, L)
+			L, R = pointers[L]["right"] #right_child(wt[L:R], n, L)
 	return ii
 
 
@@ -176,10 +194,6 @@ def node_rank_query(bitvector, ranks, c, i):
 # Helper functions
 ########################################################
 
-
-def is_leaf(s):
-	return len(get_alphabet(s)) == 1
-
 '''
 Computes the index of the left child of a given "node" in a level order
 wavelet tree.
@@ -206,12 +220,12 @@ def right_child(sub_bv, n, i):
 x = "mississippialpha"
 n = len(x)
 
-wt, pointers, codes = wavelet_tree_and_codes(x)
-print("pointer dict:\n", pointers)
-print(len(wt))
-#ranks = preprocess_tree_node_ranks(wt, n)
+wt, pointers, codes = wavelet_tree_and_pointers_and_codes(x)
+#print("pointer dict:\n", pointers)
+#print(wt)
+ranks = preprocess_tree_node_ranks(wt, n, pointers)
 #print(ranks)
-#print(rank_query(wt, n, ranks, codes, "i", 0))
+print(rank_query(wt, n, pointers, ranks, codes, "i", 15))
 
 
 
