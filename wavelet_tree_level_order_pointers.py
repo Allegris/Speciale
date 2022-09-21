@@ -55,43 +55,13 @@ def wavelet_tree_and_pointers_and_codes(x):
 		else:
 			child_dict[i]["right"] = (None, None)
 			correction += len(s1)
-		#if child_dict[i]["left"] == (None, None) and child_dict[i]["right"] == (None, None):
-		#	child_dict.pop(i)
 	return wt, child_dict, codes
 
 
 
-def old_split_node(x, codes):
-	alpha = get_alphabet(x)
-	a_size = len(alpha)
-	# Assign binary value to each letter: d = {letter: binary},
-	# (split alphabet in half)
-	d = {letter: 0 for letter in alpha}
-	for letter in alpha[a_size // 2:]: # assign last half of alphabet to 1
-		d[letter] = 1
-	# Update codes for letters
-	for letter in alpha:
-		codes[letter].append(d[letter])
-	# Binary representation of x
-	bin_x = bitarray()
-	# The part of x corresponding to 0s and 1s, respectively
-	x0, x1 = "", ""
-	for char in x:
-		bin_x.append(d[char])
-		if d[char] == 0:
-			x0 += char
-		else:
-			x1 += char
-	return bin_x, x0, x1, a_size, codes
-
 def split_node(s, codes, level):
-	#print("s", s)
-	#print(codes)
 	alpha = get_alphabet(s)
 	a_size = len(alpha)
-	#print("alpha", alpha, "level", level)
-	#for letter in alpha:
-	#	print(codes[letter], level)
 	d = {letter: codes[letter][level] for letter in alpha}
 	# Binary representation of s
 	bin_s = bitarray()
@@ -116,28 +86,17 @@ Returns a dict {idx: {0: [], 1: []}} where the lists contain the word ranks
 for 0 and 1, respectively. Idx is the starting index of the "node" in the
 bitvector for the entire wavelet tree.
 '''
-def old_preprocess_tree_node_ranks(wt, n, pointers):
-	ranks = {idx: {0: [], 1: []} for idx in pointers.keys()}
-	ranks[0] = node_word_ranks(wt[0:n], len(wt[0:n]))
-	for idx, lr in pointers.items():
-		if lr["left"]:
-			L, R = lr["left"]
-			ranks[L] = node_word_ranks(wt[L:R], len(wt[L:R]))
-		if lr["right"]:
-			L, R = lr["right"]
-			ranks[L] = node_word_ranks(wt[L:R], len(wt[L:R]))
-	return ranks
-
-def preprocess_tree_node_ranks(wt, n, pointers):
-	ranks = {idx: {0: [], 1: []} for idx in pointers.keys()}
-	ranks[0] = node_word_ranks(wt[0:n], n)
-	for lr in pointers.values():
-		if lr["left"]:
-			L, R = lr["left"]
-			ranks[L] = node_word_ranks(wt[L:R], len(wt[L:R])) #refactor
-		if lr["right"]:
-			L, R = lr["right"]
-			ranks[L] = node_word_ranks(wt[L:R], len(wt[L:R])) #len(wt[L:R])
+def preprocess_tree_node_ranks(wt, n, child_dict):
+	ranks = {idx: {0: [], 1: []} for idx in child_dict.keys()}
+	ranks[0] = node_word_ranks(wt[0:n], n) # root ranks
+	# iterate nodes
+	for lr in child_dict.values():
+		L, R = lr["left"]
+		if L and R: # if inner node
+			ranks[L] = node_word_ranks(wt[L:R], R-L)
+		L, R = lr["right"]
+		if L and R: # if inner node
+			ranks[L] = node_word_ranks(wt[L:R], R-L)
 	return ranks
 
 
@@ -146,12 +105,11 @@ Computes word ranks of a "node" in the (implicit) wavelet tree.
 Returns a dict, {0: [], 1: []} where the lists contain the word ranks
 for 0 and 1, respectively.
 '''
-def node_word_ranks(bitvector, n):
+def node_word_ranks(bitvector, length):
 	ranks = {0: [], 1: []}
-	if n == 0: return ranks
-	word_size = max(floor(log2(n)), 1)
-	#word_size = floor(log2(n)) if floor(log2(n)) < 0 else 1  # BLOWS SPACE USAGE UP???
-	for i in range(n // word_size): # Iterate words
+	if length == 0: return None # should not happen
+	word_size = max(floor(log2(length)), 1)
+	for i in range(length // word_size): # Iterate words
 		word = bitvector[i*word_size: (i+1)*word_size]
 		prev_0s = 0 if i == 0 else ranks[0][i-1]
 		prev_1s = 0 if i == 0 else ranks[1][i-1]
@@ -251,12 +209,12 @@ n = len(x)
 wt, pointers, codes = wavelet_tree_and_pointers_and_codes(x)
 
 ranks = preprocess_tree_node_ranks(wt, n, pointers)
-#print(ranks)
-print(codes)
-print(wt)
-print(pointers)
+print(ranks)
+#print(codes)
+#print(wt)
+#print(pointers)
 
-print(rank_query(wt, n, pointers, ranks, codes, "A", 1)) # == 1
+#print(rank_query(wt, n, pointers, ranks, codes, "A", 1)) # == 1
 
 
 
