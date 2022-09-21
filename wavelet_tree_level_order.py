@@ -191,18 +191,14 @@ def right_child(sub_bv, n, i):
 
 #x = "mississippialphaaaaaiiiiiiiiiiiiiiipppppppppppppabcdefghijklmnopqrstuvwxyzøæåjkfadnkcdnoeuhritnodhnijsbdakflne"
 #x = "mississippialpha"
-x = "ississippi"
+x = "mississippi"
 n = len(x)
 
 wt, codes = wavelet_tree_and_codes(x)
 #print(len(wt))
-#ranks = preprocess_tree_node_ranks(wt, n)
-#print(ranks)
-#print(rank_query(wt, n, ranks, codes, "i", 0))
-
-
-
-
+ranks = preprocess_tree_node_ranks(wt, n)
+print(ranks)
+#print(rank_query(wt, n, ranks, codes, "i", 11))
 
 
 
