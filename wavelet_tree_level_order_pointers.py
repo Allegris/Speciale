@@ -23,7 +23,7 @@ bitarray('0011011011010000111100')
 'p': bitarray('10'),
 's': bitarray('11')}
 '''
-def wavelet_tree_and_pointers_and_codes(x):
+def wavelet_tree_and_child_dict_and_codes(x):
 	wt = bitarray()
 	n = len(x)
 	count = letter_count(x)
@@ -35,8 +35,7 @@ def wavelet_tree_and_pointers_and_codes(x):
 	while q:
 		level, s, i, j = q.pop(0)
 		bin_s, s0, s1, a_size = split_node(s, codes, level)
-		# s is an inner node
-		if a_size > 1:
+		if a_size > 1: # if i is an inner node
 			wt += bin_s
 			child_dict[i] = {"left": (None, None), "right": (None, None)}
 		# LEFT CHILD
@@ -107,13 +106,14 @@ for 0 and 1, respectively.
 '''
 def node_word_ranks(bitvector, length):
 	ranks = {0: [], 1: []}
-	if length == 0: return None # should not happen
 	word_size = max(floor(log2(length)), 1)
 	for i in range(length // word_size): # Iterate words
 		word = bitvector[i*word_size: (i+1)*word_size]
+		# Zeros
 		prev_0s = 0 if i == 0 else ranks[0][i-1]
-		prev_1s = 0 if i == 0 else ranks[1][i-1]
 		ranks[0].append(prev_0s + word.count(0))
+		# Ones
+		prev_1s = 0 if i == 0 else ranks[1][i-1]
 		ranks[1].append(prev_1s + word.count(1))
 	return ranks
 
@@ -129,14 +129,11 @@ Rank query using a wavelet tree in level order format.
 def rank_query(wt, n, pointers, ranks, codes, c, i):
 	code = codes[c]
 	L, R = 0, n
-	rank = i
+	rank = i # current rank
 	for char in code:
-		#if L and R:
 		rank = node_rank_query(wt[L:R], ranks[L], char, rank)
-		if char == 0:
-			L, R = pointers[L]["left"]
-		if char == 1:
-			L, R = pointers[L]["right"]
+		# Update L, R depending on char
+		L, R = pointers[L]["right"] if char else pointers[L]["left"]
 	return rank
 
 
@@ -185,36 +182,22 @@ def right_child(sub_bv, n, i):
 # Code to run
 ########################################################
 
-'''
+
 
 #x = "mississippialphaaaaaiiiiiiiiiiiiiiipppppppppppppabcdefghijklmnopqrstuvwxyzøæåjkfadnkcdnoeuhritnodhnijsbdakflne"
 #x = "mississippialpha"
-#x = "mississippi"
-x = "misisipi"
+x = "mississippi"
 n = len(x)
 
-wt, pointers, codes = wavelet_tree_and_pointers_and_codes(x)
-print(wt)
-print(pointers)
-print(codes)
-ranks = preprocess_tree_node_ranks(wt, n, pointers)
-print(ranks)
-print(rank_query(wt, n, pointers, ranks, codes, "s", 3))
-
-'''
-
-
-x = "ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ123456789"
-n = len(x)
-wt, pointers, codes = wavelet_tree_and_pointers_and_codes(x)
-
-ranks = preprocess_tree_node_ranks(wt, n, pointers)
-print(ranks)
-#print(codes)
+wt, pointers, codes = wavelet_tree_and_child_dict_and_codes(x)
 #print(wt)
 #print(pointers)
+#print(codes)
+ranks = preprocess_tree_node_ranks(wt, n, pointers)
+#print(ranks)
+print(rank_query(wt, n, pointers, ranks, codes, "s", 4))
 
-#print(rank_query(wt, n, pointers, ranks, codes, "A", 1)) # == 1
+
 
 
 

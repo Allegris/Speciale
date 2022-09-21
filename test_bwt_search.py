@@ -22,7 +22,7 @@ wt, codes = lo.wavelet_tree_and_codes(bwt_x)
 ranks = lo.preprocess_tree_node_ranks(wt, len(bwt_x))
 
 # BW search with wavelet tree rank query (level order wt with pointers)
-wt2, pointers, codes2 = lop.wavelet_tree_and_pointers_and_codes(bwt_x)
+wt2, pointers, codes2 = lop.wavelet_tree_and_child_dict_and_codes(bwt_x)
 ranks2 = lop.preprocess_tree_node_ranks(wt2, len(bwt_x), pointers)
 
 def test_AACGTAAACGTAAC_AAC():
