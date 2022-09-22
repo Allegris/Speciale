@@ -1,6 +1,6 @@
 from bitarray import bitarray
 from math import log2, floor, ceil
-from shared import get_alphabet, letter_count
+from shared import get_alphabet, letter_count, alphabet_size
 from bitarray.util import canonical_huffman#, huffman_code
 
 
@@ -29,30 +29,29 @@ def wavelet_tree_and_child_dict_and_codes(x):
 	count = letter_count(x)
 	codes, _, _ = canonical_huffman(count)
 	child_dict = {}
-	level = 0
-	q = [(level, x, 0, n)]
-	correction = 0
+	q = [(x, 0, 0)] # string, idx, level
+	correction = 0 # number of encountered leaf chars
 	while q:
-		level, s, i, j = q.pop(0)
-		bin_s, s0, s1, a_size = split_node(s, codes, level)
-		if a_size > 1: # if i is an inner node
+		s, idx, level = q.pop(0)
+		bin_s, s0, s1 = split_node(s, codes, level)
+		if alphabet_size(s) > 1: # if i is an inner node
 			wt += bin_s
-			child_dict[i] = {"left": (None, None), "right": (None, None)}
+			child_dict[idx] = {"left": (None, None), "right": (None, None)}
 		# LEFT CHILD
-		if len(get_alphabet(s0)) > 1:
-			ii, jj = left_child(bin_s, i-correction, n)
-			child_dict[i]["left"] = (ii, jj)
-			q.append((level+1, s0, ii, jj))
+		if alphabet_size(s0) > 1:
+			i, j = left_child(bin_s, n+idx-correction)
+			child_dict[idx]["left"] = (i, j)
+			q.append((s0, i, level+1))
 		else:
-			child_dict[i]["left"] = (None, None)
+			child_dict[idx]["left"] = (None, None)
 			correction += len(s0)
 		# RIGHT CHILD
-		if(len(get_alphabet(s1))) > 1:
-			ii, jj = right_child(bin_s, i-correction, n)
-			child_dict[i]["right"] = (ii, jj)
-			q.append((level+1, s1, ii, jj))
+		if alphabet_size(s1) > 1:
+			i, j = right_child(bin_s, n+idx-correction)
+			child_dict[idx]["right"] = (i, j)
+			q.append((s1, i, level+1))
 		else:
-			child_dict[i]["right"] = (None, None)
+			child_dict[idx]["right"] = (None, None)
 			correction += len(s1)
 	return wt, child_dict, codes
 
@@ -60,7 +59,6 @@ def wavelet_tree_and_child_dict_and_codes(x):
 
 def split_node(s, codes, level):
 	alpha = get_alphabet(s)
-	a_size = len(alpha)
 	d = {letter: codes[letter][level] for letter in alpha}
 	# Binary representation of s
 	bin_s = bitarray()
@@ -72,7 +70,7 @@ def split_node(s, codes, level):
 			s0 += char
 		else:
 			s1 += char
-	return bin_s, s0, s1, a_size
+	return bin_s, s0, s1
 
 
 ########################################################
@@ -167,15 +165,15 @@ def node_rank_query(bitvector, ranks, c, i):
 Computes the index of the left child of a given "node" in a level order
 wavelet tree.
 '''
-def left_child(sub_bv, n, i):
-	return i+n, i+n+sub_bv.count(0)
+def left_child(bv, offset):
+	return offset, offset + bv.count(0)
 
 '''
 Computes the index of the right child of a given "node" in a level order
 wavelet tree.
 '''
-def right_child(sub_bv, n, i):
-	return i+n+sub_bv.count(0), i+n+sub_bv.count(0)+sub_bv.count(1)
+def right_child(bv, offset):
+	return offset + bv.count(0), offset + len(bv)
 
 
 ########################################################
@@ -185,14 +183,14 @@ def right_child(sub_bv, n, i):
 
 
 #x = "mississippialphaaaaaiiiiiiiiiiiiiiipppppppppppppabcdefghijklmnopqrstuvwxyzøæåjkfadnkcdnoeuhritnodhnijsbdakflne"
-#x = "mississippialpha"
-x = "mississippi"
+x = "mississippialpha"
+#x = "mississippi"
 n = len(x)
 
 wt, pointers, codes = wavelet_tree_and_child_dict_and_codes(x)
-#print(wt)
-#print(pointers)
-#print(codes)
+print(wt)
+print(pointers)
+print(codes)
 ranks = preprocess_tree_node_ranks(wt, n, pointers)
 #print(ranks)
 print(rank_query(wt, n, pointers, ranks, codes, "s", 4))

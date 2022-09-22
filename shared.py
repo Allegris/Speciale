@@ -7,6 +7,10 @@ def get_alphabet(x):
 	letters = ''.join(set(x))
 	return sorted(letters)
 
+def alphabet_size(x):
+	letters = ''.join(set(x))
+	return len(letters)
+
 def letter_count(x):
 	alpha = get_alphabet(x)
 	# Map between letters and ints
