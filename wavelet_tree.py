@@ -17,7 +17,7 @@ class WaveletTreeNode:
 			self.root = root
 
 		# Encode s and split s in two parts (potential child nodes)
-		bin_s, s0, s1 = self.split_node(s, level)
+		bin_s, s0, s1 = self.split(s, level)
 
 		# Set bitvector and preprocess ranks
 		self.bitvector = bin_s
@@ -44,7 +44,7 @@ class WaveletTreeNode:
 		2) bitarray('10000') iiii m
 		3) bitarray('111100') pp ssss
 	'''
-	def split_node(self, s, level):
+	def split(self, s, level):
 		codes = self.root.codes
 		alpha = get_alphabet(s)
 		# Set d = {letter: binary code at this level (either 0 or 1)}
@@ -84,8 +84,8 @@ class WaveletTreeNode:
 
 
 	'''
-	Finds the rank of a char c and an index i in a bitvector of length n,
-	by looking up in ranks and/or scanning the bits in the bitvector.
+	Finds the rank of a char c and an index i in a bitvector,
+	by looking up in word_ranks and/or scanning the bits in the bitvector.
 	'''
 	def rank_lookup(self, c, i):
 		word_size = floor(log2(len(self.bitvector)))
@@ -113,7 +113,7 @@ Iterates a wavelet tree, starting from the root, and returns the rank of a
 given char c and a given index i.
 '''
 def rank_query(root, c, i):
-	code = root.codes[c] # code of c, e.g., "00" (left, left) for i in mississippi
+	code = root.codes[c]
 	node = root
 	rank = i # Current rank
 	for char in code:
@@ -127,13 +127,13 @@ def rank_query(root, c, i):
 ########################################################
 
 
-
+'''
 #x = "mississippialpha"
 x = "ississippi"
 wt_root = WaveletTreeNode(x, 0, None) # s, level, root
 #print(wt_root.__dict__)
 
-'''
+
 print(rank_query(wt_root, "i", 8))
 
 
@@ -151,18 +151,4 @@ rank_query(wt_root, "i", 8)
 # stopping the library
 #tracemalloc.stop()
 '''
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

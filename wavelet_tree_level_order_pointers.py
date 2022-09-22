@@ -9,7 +9,6 @@ from shared import get_alphabet, letter_count, alphabet_size, huffman_codes
 # Construct level order wavelet tree
 ########################################################
 
-
 '''
 Constructs a level order, Huffman-shaped wavelet tree of string x.
 Returns the wavelet tree as:
@@ -90,6 +89,7 @@ def split_node(s, codes, level):
 			s1 += char
 	return bin_s, s0, s1
 
+
 '''
 Computes the index of the left child of a given "node" in a level order
 wavelet tree.
@@ -97,12 +97,14 @@ wavelet tree.
 def left_child(bv, left_child_idx):
 	return left_child_idx, left_child_idx + bv.count(0)
 
+
 '''
 Computes the index of the right child of a given "node" in a level order
 wavelet tree.
 '''
 def right_child(bv, left_child_idx):
 	return left_child_idx + bv.count(0), left_child_idx + len(bv)
+
 
 ########################################################
 # Preprocess wavelet tree ranks
@@ -149,7 +151,6 @@ def node_word_ranks(bitvector):
 # Rank query using wavelet tree
 ########################################################
 
-
 '''
 Rank query using a wavelet tree in level order.
 '''
@@ -189,8 +190,7 @@ def node_rank_lookup(bitvector, ranks, c, i):
 # Code to run
 ########################################################
 
-
-
+'''
 #x = "mississippialphaaaaaiiiiiiiiiiiiiiipppppppppppppabcdefghijklmnopqrstuvwxyzøæåjkfadnkcdnoeuhritnodhnijsbdakflne"
 #x = "mississippialpha"
 x = "mississippi"
@@ -204,9 +204,4 @@ print(codes)
 ranks = preprocess_all_tree_node_ranks(wt, n, child_dict)
 #print(ranks)
 print(rank_query(wt, n, child_dict, ranks, codes, "s", 4))
-
-
-
-
-
-
+'''

@@ -10,7 +10,7 @@ tracemalloc.start()
 x = "mississippi"
 n = len(x)
 wt, codes = lo.wavelet_tree_and_codes(x)
-ranks = lo.preprocess_tree_node_ranks(wt, n)
+ranks = lo.preprocess_all_tree_node_ranks(wt, n)
 
 
 def test_mississippi_m_0():
@@ -50,7 +50,7 @@ def test_mississippi_s_6():
 x2 = "mississippii"
 n2 = len(x2)
 wt2, codes2 = lo.wavelet_tree_and_codes(x2)
-ranks2 = lo.preprocess_tree_node_ranks(wt2, n2)
+ranks2 = lo.preprocess_all_tree_node_ranks(wt2, n2)
 
 def test_mississippii_i_12():
 	assert lo.rank_query(wt2, n2, ranks2, codes2, "i", 12) == 5
@@ -70,7 +70,7 @@ def test_mississippii_i_9():
 dna = "AGTCCTGAANCTGAGCCTTNAGG"
 dna_n = len(dna)
 dna_wt, dna_codes = lo.wavelet_tree_and_codes(dna)
-dna_ranks = lo.preprocess_tree_node_ranks(dna_wt, dna_n)
+dna_ranks = lo.preprocess_all_tree_node_ranks(dna_wt, dna_n)
 
 
 def test_dna_a_0():
@@ -101,7 +101,7 @@ def test_dna_C_5():
 big = "ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ123456789"
 big_n = len(big)
 big_wt, big_codes = lo.wavelet_tree_and_codes(big)
-big_ranks = lo.preprocess_tree_node_ranks(big_wt, big_n)
+big_ranks = lo.preprocess_all_tree_node_ranks(big_wt, big_n)
 
 
 def test_big_a_0():
