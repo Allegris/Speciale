@@ -5,59 +5,53 @@ from bitarray.util import canonical_huffman
 
 
 ########################################################
-# Classes for wavelet tree leaves and internal nodes
+# Classes for wavelet tree internal nodes
 ########################################################
-
-
-#class WaveletTreeLeaf:
-#	def __init__(self, letter):
-#		self.letter = letter
-
 
 class WaveletTreeNode:
 	def __init__(self, s, level, root):
-		self.n = len(s)
-
-		if level == 0: #root
+		if level == 0: # If is root
 			self.root = self
 			self.codes, _, _ = canonical_huffman(letter_count(s))
 		else:
 			self.root = root
 
+		# Encode s and split s in two parts (potential child nodes)
+		bin_s, s0, s1 = self.split_node(s, level)
 
-		# Split alphabet to create child nodes
-		bin_s, s0, s1 = self.split_node(s, level, self.root.codes)
-
+		# Set bitvector and preprocess ranks
 		self.bitvector = bin_s
-		self.ranks = self.preprocess_node_ranks(self.bitvector, self.n)
+		self.ranks = self.preprocess_node_ranks()
 
-		if alphabet_size(s) > 1:
-			self.left_child = None
-			self.right_child = None
-		if alphabet_size(s0) > 1: # if inner node
+		# Create children
+		self.left_child, self.right_child = None, None
+		# Left child
+		if alphabet_size(s0) > 1: # If left child is inner node
 			self.left_child = WaveletTreeNode(s0, level+1, self.root)
-		if alphabet_size(s1) > 1: # if inner node
+		# Right child
+		if alphabet_size(s1) > 1: # If right child is inner node
 			self.right_child = WaveletTreeNode(s1, level+1, self.root)
 
 
 	'''
-	Splits alphabet in half and assigns binary values to each letter,
-	i.e., d = {letter: binary}.
+	Encodes string s using Huffman encoding in codes (index level in each code).
 	Returns:
-		bin_x: The binary representation of x (wrt. the alphabet split)
-		x0: The part of x that corresponds to 0s
-		x1: The part of x that corresponds to 1s
+		bin_s: The binary representation of s
+		s0: The part of s that corresponds to 0s
+		s1: The part of s that corresponds to 1s
 	Examples of return:
 		1) bitarray('00110110110') miiii sssspp
 		2) bitarray('10000') iiii m
 		3) bitarray('111100') pp ssss
 	'''
-	def split_node(self, s, level, codes):
+	def split_node(self, s, level):
+		codes = self.root.codes
 		alpha = get_alphabet(s)
+		# Set d = {letter: binary code at this level (either 0 or 1)}
 		d = {letter: codes[letter][level] for letter in alpha}
 		# Binary representation of s
 		bin_s = bitarray()
-		# The part of s corresponding to 1s
+		# The part of s corresponding to zeros and ones, respectively
 		s0, s1 = "", ""
 		for char in s:
 			bin_s.append(d[char])
@@ -75,11 +69,11 @@ class WaveletTreeNode:
 	Returns a dict {0: [word_ranks], 1: [word_ranks]} where the lists contain
 	the rank of each word for the given bit, e.g., {0: [2, 3, 4], 1: [1, 3, 5]}
 	'''
-	def preprocess_node_ranks(self, bitvector, length):
+	def preprocess_node_ranks(self):
 		ranks = {0: [], 1: []}
-		word_size = floor(log2(length))
-		for i in range(length // word_size): # Iterate words
-			word = bitvector[i*word_size: (i+1)*word_size]
+		word_size = floor(log2(len(self.bitvector)))
+		for i in range(len(self.bitvector) // word_size): # Iterate words
+			word = self.bitvector[i*word_size: (i+1)*word_size]
 			# Zeros
 			prev_0s = 0 if i == 0 else ranks[0][i-1]
 			ranks[0].append(prev_0s + word.count(0))
@@ -93,21 +87,21 @@ class WaveletTreeNode:
 	Finds the rank of a char c and an index i in a bitvector of length n,
 	by looking up in ranks and/or scanning the bits in the bitvector.
 	'''
-	def node_rank(self, bitvector, ranks, n, c, i):
-		word_size = floor(log2(len(bitvector)))
+	def node_rank(self, c, i):
+		word_size = floor(log2(len(self.bitvector)))
 		word_no = (i // word_size)
 		scan_len = i % word_size
 		# If in first word, just scan
 		if word_no == 0:
-			return bitvector[0:scan_len].count(c)
+			return self.bitvector[0:scan_len].count(c)
 		# If we do not need to scan, look-up the rank directly in ranks
 		if scan_len == 0:
-			return ranks[c][word_no - 1]
+			return self.ranks[c][word_no - 1]
 		# If we need to look-up in ranks AND scan
 		else:
 			start = word_no * word_size
 			end = start + scan_len
-			return ranks[c][word_no - 1] + bitvector[start:end].count(c)
+			return self.ranks[c][word_no - 1] + self.bitvector[start:end].count(c)
 
 
 ########################################################
@@ -123,7 +117,7 @@ def rank_query(root, c, i):
 	node = root
 	ii = i
 	for char in code:
-		ii = node.node_rank(node.bitvector, node.ranks, node.n, char, ii)
+		ii = node.node_rank(char, ii)
 		node = node.left_child if char == 0 else node.right_child
 	return ii
 

@@ -55,13 +55,23 @@ def wavelet_tree_and_child_dict_and_codes(x):
 	return wt, child_dict, codes
 
 
-
+'''
+Encodes string s using Huffman encoding in codes (index level in each code).
+Returns:
+	bin_s: The binary representation of s
+	s0: The part of s that corresponds to 0s
+	s1: The part of s that corresponds to 1s
+Examples of return:
+	1) bitarray('00110110110') miiii sssspp
+	2) bitarray('10000') iiii m
+	3) bitarray('111100') pp ssss
+'''
 def split_node(s, codes, level):
 	alpha = get_alphabet(s)
 	d = {letter: codes[letter][level] for letter in alpha}
 	# Binary representation of s
 	bin_s = bitarray()
-	# The part of s corresponding to 1s
+	# The part of s corresponding to zeros and ones, respectively
 	s0, s1 = "", ""
 	for char in s:
 		bin_s.append(d[char])
@@ -71,6 +81,19 @@ def split_node(s, codes, level):
 			s1 += char
 	return bin_s, s0, s1
 
+'''
+Computes the index of the left child of a given "node" in a level order
+wavelet tree.
+'''
+def left_child(bv, offset):
+	return offset, offset + bv.count(0)
+
+'''
+Computes the index of the right child of a given "node" in a level order
+wavelet tree.
+'''
+def right_child(bv, offset):
+	return offset + bv.count(0), offset + len(bv)
 
 ########################################################
 # Preprocess wavelet tree ranks
@@ -121,7 +144,7 @@ def node_word_ranks(bitvector, length):
 
 
 '''
-Rank query using a wavelet tree in level order format.
+Rank query using a wavelet tree in level order.
 '''
 def rank_query(wt, n, pointers, ranks, codes, c, i):
 	code = codes[c]
@@ -154,25 +177,6 @@ def node_rank_query(bitvector, ranks, c, i):
 		start = word_no * word_size
 		end = start + scan_len
 		return ranks[c][word_no - 1] + bitvector[start:end].count(c)
-
-
-########################################################
-# Helper functions
-########################################################
-
-'''
-Computes the index of the left child of a given "node" in a level order
-wavelet tree.
-'''
-def left_child(bv, offset):
-	return offset, offset + bv.count(0)
-
-'''
-Computes the index of the right child of a given "node" in a level order
-wavelet tree.
-'''
-def right_child(bv, offset):
-	return offset + bv.count(0), offset + len(bv)
 
 
 ########################################################
