@@ -7,7 +7,7 @@ tracemalloc.start()
 
 
 x = "mississippi"
-root = wt.WaveletTreeNode(x, False)
+root = wt.WaveletTreeNode(x, 0, None)
 
 
 def test_mississippi_m_0():
@@ -51,7 +51,7 @@ def test_mississippi_p_10():
 
 
 x2 = "mississippii$"
-root2 = wt.WaveletTreeNode(x2, False)
+root2 = wt.WaveletTreeNode(x2, 0, None)
 
 def test_mississippii_sentinel_13():
 	assert wt.rank_query(root2, "$", 13) == 1
@@ -74,7 +74,7 @@ def test_mississippii_i_9():
 
 
 dna = "AGTCCTGAANCTGAGCCTTNAGG"
-dna_root = wt.WaveletTreeNode(dna, False)
+dna_root = wt.WaveletTreeNode(dna, 0, None)
 
 
 def test_dna_a_0():
@@ -103,7 +103,7 @@ def test_dna_C_5():
 
 
 big = "ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ123456789"
-big_root = wt.WaveletTreeNode(big, False)
+big_root = wt.WaveletTreeNode(big, 0, None)
 
 
 def test_big_a_0():

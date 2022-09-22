@@ -26,8 +26,7 @@ bitarray('0011011011010000111100')
 def wavelet_tree_and_child_dict_and_codes(x):
 	wt = bitarray()
 	n = len(x)
-	count = letter_count(x)
-	codes, _, _ = canonical_huffman(count)
+	codes, _, _ = canonical_huffman(letter_count(x))
 	child_dict = {}
 	q = [(x, 0, 0)] # string, idx, level
 	correction = 0 # number of encountered leaf chars
