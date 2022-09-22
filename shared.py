@@ -1,4 +1,4 @@
-
+from bitarray.util import canonical_huffman#, huffman_code
 
 '''
 Returns a lex sorted list of the letters of x
@@ -18,3 +18,8 @@ def letter_count(x):
 	for char in x:
 		counts[char] += 1
 	return counts
+
+def huffman_codes(x):
+	count = letter_count(x)
+	codes, _, _ = canonical_huffman(count)
+	return codes

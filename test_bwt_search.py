@@ -2,6 +2,7 @@ import bwt_search as bw
 import bwt_search_wt as bwt_wt
 import wavelet_tree_level_order as lo
 import wavelet_tree_level_order_pointers as lop
+from shared import huffman_codes
 
 
 x = "AACGTAAACGTAAC"
@@ -22,8 +23,9 @@ wt, codes = lo.wavelet_tree_and_codes(bwt_x)
 ranks = lo.preprocess_tree_node_ranks(wt, len(bwt_x))
 
 # BW search with wavelet tree rank query (level order wt with pointers)
-wt2, pointers, codes2 = lop.wavelet_tree_and_child_dict_and_codes(bwt_x)
-ranks2 = lop.preprocess_tree_node_ranks(wt2, len(bwt_x), pointers)
+codes2 = huffman_codes(bwt_x)
+wt2, pointers = lop.wavelet_tree(bwt_x, codes2)
+ranks2 = lop.preprocess_all_tree_node_ranks(wt2, len(bwt_x), pointers)
 
 def test_AACGTAAACGTAAC_AAC():
 	p = "AAC"

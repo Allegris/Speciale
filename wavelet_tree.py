@@ -21,16 +21,16 @@ class WaveletTreeNode:
 
 		# Set bitvector and preprocess ranks
 		self.bitvector = bin_s
-		self.ranks = self.preprocess_node_ranks()
+		self.word_ranks = self.preprocess_word_ranks()
 
 		# Create children
 		self.left_child, self.right_child = None, None
 		# Left child
 		if alphabet_size(s0) > 1: # If left child is inner node
-			self.left_child = WaveletTreeNode(s0, level+1, self.root)
+			self.left_child = WaveletTreeNode(s0, level + 1, self.root)
 		# Right child
 		if alphabet_size(s1) > 1: # If right child is inner node
-			self.right_child = WaveletTreeNode(s1, level+1, self.root)
+			self.right_child = WaveletTreeNode(s1, level + 1, self.root)
 
 
 	'''
@@ -69,7 +69,7 @@ class WaveletTreeNode:
 	Returns a dict {0: [word_ranks], 1: [word_ranks]} where the lists contain
 	the rank of each word for the given bit, e.g., {0: [2, 3, 4], 1: [1, 3, 5]}
 	'''
-	def preprocess_node_ranks(self):
+	def preprocess_word_ranks(self):
 		ranks = {0: [], 1: []}
 		word_size = floor(log2(len(self.bitvector)))
 		for i in range(len(self.bitvector) // word_size): # Iterate words
@@ -87,7 +87,7 @@ class WaveletTreeNode:
 	Finds the rank of a char c and an index i in a bitvector of length n,
 	by looking up in ranks and/or scanning the bits in the bitvector.
 	'''
-	def node_rank(self, c, i):
+	def rank_lookup(self, c, i):
 		word_size = floor(log2(len(self.bitvector)))
 		word_no = (i // word_size)
 		scan_len = i % word_size
@@ -96,12 +96,12 @@ class WaveletTreeNode:
 			return self.bitvector[0:scan_len].count(c)
 		# If we do not need to scan, look-up the rank directly in ranks
 		if scan_len == 0:
-			return self.ranks[c][word_no - 1]
+			return self.word_ranks[c][word_no - 1]
 		# If we need to look-up in ranks AND scan
 		else:
 			start = word_no * word_size
 			end = start + scan_len
-			return self.ranks[c][word_no - 1] + self.bitvector[start:end].count(c)
+			return self.word_ranks[c][word_no - 1] + self.bitvector[start:end].count(c)
 
 
 ########################################################
@@ -115,11 +115,11 @@ given char c and a given index i.
 def rank_query(root, c, i):
 	code = root.codes[c] # code of c, e.g., "00" (left, left) for i in mississippi
 	node = root
-	ii = i
+	rank = i # Current rank
 	for char in code:
-		ii = node.node_rank(char, ii)
+		rank = node.rank_lookup(char, rank)
 		node = node.left_child if char == 0 else node.right_child
-	return ii
+	return rank
 
 
 ########################################################

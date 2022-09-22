@@ -1,11 +1,13 @@
 import wavelet_tree_level_order_pointers as lop
+from shared import huffman_codes
 import tracemalloc
 
 
 x = "mississippi"
+codes = huffman_codes(x)
 n = len(x)
-wt, pointers, codes = lop.wavelet_tree_and_child_dict_and_codes(x)
-ranks = lop.preprocess_tree_node_ranks(wt, n, pointers)
+wt, pointers = lop.wavelet_tree(x, codes)
+ranks = lop.preprocess_all_tree_node_ranks(wt, n, pointers)
 
 def test_mississippi_m_0():
 	assert lop.rank_query(wt, n, pointers, ranks, codes, "m", 0) == 0
@@ -41,9 +43,10 @@ def test_mississippi_s_6():
 
 
 x2 = "mississippii"
+codes2 = huffman_codes(x2)
 n2 = len(x2)
-wt2, pointers2, codes2 = lop.wavelet_tree_and_child_dict_and_codes(x2)
-ranks2 = lop.preprocess_tree_node_ranks(wt2, n2, pointers2)
+wt2, pointers2 = lop.wavelet_tree(x2, codes2)
+ranks2 = lop.preprocess_all_tree_node_ranks(wt2, n2, pointers2)
 
 def test_mississippii_i_11():
 		assert lop.rank_query(wt, n, pointers, ranks, codes, "i", 11) == 4
@@ -58,9 +61,10 @@ def test_mississippii_i_9():
 
 
 dna = "AGTCCTGAANCTGAGCCTTNAGG"
+dna_codes = huffman_codes(dna)
 dna_n = len(dna)
-dna_wt, dna_pointers, dna_codes = lop.wavelet_tree_and_child_dict_and_codes(dna)
-dna_ranks = lop.preprocess_tree_node_ranks(dna_wt, dna_n, dna_pointers)
+dna_wt, dna_pointers = lop.wavelet_tree(dna, dna_codes)
+dna_ranks = lop.preprocess_all_tree_node_ranks(dna_wt, dna_n, dna_pointers)
 
 
 def test_dna_a_0():
@@ -91,9 +95,10 @@ def test_dna_C_5():
 
 
 big = "ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ123456789"
+big_codes = huffman_codes(big)
 big_n = len(big)
-big_wt, big_pointers, big_codes = lop.wavelet_tree_and_child_dict_and_codes(big)
-big_ranks = lop.preprocess_tree_node_ranks(big_wt, big_n, big_pointers)
+big_wt, big_pointers = lop.wavelet_tree(big, big_codes)
+big_ranks = lop.preprocess_all_tree_node_ranks(big_wt, big_n, big_pointers)
 
 
 def test_big_a_0():

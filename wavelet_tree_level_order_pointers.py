@@ -1,7 +1,7 @@
 from bitarray import bitarray
 from math import log2, floor, ceil
-from shared import get_alphabet, letter_count, alphabet_size
-from bitarray.util import canonical_huffman#, huffman_code
+from shared import get_alphabet, letter_count, alphabet_size, huffman_codes
+
 
 
 
@@ -11,48 +11,57 @@ from bitarray.util import canonical_huffman#, huffman_code
 
 
 '''
-bitarray('0011011011010000111100')
+Constructs a level order, Huffman-shaped wavelet tree of string x.
+Returns the wavelet tree as:
+	- A bitvector (representing level order representation).
+	- Child dict {parent_idx: {'left': left_child_idx, 'right': right_child_idx}}.
+	  Note, if child_idx is (Nonen None), then the child is a leaf in the tree.
+    - The Huffman codes of the letters
 
-{0: {'left': (11, 16), 'right': (16, 22)},
-11: {'left': (None, None), 'right': (None, None)},
-16: {'left': (None, None), 'right': (None, None)}}
+E.g., for x="mississippi", it returns:
+bitarray('101101101101000011011')
 
-{
-'i': bitarray('00'),
-'m': bitarray('01'),
-'p': bitarray('10'),
-'s': bitarray('11')}
+{0: {'left': (None, None), 'right': (11, 18)},
+11: {'left': (None, None), 'right': (18, 21)},
+18: {'left': (None, None), 'right': (None, None)}}
+
+{'i': bitarray('0'),
+ 's': bitarray('10'),
+ 'm': bitarray('110'),
+ 'p': bitarray('111')}
+
 '''
-def wavelet_tree_and_child_dict_and_codes(x):
+def wavelet_tree(x, codes):
 	wt = bitarray()
-	n = len(x)
-	codes, _, _ = canonical_huffman(letter_count(x))
 	child_dict = {}
+	# Queue of inner nodes - so we run through them in level order
 	q = [(x, 0, 0)] # string, idx, level
-	correction = 0 # number of encountered leaf chars
+	# The indices of inner nodes should be corrected for the number
+	# of leaf chars that we encounter
+	leaf_chars = 0
 	while q:
 		s, idx, level = q.pop(0)
 		bin_s, s0, s1 = split_node(s, codes, level)
-		if alphabet_size(s) > 1: # if i is an inner node
+		if alphabet_size(s) > 1: # If s is an inner node
 			wt += bin_s
 			child_dict[idx] = {"left": (None, None), "right": (None, None)}
-		# LEFT CHILD
-		if alphabet_size(s0) > 1:
-			i, j = left_child(bin_s, n+idx-correction)
+		# Left Child
+		if alphabet_size(s0) > 1: # If left child is an inner node
+			i, j = left_child(bin_s, idx+len(x)-leaf_chars)
 			child_dict[idx]["left"] = (i, j)
-			q.append((s0, i, level+1))
-		else:
+			q.append((s0, i, level + 1))
+		else: # If left child is a leaf
 			child_dict[idx]["left"] = (None, None)
-			correction += len(s0)
-		# RIGHT CHILD
-		if alphabet_size(s1) > 1:
-			i, j = right_child(bin_s, n+idx-correction)
+			leaf_chars += len(s0)
+		# Right child
+		if alphabet_size(s1) > 1:  # If right child is an inner node
+			i, j = right_child(bin_s, idx+len(x)-leaf_chars)
 			child_dict[idx]["right"] = (i, j)
-			q.append((s1, i, level+1))
-		else:
+			q.append((s1, i, level + 1))
+		else: # If right child is a leaf
 			child_dict[idx]["right"] = (None, None)
-			correction += len(s1)
-	return wt, child_dict, codes
+			leaf_chars += len(s1)
+	return wt, child_dict
 
 
 '''
@@ -85,15 +94,15 @@ def split_node(s, codes, level):
 Computes the index of the left child of a given "node" in a level order
 wavelet tree.
 '''
-def left_child(bv, offset):
-	return offset, offset + bv.count(0)
+def left_child(bv, left_child_idx):
+	return left_child_idx, left_child_idx + bv.count(0)
 
 '''
 Computes the index of the right child of a given "node" in a level order
 wavelet tree.
 '''
-def right_child(bv, offset):
-	return offset + bv.count(0), offset + len(bv)
+def right_child(bv, left_child_idx):
+	return left_child_idx + bv.count(0), left_child_idx + len(bv)
 
 ########################################################
 # Preprocess wavelet tree ranks
@@ -105,17 +114,15 @@ Returns a dict {idx: {0: [], 1: []}} where the lists contain the word ranks
 for 0 and 1, respectively. Idx is the starting index of the "node" in the
 bitvector for the entire wavelet tree.
 '''
-def preprocess_tree_node_ranks(wt, n, child_dict):
+def preprocess_all_tree_node_ranks(wt, n, child_dict):
 	ranks = {idx: {0: [], 1: []} for idx in child_dict.keys()}
-	ranks[0] = node_word_ranks(wt[0:n], n) # root ranks
-	# iterate nodes
-	for lr in child_dict.values():
-		L, R = lr["left"]
-		if L and R: # if inner node
-			ranks[L] = node_word_ranks(wt[L:R], R-L)
-		L, R = lr["right"]
-		if L and R: # if inner node
-			ranks[L] = node_word_ranks(wt[L:R], R-L)
+	ranks[0] = node_word_ranks(wt[0:n]) # Root ranks
+	# Iterate through nodes
+	for children in child_dict.values():
+		for path in ["left", "right"]:
+			i, j = children[path]
+			if i and j: # If inner node, calculate word ranks
+				ranks[i] = node_word_ranks(wt[i:j])
 	return ranks
 
 
@@ -124,10 +131,10 @@ Computes word ranks of a "node" in the (implicit) wavelet tree.
 Returns a dict, {0: [], 1: []} where the lists contain the word ranks
 for 0 and 1, respectively.
 '''
-def node_word_ranks(bitvector, length):
+def node_word_ranks(bitvector):
 	ranks = {0: [], 1: []}
-	word_size = max(floor(log2(length)), 1)
-	for i in range(length // word_size): # Iterate words
+	word_size = max(floor(log2(len(bitvector))), 1)
+	for i in range(len(bitvector) // word_size): # Iterate words
 		word = bitvector[i*word_size: (i+1)*word_size]
 		# Zeros
 		prev_0s = 0 if i == 0 else ranks[0][i-1]
@@ -149,9 +156,9 @@ Rank query using a wavelet tree in level order.
 def rank_query(wt, n, pointers, ranks, codes, c, i):
 	code = codes[c]
 	L, R = 0, n
-	rank = i # current rank
+	rank = i # Current rank
 	for char in code:
-		rank = node_rank_query(wt[L:R], ranks[L], char, rank)
+		rank = node_rank_lookup(wt[L:R], ranks[L], char, rank)
 		# Update L, R depending on char
 		L, R = pointers[L]["right"] if char else pointers[L]["left"]
 	return rank
@@ -161,9 +168,8 @@ def rank_query(wt, n, pointers, ranks, codes, c, i):
 Rank query on a given node in the wavelet tree (as a bitvector).
 I.e., look-up in ranks and/or scan.
 '''
-def node_rank_query(bitvector, ranks, c, i):
-	n = len(bitvector)
-	word_size = floor(log2(n))
+def node_rank_lookup(bitvector, ranks, c, i):
+	word_size = floor(log2(len(bitvector)))
 	word_no = (i // word_size)
 	scan_len = i % word_size
 	# If in first word, just scan
@@ -186,17 +192,18 @@ def node_rank_query(bitvector, ranks, c, i):
 
 
 #x = "mississippialphaaaaaiiiiiiiiiiiiiiipppppppppppppabcdefghijklmnopqrstuvwxyzøæåjkfadnkcdnoeuhritnodhnijsbdakflne"
-x = "mississippialpha"
-#x = "mississippi"
+#x = "mississippialpha"
+x = "mississippi"
+codes = huffman_codes(x)
 n = len(x)
 
-wt, pointers, codes = wavelet_tree_and_child_dict_and_codes(x)
+wt, child_dict = wavelet_tree(x, codes)
 print(wt)
-print(pointers)
+print(child_dict)
 print(codes)
-ranks = preprocess_tree_node_ranks(wt, n, pointers)
+ranks = preprocess_all_tree_node_ranks(wt, n, child_dict)
 #print(ranks)
-print(rank_query(wt, n, pointers, ranks, codes, "s", 4))
+print(rank_query(wt, n, child_dict, ranks, codes, "s", 4))
 
 
 

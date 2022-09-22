@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Sep 22 11:26:31 2022
-
-@author: qeast
-"""
-
 from bitarray import bitarray
 from math import log2, floor, ceil
 from shared import get_alphabet
