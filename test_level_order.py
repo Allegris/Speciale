@@ -1,4 +1,5 @@
 import wavelet_tree_level_order as lo
+from shared import huffman_codes
 import tracemalloc
 
 
@@ -9,7 +10,8 @@ tracemalloc.start()
 
 x = "mississippi"
 n = len(x)
-wt, codes = lo.wavelet_tree_and_codes(x)
+codes = huffman_codes(x)
+wt = lo.wavelet_tree(x, codes)
 ranks = lo.preprocess_all_tree_node_ranks(wt, n)
 
 
@@ -49,7 +51,8 @@ def test_mississippi_s_6():
 
 x2 = "mississippii"
 n2 = len(x2)
-wt2, codes2 = lo.wavelet_tree_and_codes(x2)
+codes2 = huffman_codes(x2)
+wt2 = lo.wavelet_tree(x2, codes2)
 ranks2 = lo.preprocess_all_tree_node_ranks(wt2, n2)
 
 def test_mississippii_i_12():
@@ -69,7 +72,8 @@ def test_mississippii_i_9():
 
 dna = "AGTCCTGAANCTGAGCCTTNAGG"
 dna_n = len(dna)
-dna_wt, dna_codes = lo.wavelet_tree_and_codes(dna)
+dna_codes = huffman_codes(dna)
+dna_wt = lo.wavelet_tree(dna, dna_codes)
 dna_ranks = lo.preprocess_all_tree_node_ranks(dna_wt, dna_n)
 
 
@@ -100,7 +104,8 @@ def test_dna_C_5():
 
 big = "ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ123456789"
 big_n = len(big)
-big_wt, big_codes = lo.wavelet_tree_and_codes(big)
+big_codes = huffman_codes(big)
+big_wt = lo.wavelet_tree(big, big_codes)
 big_ranks = lo.preprocess_all_tree_node_ranks(big_wt, big_n)
 
 

@@ -190,7 +190,7 @@ def node_rank_lookup(bitvector, ranks, c, i):
 # Code to run
 ########################################################
 
-'''
+
 #x = "mississippialphaaaaaiiiiiiiiiiiiiiipppppppppppppabcdefghijklmnopqrstuvwxyzøæåjkfadnkcdnoeuhritnodhnijsbdakflne"
 #x = "mississippialpha"
 x = "mississippi"
@@ -199,9 +199,9 @@ n = len(x)
 
 wt, child_dict = wavelet_tree(x, codes)
 print(wt)
-print(child_dict)
-print(codes)
+#print(child_dict)
+#print(codes)
 ranks = preprocess_all_tree_node_ranks(wt, n, child_dict)
-#print(ranks)
-print(rank_query(wt, n, child_dict, ranks, codes, "s", 4))
-'''
+print(ranks)
+#print(rank_query(wt, n, child_dict, ranks, codes, "s", 4))
+
