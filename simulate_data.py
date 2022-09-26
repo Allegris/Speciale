@@ -2,8 +2,8 @@ from numpy.random import choice
 import numpy
 
 alpha = ["A", "C", "G", "T"]
-probs = [0.25] * len(alpha)
-
+#probs = [0.25] * len(alpha)
+probs = [0.4, 0.1, 0.1, 0.4]
 
 
 def common_ancestor(n):

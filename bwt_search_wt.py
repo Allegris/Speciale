@@ -1,5 +1,4 @@
 import skew
-import wavelet_tree_level_order as lo
 import wavelet_tree_level_order_pointers as lop
 from shared import get_alphabet
 import tracemalloc
@@ -54,22 +53,7 @@ def construct_C_dict(x):
 '''
 Pattern match using wavelet tree of BWT(x)
 '''
-def bw_search(p, n, sa, C, wt, ranks, codes):
-	L, R = 0, n # keeping n as arg, because SA will be changed to sparse, so cannot use n = len(sa)
-	for c in reversed(p):
-		if L < R:
-			L = C[c] + lo.rank_query(wt, n, ranks, codes, c, L)
-			R = C[c] + lo.rank_query(wt, n, ranks, codes, c, R)
-		else:
-			break
-	matches = [sa[i] for i in range(L, R)]
-	return sorted(matches)
-
-
-'''
-Pattern match using wavelet tree of BWT(x)
-'''
-def bw_search2(p, n, sa, C, wt, pointers, ranks, codes):
+def bw_search(p, n, sa, C, wt, pointers, ranks, codes):
 	L, R = 0, n # keeping n as arg, because SA will be changed to sparse, so cannot use n = len(sa)
 	for c in reversed(p):
 		if L < R:

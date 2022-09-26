@@ -1,0 +1,96 @@
+________________________________________
+
+Lorem ipsum string
+~11 mio chars
+
+CURRENT
+Node 172826263 
+Lvl. 172964671 
+Ohe. 815052811 
+
+PEAK
+Node 197038135 
+Lvl. 172965917 
+Ohe. 815053118 
+
+________________________________________
+
+Random DNA string (A,C,G,T)
+10 mio chars
+
+CURRENT
+Node 67537328
+Lvl. 67455616
+Ohe. 68945308
+
+PEAK
+Node 82534849
+Lvl. 68080735
+Ohe. 68945615 
+
+________________________________________
+
+DNA, probs: A: 0.3, T: 0.3, C: 0.2, T: 0.2
+10 mio chars
+
+CURRENT
+Node 67576540
+Lvl. 67455616
+Ohe. 68945196 
+
+PEAK
+Node 82576821 
+Lvl. 68081080
+Ohe. 68945503
+
+________________________________________
+
+DNA, probs: A: 0.4, T: 0.4, C: 0.1, T: 0.1
+10 mio chars
+
+CURRENT
+Node 61605700
+Lvl. 61514876 
+Ohe. 68941592 
+
+PEAK
+Node 79609300
+Lvl. 61765740
+Ohe. 68941899
+
+________________________________________
+
+x = "a" * 1000000 + "b" * 1000000 + "c" * 100000 + "d" * 100000 + "efghi"
+
+CURRENT
+Node 10832501 
+Lvl. 10834245 
+Ohe. 15904250 
+
+PEAK
+Node 14533523
+Lvl. 10847014 
+Ohe. 15904585 
+
+________________________________________
+
+x = "a" * 10000000 + "bcdefghijklmnopqrstuvwxyz"
+
+CURRENT
+Node 21112498 
+Lvl. 21155150
+Ohe. 143970413 
+PEAK
+
+Node 31113674 
+Lvl. 22403944 
+Ohe. 143970748 
+________________________________________
+
+Conclusions:
+Big alphabet => do not use OHE.
+Random DNA strings => all approx the same, but Node higher peak.
+DNA strings, non-random => the bitvectors we store will be shorter => OHE is worse on current, but Node is still worst on peak.
+
+
+

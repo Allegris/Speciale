@@ -190,7 +190,7 @@ def node_rank_lookup(bitvector, ranks, c, i):
 # Code to run
 ########################################################
 
-
+'''
 #x = "mississippialphaaaaaiiiiiiiiiiiiiiipppppppppppppabcdefghijklmnopqrstuvwxyzøæåjkfadnkcdnoeuhritnodhnijsbdakflne"
 #x = "mississippialpha"
 x = "mississippi"
@@ -204,4 +204,4 @@ print(wt)
 ranks = preprocess_all_tree_node_ranks(wt, n, child_dict)
 print(ranks)
 #print(rank_query(wt, n, child_dict, ranks, codes, "s", 4))
-
+'''

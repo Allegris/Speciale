@@ -22,11 +22,10 @@ Inputs are:
 	n = length of x
 	alpha: alphabet
 '''
-def one_hot_encoding(x, alpha):
-	n = len(x)
+def one_hot_encoding(x):
 	# Initiate dict {letter: bitarray} of all zeros
 	# e.g., {'$': bitarray('000000000000'), 'i': bitarray('000000000000'), ...}
-	d = {char: bitarray(n) for char in alpha}
+	d = {char: bitarray(len(x)) for char in get_alphabet(x)}
 	for bv in d.values():
 		bv.setall(0)
 	# Set bits corresponding to chars in x
@@ -59,8 +58,8 @@ Inputs are:
 	 n: length of x
 	 alpha: alphabet
 '''
-def preprocess_ranks(d, n, alpha):
-	ranks = {char: [] for char in alpha}
+def preprocess_ranks(d, n):
+	ranks = {char: [] for char in d.keys()}
 	word_size = floor(log2(n))
 	for char in d.keys():
 		# Iterate over the words

@@ -31,7 +31,7 @@ def construct_O(x, sa, n_to_l):
 	return O
 
 '''
-Patterb natch for p in x (x: implicitly as sa, n, C, O, and l_to_n)
+Pattern natch for p in x (x: implicitly as sa, n, C, O, and l_to_n)
 '''
 def bw_search(p, sa, C, O, l_to_n):
 	# Init L and R

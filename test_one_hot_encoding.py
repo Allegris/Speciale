@@ -11,9 +11,8 @@ tracemalloc.start()
 # Words "mis sis sip pi$"
 x = "mississippi$"
 n = len(x)
-alpha = get_alphabet(x) #["$", "i", "m", "p", "s"]
-d = bv.one_hot_encoding(x, alpha)
-ranks = bv.preprocess_ranks(d, n, alpha)
+d = bv.one_hot_encoding(x)
+ranks = bv.preprocess_ranks(d, n)
 
 
 def test_mississippi_m_0():
@@ -56,8 +55,8 @@ def test_mississippi_s_6():
 # Words "mis sis sip pii $" (the rank of last non-full word is not calculated - must scan)
 x2 = "mississippii$"
 n2 = len(x2)
-d2 = bv.one_hot_encoding(x2, alpha)
-ranks2 = bv.preprocess_ranks(d2, n2, alpha)
+d2 = bv.one_hot_encoding(x2)
+ranks2 = bv.preprocess_ranks(d2, n2)
 
 def test_mississippii_sentinel_13():
 	assert bv.rank_query(ranks2, d2, n2, "$", 13) == 1
@@ -81,9 +80,8 @@ def test_mississippii_i_9():
 
 dna = "AGTCCTGAANCTGAGCCTTNAGG"
 dna_n = len(dna)
-dna_alpha = get_alphabet(dna) #["A", "C", "G", "N", "T"]
-dna_d = bv.one_hot_encoding(dna, dna_alpha)
-dna_ranks = bv.preprocess_ranks(dna_d, dna_n, dna_alpha)
+dna_d = bv.one_hot_encoding(dna)
+dna_ranks = bv.preprocess_ranks(dna_d, dna_n)
 
 def test_dna_a_0():
 	assert bv.rank_query(dna_ranks, dna_d, dna_n, "A", 0) == 0
@@ -112,9 +110,8 @@ def test_dna_C_5():
 
 big = "ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ123456789"
 big_n = len(big)
-big_alpha = get_alphabet(big) #["A", "C", "G", "N", "T"]
-big_d = bv.one_hot_encoding(big, big_alpha)
-big_ranks = bv.preprocess_ranks(big_d, big_n, big_alpha)
+big_d = bv.one_hot_encoding(big)
+big_ranks = bv.preprocess_ranks(big_d, big_n)
 
 
 def test_big_a_0():
