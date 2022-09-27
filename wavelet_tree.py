@@ -45,7 +45,6 @@ def rank_query(root, c, i):
 	node = root
 	rank = i # Current rank
 	for char in code:
-		#rank = node.rank_lookup(char, rank)
 		rank = bitvector_rank(node.bitvector, node.word_ranks[char], char, rank)
 		node = node.left_child if char == 0 else node.right_child
 	return rank

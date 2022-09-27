@@ -3,18 +3,22 @@ from bitarray.util import canonical_huffman#, huffman_code
 from math import floor, log2
 
 '''
-Returns a lex sorted list of the letters of x
+Returns a lex sorted list of the letters of string x.
 '''
 def get_alphabet(x):
 	letters = ''.join(set(x))
 	return sorted(letters)
 
-
+'''
+Returns the size of the alphabet of string x.
+'''
 def alphabet_size(x):
 	letters = ''.join(set(x))
 	return len(letters)
 
-
+'''
+Returns a dict {letter: count} of the counts of the letters in x.
+'''
 def letter_count(x):
 	alpha = get_alphabet(x)
 	# Map between letters and ints
@@ -23,27 +27,18 @@ def letter_count(x):
 		counts[char] += 1
 	return counts
 
-
+'''
+Returns the Huffman codes of the alphabet of x, depending on the letter counts.
+E.g., for x = "mississippi", it returns:
+{'i': bitarray('0'),
+ 's': bitarray('10'),
+ 'm': bitarray('110'),
+ 'p': bitarray('111')}
+'''
 def huffman_codes(x):
 	count = letter_count(x)
 	codes, _, _ = canonical_huffman(count)
 	return codes
-
-
-'''
-Finds the rank of a char c and an index i in a bitvector,
-by looking up in the word ranks and scanning the bits in the bitvector.
-'''
-def bitvector_rank(bitvector, word_ranks, c, i):
-	word_size = floor(log2(len(bitvector)))
-	word_no = (i // word_size)
-	# Scan
-	scan_len = i % word_size
-	scan_start = word_no * word_size
-	scan_end = scan_start + scan_len
-	# Look-up and scan (scan length may be 0)
-	#return word_ranks[c][word_no] + bitvector[scan_start:scan_end].count(c)
-	return word_ranks[word_no] + bitvector[scan_start:scan_end].count(c)
 
 
 '''
@@ -58,11 +53,22 @@ def preprocess_node_word_ranks(bitvector):
 	word_size = floor(log2(len(bitvector)))
 	for i in range(len(bitvector) // word_size): # Iterate words
 		word = bitvector[i*word_size: (i+1)*word_size]
-		# Zeros
-		ranks[0].append(ranks[0][i] + word.count(0))
-		# Ones
-		ranks[1].append(ranks[1][i] + word.count(1))
+		ranks[0].append(ranks[0][i] + word.count(0)) # Zeros
+		ranks[1].append(ranks[1][i] + word.count(1)) # Ones
 	return ranks
+
+'''
+Finds the rank of a char c and an index i in a bitvector,
+by looking up in the word ranks and scanning the bits in the bitvector.
+'''
+def bitvector_rank(bitvector, word_ranks, c, i):
+	word_size = floor(log2(len(bitvector)))
+	word_no = (i // word_size)
+	scan_len = i % word_size
+	scan_start = word_no * word_size
+	scan_end = scan_start + scan_len
+	# Look-up and scan (scan length may be 0)
+	return word_ranks[word_no] + bitvector[scan_start:scan_end].count(c)
 
 
 '''

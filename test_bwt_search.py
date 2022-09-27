@@ -23,7 +23,7 @@ codes = huffman_codes(x)
 # BW search with wavelet tree rank query (level order wt with pointers)
 codes2 = huffman_codes(bwt_x)
 wt2, pointers = lop.wavelet_tree(bwt_x, codes2)
-ranks2 = lop.preprocess_all_tree_node_ranks(wt2, len(bwt_x), pointers)
+ranks2 = lop.all_node_ranks(wt2, len(bwt_x), pointers)
 
 def test_AACGTAAACGTAAC_AAC():
 	p = "AAC"

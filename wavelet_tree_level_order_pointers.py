@@ -85,7 +85,7 @@ Returns a dict {idx: {0: [], 1: []}} where the lists contain the word ranks
 for 0 and 1, respectively. Idx is the starting index of the "node" in the
 bitvector for the entire wavelet tree, wt.
 '''
-def preprocess_all_tree_node_ranks(wt, n, child_dict):
+def all_node_ranks(wt, n, child_dict):
 	ranks = {idx: {0: [0], 1: [0]} for idx in child_dict.keys()}
 	ranks[0] = preprocess_node_word_ranks(wt[0:n]) # Root ranks
 	# Iterate over nodes
@@ -124,7 +124,7 @@ def rank_query(wt, n, child_dict, ranks, codes, c, i):
 x = "mississippi"
 codes = huffman_codes(x)
 wt, child_dict = wavelet_tree(x, codes)
-ranks = preprocess_all_tree_node_ranks(wt, len(x), child_dict)
+ranks = all_node_ranks(wt, len(x), child_dict)
 
 #print(wt)
 #print(child_dict)
