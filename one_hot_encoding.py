@@ -7,7 +7,6 @@ from shared import get_alphabet, bitvector_rank
 # Construct one hot encoding
 ########################################################
 
-
 '''
 Returns a dict {letter: bitarray} where the set bits correspond to the places
 where the given letter appear in string x. E.g., for x = "mississippi$", it returns:
@@ -31,7 +30,6 @@ def one_hot_encoding(x):
 ########################################################
 # Preprocess ranks for one hot encoding
 ########################################################
-
 
 '''
 Returns a dict {letter: [word_ranks]} where the list contains the rank of each
@@ -66,7 +64,6 @@ def preprocess_ranks(ohe, n):
 # Rank query for one hot encoding
 ########################################################
 
-
 '''
 Returns the rank of a given letter and index in string x.
 
@@ -81,6 +78,7 @@ Inputs are:
 def rank_query(ohe, ranks, c, i):
 	# We query 1s in bitvector for c (set bits)
 	return bitvector_rank(ohe[c], ranks[c], 1, i)
+
 
 ########################################################
 # Code to run

@@ -1,3 +1,4 @@
+from bitarray import bitarray
 from bitarray.util import canonical_huffman#, huffman_code
 from math import floor, log2
 
@@ -8,9 +9,11 @@ def get_alphabet(x):
 	letters = ''.join(set(x))
 	return sorted(letters)
 
+
 def alphabet_size(x):
 	letters = ''.join(set(x))
 	return len(letters)
+
 
 def letter_count(x):
 	alpha = get_alphabet(x)
@@ -20,11 +23,11 @@ def letter_count(x):
 		counts[char] += 1
 	return counts
 
+
 def huffman_codes(x):
 	count = letter_count(x)
 	codes, _, _ = canonical_huffman(count)
 	return codes
-
 
 
 '''
@@ -62,7 +65,31 @@ def preprocess_node_word_ranks(bitvector):
 	return ranks
 
 
+'''
+Encodes string s using Huffman encoding in codes (index level in each code).
 
+Returns:
+	bin_s: The binary representation of s
+	s0: The part of s that corresponds to 0s
+	s1: The part of s that corresponds to 1s
+
+E.g., for s = "mississippi" at level 0, it returns:
+	1) bitarray('00110110110') miiii sssspp
+'''
+def split_node(s, codes, level):
+	alpha = get_alphabet(s)
+	d = {letter: codes[letter][level] for letter in alpha}
+	# Binary representation of s
+	bin_s = bitarray()
+	# The part of s corresponding to zeros and ones, respectively
+	s0, s1 = "", ""
+	for char in s:
+		bin_s.append(d[char])
+		if d[char] == 0:
+			s0 += char
+		else:
+			s1 += char
+	return bin_s, s0, s1
 
 
 
