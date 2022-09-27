@@ -1,6 +1,6 @@
 from bitarray import bitarray
 from math import log2, floor
-from shared import get_alphabet
+from shared import get_alphabet, bitvector_rank
 
 
 ########################################################
@@ -25,14 +25,14 @@ Inputs are:
 def one_hot_encoding(x):
 	# Initiate dict {letter: bitarray} of all zeros
 	# e.g., {'$': bitarray('000000000000'), 'i': bitarray('000000000000'), ...}
-	d = {char: bitarray(len(x)) for char in get_alphabet(x)}
-	for bv in d.values():
+	ohe = {char: bitarray(len(x)) for char in get_alphabet(x)}
+	for bv in ohe.values():
 		bv.setall(0)
 	# Set bits corresponding to chars in x
 	# e.g. {'$': bitarray('000000000001'), 'i': bitarray('010010010010'), ...}
 	for i, char in enumerate(x):
-		d[char][i] = 1
-	return d
+		ohe[char][i] = 1
+	return ohe
 
 
 ########################################################
@@ -58,18 +58,15 @@ Inputs are:
 	 n: length of x
 	 alpha: alphabet
 '''
-def preprocess_ranks(d, n):
-	ranks = {char: [] for char in d.keys()}
+def preprocess_ranks(ohe, n):
+	ranks = {char: [0] for char in ohe.keys()}
 	word_size = floor(log2(n))
-	for char in d.keys():
+	for char in ohe.keys():
 		# Iterate over the words
 		for i in range(n // word_size):
 			# Rank of this word
-			count = d[char][i*word_size : (i+1)*word_size].count(1)
-			if i == 0:
-				ranks[char].append(count)
-			else: # Last word rank + this word rank
-				ranks[char].append(ranks[char][i-1] + count)
+			count = ohe[char][i*word_size : (i+1)*word_size].count(1)
+			ranks[char].append(ranks[char][i] + count)
 	return ranks
 
 
@@ -90,7 +87,7 @@ Inputs are:
 	 c: query letter
 	 i: query index
 '''
-def rank_query(ranks, d, n, c, i):
+def old_rank_query(ranks, d, n, c, i):
 	word_size = floor(log2(n))
 	word_no = (i // word_size)
 	scan_len = i % word_size
@@ -106,6 +103,9 @@ def rank_query(ranks, d, n, c, i):
 		end = start + scan_len
 		return ranks[c][word_no - 1] + d[c][start:end].count(1)
 
+
+def rank_query(ohe, ranks, c, i):
+	return bitvector_rank(ohe[c], ranks[c], 1, i)
 
 ########################################################
 # Code to run
