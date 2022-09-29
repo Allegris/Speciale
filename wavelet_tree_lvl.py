@@ -33,12 +33,12 @@ def wavelet_tree(x, codes):
 	wt_bitvector = bitarray()
 	child_dict = {} # {parent_idx: {'left': left_idx, 'right': right_idx}}
 	# Queue of inner nodes - s.t. we run through them in level order
-	q = [(x, 0, 0)] # (string, idx, level)
+	inner_nodes = [(x, 0, 0)] # (string, idx, level)
 	# The indices of inner nodes should be corrected for the number
 	# of leaf chars that we encounter, so store this
 	leaf_chars = 0
-	while q:
-		s, idx, level = q.pop(0)
+	while inner_nodes:
+		s, idx, level = inner_nodes.pop(0)
 		s_bitvector, s0, s1 = split_node(s, codes, level)
 		wt_bitvector += s_bitvector
 		child_dict[idx] = {"left": (None, None), "right": (None, None)}
@@ -46,14 +46,14 @@ def wavelet_tree(x, codes):
 		if alphabet_size(s0) > 1:
 			i, j = left_child(s_bitvector, idx+len(x)-leaf_chars)
 			child_dict[idx]["left"] = (i, j)
-			q.append((s0, i, level+1))
+			inner_nodes.append((s0, i, level+1))
 		else: # If left child is a leaf
 			leaf_chars += len(s0)
 		# If right child is an inner node
 		if alphabet_size(s1) > 1:
 			i, j = right_child(s_bitvector, idx+len(x)-leaf_chars)
 			child_dict[idx]["right"] = (i, j)
-			q.append((s1, i, level+1))
+			inner_nodes.append((s1, i, level+1))
 		else: # If right child is a leaf
 			leaf_chars += len(s1)
 	return wt_bitvector, child_dict
@@ -104,12 +104,13 @@ def all_node_ranks(wt, n, child_dict):
 Rank query using a wavelet tree in level order.
 '''
 def rank_query(wt, n, child_dict, ranks, codes, c, i):
-	code = codes[c]
+	# Current node, (L, R), and rank
 	L, R = 0, n
-	rank = i # Current rank
-	for char in code:
+	rank = i
+	# Iterate chars in code
+	for char in codes[c]:
+		# Update rank and node
 		rank = bitvector_rank(wt[L:R], ranks[L][char], char, rank)
-		# Update L, R depending on char
 		L, R = child_dict[L]["right"] if char else child_dict[L]["left"]
 	return rank
 
