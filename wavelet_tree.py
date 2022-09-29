@@ -1,5 +1,4 @@
-from shared import letter_count, alphabet_size, bitvector_rank, preprocess_node_word_ranks, split_node
-from bitarray.util import canonical_huffman
+from shared import alphabet_size, bitvector_rank, preprocess_node_word_ranks, split_node, huffman_codes
 
 
 ########################################################
@@ -8,26 +7,23 @@ from bitarray.util import canonical_huffman
 
 class WaveletTreeNode:
 	def __init__(self, s, level, root):
-		if level == 0: # If is root
+		# Root pointer and store codes at root
+		if level == 0:
 			self.root = self
-			self.codes, _, _ = canonical_huffman(letter_count(s))
+			self.codes = huffman_codes(s)
 		else:
 			self.root = root
-
-		# Encode s and split s in two parts (child nodes)
-		bin_s, s0, s1 = split_node(s, self.root.codes, level)
-
-		# Set bitvector and preprocess ranks
-		self.bitvector = bin_s
+		# Construct bitvector and split s in two parts (child nodes)
+		self.bitvector, s0, s1 = split_node(s, self.root.codes, level)
+		# Preprocess ranks
 		self.word_ranks = preprocess_node_word_ranks(self.bitvector)
-
 		# Create children
 		self.left_child, self.right_child = None, None
-		# Left child
-		if alphabet_size(s0) > 1: # If left child is inner node
+		# If left child is an inner node
+		if alphabet_size(s0) > 1:
 			self.left_child = WaveletTreeNode(s0, level+1, self.root)
-		# Right child
-		if alphabet_size(s1) > 1: # If right child is inner node
+		# If right child is an inner node
+		if alphabet_size(s1) > 1:
 			self.right_child = WaveletTreeNode(s1, level+1, self.root)
 
 
@@ -41,12 +37,14 @@ Iterates a wavelet tree, starting from the root, and returns the rank of a
 given char c and a given index i.
 '''
 def rank_query(root, c, i):
-	code = root.codes[c]
+	# Current node and rank
 	node = root
-	rank = i # Current rank
-	for char in code:
+	rank = i
+	# Iterate chars in code
+	for char in root.codes[c]:
+		# Update rank and node
 		rank = bitvector_rank(node.bitvector, node.word_ranks[char], char, rank)
-		node = node.left_child if char == 0 else node.right_child
+		node = node.right_child if char else node.left_child
 	return rank
 
 

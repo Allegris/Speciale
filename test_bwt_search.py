@@ -1,6 +1,6 @@
 import bwt_search as bw
 import bwt_search_wt as bwt_wt
-import wavelet_tree_level_order_pointers as lop
+import wavelet_tree_lvl as lop
 from shared import huffman_codes
 
 

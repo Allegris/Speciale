@@ -29,8 +29,9 @@ bitarray('101101101101000011011')
 
 '''
 def wavelet_tree(x, codes):
-	wt = bitarray()
-	child_dict = {}
+	# Implicit tree: bitvector and child dict
+	wt_bitvector = bitarray()
+	child_dict = {} # {parent_idx: {'left': left_idx, 'right': right_idx}}
 	# Queue of inner nodes - s.t. we run through them in level order
 	q = [(x, 0, 0)] # (string, idx, level)
 	# The indices of inner nodes should be corrected for the number
@@ -38,25 +39,24 @@ def wavelet_tree(x, codes):
 	leaf_chars = 0
 	while q:
 		s, idx, level = q.pop(0)
-		bin_s, s0, s1 = split_node(s, codes, level)
-		if alphabet_size(s) > 1: # If s is an inner node
-			wt += bin_s
-			child_dict[idx] = {"left": (None, None), "right": (None, None)}
-		# Left Child
-		if alphabet_size(s0) > 1: # If left child is an inner node
-			i, j = left_child(bin_s, idx+len(x)-leaf_chars)
+		s_bitvector, s0, s1 = split_node(s, codes, level)
+		wt_bitvector += s_bitvector
+		child_dict[idx] = {"left": (None, None), "right": (None, None)}
+		# If left child is an inner node
+		if alphabet_size(s0) > 1:
+			i, j = left_child(s_bitvector, idx+len(x)-leaf_chars)
 			child_dict[idx]["left"] = (i, j)
 			q.append((s0, i, level+1))
 		else: # If left child is a leaf
 			leaf_chars += len(s0)
-		# Right child
-		if alphabet_size(s1) > 1:  # If right child is an inner node
-			i, j = right_child(bin_s, idx+len(x)-leaf_chars)
+		# If right child is an inner node
+		if alphabet_size(s1) > 1:
+			i, j = right_child(s_bitvector, idx+len(x)-leaf_chars)
 			child_dict[idx]["right"] = (i, j)
 			q.append((s1, i, level+1))
 		else: # If right child is a leaf
 			leaf_chars += len(s1)
-	return wt, child_dict
+	return wt_bitvector, child_dict
 
 
 '''

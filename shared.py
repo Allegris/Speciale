@@ -1,6 +1,7 @@
 from bitarray import bitarray
 from bitarray.util import canonical_huffman#, huffman_code
 from math import floor, log2
+import sys
 
 '''
 Returns a lex sorted list of the letters of string x.
@@ -98,9 +99,21 @@ def split_node(s, codes, level):
 	return bin_s, s0, s1
 
 
+'''
+#codes = huffman_codes("ABCDEFG")
 
+alfa = ["A","C","G","T","$"]
 
+codes = [bitarray('0'), bitarray('100'), bitarray('101'), bitarray('110'), bitarray('111')]
 
+b = huffman_codes("ACTAGA$") #alfa
+
+bv = bitarray('0000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000111111111111111111111000000000001')
+
+print(sys.getsizeof(b))
+
+#print(huffman_codes("ACTAGA$"))
+'''
 
 
 

@@ -17,7 +17,7 @@ where the given letter appear in string x. E.g., for x = "mississippi$", it retu
  's': bitarray('001101100000')}
 '''
 def one_hot_encoding(x):
-	# Initiate dict {letter: bitarray} of all zeros
+	# Initiate dict {letter: bitarray}, bitarray is all zeros
 	ohe = {char: bitarray(len(x)) for char in get_alphabet(x)}
 	for bv in ohe.values():
 		bv.setall(0)
