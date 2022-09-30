@@ -72,7 +72,8 @@ def size_of_tree(root):
 
 
 #x = "mississippialpha"
-x = "mississippi"
+#x = "mississippi"
+x = "ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ123456789"
 wt_root = WaveletTreeNode(x, 0, None) # x, level, root
 #print(wt_root.__dict__)
 #print(wt_root.word_ranks)

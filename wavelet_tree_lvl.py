@@ -126,7 +126,8 @@ def size_of_tree(codes, wt, child_dict, ranks):
 
 #x = "mississippialphaaaaaiiiiiiiiiiiiiiipppppppppppppabcdefghijklmnopqrstuvwxyzøæåjkfadnkcdnoeuhritnodhnijsbdakflne"
 #x = "mississippialpha"
-x = "mississippi"
+#x = "mississippi"
+x = "ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ123456789"
 codes = huffman_codes(x)
 wt, child_dict = wavelet_tree(x, codes)
 ranks = all_node_ranks(wt, len(x), child_dict)

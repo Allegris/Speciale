@@ -1,7 +1,7 @@
 from bitarray import bitarray
 from math import log2, floor
 from shared import get_alphabet, bitvector_rank
-
+import sys
 
 ########################################################
 # Construct one hot encoding
@@ -85,11 +85,16 @@ def rank_query(ohe, ranks, c, i):
 ########################################################
 
 
-'''
-x = "mississippi$"
+def size_of_encoding(ohe, ranks):
+	return sys.getsizeof(ohe) + sys.getsizeof(ranks)
+
+
+#x = "mississippi$"
+x = "ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ123456789" #+ "A"*10000 + "B"*10000
 ohe = one_hot_encoding(x)
 ranks = preprocess_ranks(ohe, len(x))
-print(rank_query(ohe, ranks, "i", 6))
-'''
+print(size_of_encoding(ohe, ranks))
+#print(rank_query(ohe, ranks, "i", 6))
+
 
 
