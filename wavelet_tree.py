@@ -51,19 +51,30 @@ def rank_query(root, c, i):
 ########################################################
 # Code to run
 ########################################################
-
+'''
 def size_of_tree(root):
 	s = 0
 	s += sys.getsizeof(root.codes)
 	q = [root]
 	while q:
-		node = q.pop(0)
-		#s += sys.getsizeof(node)
+		node = q.pop()
+		s += sys.getsizeof(node)
 		s += sys.getsizeof(node.bitvector)
 		s += sys.getsizeof(node.word_ranks)
 		s += sys.getsizeof(node.root)
-		s += sys.getsizeof(node.left_child)
-		s += sys.getsizeof(node.right_child)
+		if node.left_child:
+			q.append(node.left_child)
+		if node.right_child:
+			q.append(node.right_child)
+	return s
+
+def old_size_of_tree(root):
+	s = 0
+	s += sys.getsizeof(root.codes)
+	q = [root]
+	while q:
+		node = q.pop(0)
+		s += sys.getsizeof(node.__dict__)
 		if node.left_child:
 			q.append(node.left_child)
 		if node.right_child:
@@ -76,11 +87,12 @@ def size_of_tree(root):
 x = "ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ123456789"
 wt_root = WaveletTreeNode(x, 0, None) # x, level, root
 #print(wt_root.__dict__)
+#print(wt_root.right_child.__dict__)
 #print(wt_root.word_ranks)
 #print(rank_query(wt_root, "i", 8))
 
 
 print(size_of_tree(wt_root))
 
-
+'''
 

@@ -131,9 +131,23 @@ x = "ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ123456789"
 codes = huffman_codes(x)
 wt, child_dict = wavelet_tree(x, codes)
 ranks = all_node_ranks(wt, len(x), child_dict)
-
+'''
 print(size_of_tree(codes, wt, child_dict, ranks))
 
+def get_size(obj):
+	seen = {id(obj)}
+	size = 0
+	def f(x):
+		nonlocal size
+		size += sys.getsizeof(obj)
+		for y in x.__dict__.values():
+			if id(y) not in seen:
+				f(y)
+	f(obj)
+	return size
+
+print(get_size(ranks))
+'''
 #print(wt)
 #print(child_dict)
 #print(codes)

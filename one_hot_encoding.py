@@ -83,7 +83,7 @@ def rank_query(ohe, ranks, c, i):
 ########################################################
 # Code to run
 ########################################################
-
+'''
 
 def size_of_encoding(ohe, ranks):
 	return sys.getsizeof(ohe) + sys.getsizeof(ranks)
@@ -96,5 +96,5 @@ ranks = preprocess_ranks(ohe, len(x))
 print(size_of_encoding(ohe, ranks))
 #print(rank_query(ohe, ranks, "i", 6))
 
-
+'''
 
