@@ -1,5 +1,5 @@
 from shared import alphabet_size, bitvector_rank, preprocess_node_word_ranks, split_node, huffman_codes
-
+import sys
 
 ########################################################
 # Classes for wavelet tree internal nodes
@@ -52,12 +52,34 @@ def rank_query(root, c, i):
 # Code to run
 ########################################################
 
+def size_of_tree(root):
+	s = 0
+	s += sys.getsizeof(root.codes)
+	q = [root]
+	while q:
+		node = q.pop(0)
+		#s += sys.getsizeof(node)
+		s += sys.getsizeof(node.bitvector)
+		s += sys.getsizeof(node.word_ranks)
+		s += sys.getsizeof(node.root)
+		s += sys.getsizeof(node.left_child)
+		s += sys.getsizeof(node.right_child)
+		if node.left_child:
+			q.append(node.left_child)
+		if node.right_child:
+			q.append(node.right_child)
+	return s
 
-'''
+
 #x = "mississippialpha"
 x = "mississippi"
 wt_root = WaveletTreeNode(x, 0, None) # x, level, root
-print(wt_root.__dict__)
+#print(wt_root.__dict__)
 #print(wt_root.word_ranks)
 #print(rank_query(wt_root, "i", 8))
-'''
+
+
+print(size_of_tree(wt_root))
+
+
+
