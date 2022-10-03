@@ -1,5 +1,5 @@
 from wavelet_tree_lvl import rank_query
-from shared import get_alphabet
+from shared import get_alphabet, letter_count
 #from shared_bwt import construct_sparse_sa, bwt, construct_skew
 
 
@@ -12,27 +12,14 @@ Construct C table as a dict {letter: start_idx_of_letter_block}
 '''
 def construct_C_dict(x):
 	alpha = get_alphabet(x)
-	# Map between letters and ints
-	letter_to_int = {}
-	int_to_letter = {}
-	for i in range(len(alpha)):
-		letter_to_int[alpha[i]] = i
-		int_to_letter[i] = alpha[i]
-	# Count chars in x
-	counts = [0] * len(alpha)
-	for char in x:
-		counts[letter_to_int[char]] += 1
-	# Cumulated counts
-	cum_counts = [0] * len(alpha)
-	val = 0
-	for i in range(len(counts)):
-		cum_counts[i] = val
-		val += counts[i]
-	# Put cumulated counts into dict: {letter: start_idx_of_letter_block}
-	d = {letter: 0 for letter in alpha}
-	for i, val in enumerate(cum_counts):
-		d[int_to_letter[i]] = val
-	return d
+	counts = letter_count(x)
+	letter_offsets = {}
+	letter_offsets[alpha[0]] = 0
+	offset = counts[alpha[0]]
+	for letter in alpha[1:]:
+		letter_offsets[letter] = offset
+		offset += counts[letter]
+	return letter_offsets
 
 
 '''
