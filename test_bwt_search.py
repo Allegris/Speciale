@@ -20,7 +20,7 @@ O = bwt_O.construct_O(x, sa, num_to_letter_dict)
 
 # BW search with wavelet tree rank query (level order wt)
 bwt_x = bwt(x, sa)
-C_dict = bwt_wt.construct_C_dict(x)
+C_dict = bwt_wt.construct_C(x)
 codes = huffman_codes(x)
 
 # BW search with wavelet tree rank query (level order wt with pointers)

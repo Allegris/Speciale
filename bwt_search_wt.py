@@ -10,16 +10,16 @@ from shared import get_alphabet, letter_count
 '''
 Construct C table as a dict {letter: start_idx_of_letter_block}
 '''
-def construct_C_dict(x):
+def construct_C(x):
 	alpha = get_alphabet(x)
 	counts = letter_count(x)
-	letter_offsets = {}
-	letter_offsets[alpha[0]] = 0
+	C = {}
+	C[alpha[0]] = 0 # first letter has idx 0
 	offset = counts[alpha[0]]
 	for letter in alpha[1:]:
-		letter_offsets[letter] = offset
+		C[letter] = offset
 		offset += counts[letter]
-	return letter_offsets
+	return C
 
 
 '''
