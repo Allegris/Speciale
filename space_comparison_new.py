@@ -5,7 +5,7 @@ import wavelet_tree_lvl as wt_lvl
 from shared import huffman_codes
 
 def get_size(obj, seen=None):
-    """Recursively finds size of objects"""
+    # Recursively find size of objects
     size = sys.getsizeof(obj)
     if seen is None:
         seen = set()
@@ -23,6 +23,7 @@ def get_size(obj, seen=None):
     elif hasattr(obj, '__iter__') and not isinstance(obj, (str, bytes, bytearray)):
         size += sum([get_size(i, seen) for i in obj])
     return size
+
 
 
 #x = "mississippi$" #"ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ123456789" #+ "A"*10000 + "B"*10000
@@ -45,3 +46,11 @@ wt, child_dict = wt_lvl.wavelet_tree(x, codes)
 ranks = wt_lvl.all_node_ranks(wt, len(x), child_dict)
 wt_lvl_size = get_size(codes) + get_size(wt) + get_size(child_dict) + get_size(ranks)
 print("Size of WT lvl:", wt_lvl_size)
+
+
+
+
+
+
+
+

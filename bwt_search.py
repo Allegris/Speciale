@@ -88,11 +88,33 @@ def construct_sa_slow(x):
 	sa = [len(x)-len(y) for y in suffixes_sorted]
 	return sa
 
+def construct_sparse_sa(x, k):
+	sa = construct_sa_skew(x)
+	print(sa)
+	#idcs = [i for i in range(0, len(x), k)]
+	#sparse_sa = {i: None for i in range(0, len(x), k)}
+	#sparse_sa = {}
+	sparse_sa = []
+	for idx, val in enumerate(sa):
+		if val % k == 0:
+			#sparse_sa[idx] = val
+			sparse_sa.append(idx)
+	return sparse_sa, k
+
+def lookup_sparse_sa(sparse_sa, k, i):
+	idx = sparse_sa.index(i)
+	return idx*k
 
 
 ########################################################
 # Code to run
 ########################################################
+
+print(construct_sparse_sa("0123456789012345678901234", 12))
+
+sparse_sa, k = construct_sparse_sa("0123456789012345678901234", 12)
+
+print(lookup_sparse_sa(sparse_sa, k, 12))
 
 '''
 tracemalloc.start()
