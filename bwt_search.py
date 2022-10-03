@@ -1,6 +1,6 @@
 import numpy as np
 from shared import get_alphabet
-from shared_bwt import lookup_sparse_sa#, bwt, construct_sa_skew, construct_sparse_sa
+#from shared_bwt import bwt, construct_sa_skew, construct_sparse_sa
 
 ########################################################
 # BW search with C and O tables
@@ -28,6 +28,21 @@ def construct_O(x, sa, n_to_l):
 			O[r, c] = O[r, c-1] + (x[sa[c-1]-1] == a)
 	return O
 
+
+'''
+Finds the SA value for index i, using the sparse SA.
+'''
+def lookup_sparse_sa(sparse_sa, i, bwt_x, C, O, l_to_n):
+	idx = i
+	steps = 0
+	while idx not in sparse_sa.keys():
+		c = bwt_x[idx]
+		a = l_to_n[c]
+		idx = C[a] + O[a, idx]
+		steps += 1
+	return sparse_sa[idx] + steps
+
+
 '''
 Pattern natch for p in x (x: implicitly as sa, n, C, O, and l_to_n)
 '''
@@ -44,7 +59,7 @@ def bw_search(bwt_x, p, sparse_sa, C, O, l_to_n):
 			break
 	# Find and return corresponding match indices
 	#matches = [sa[i] for i in range(L, R)]
-	matches = [lookup_sparse_sa(sparse_sa, i, C, O, l_to_n, bwt_x) for i in range(L, R)]
+	matches = [lookup_sparse_sa(sparse_sa, i, bwt_x, C, O, l_to_n, ) for i in range(L, R)]
 	return sorted(matches)
 
 

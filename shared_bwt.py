@@ -41,15 +41,3 @@ def construct_sparse_sa(sa, k):
 			sparse_sa[idx] = val
 	return sparse_sa
 
-'''
-Finds the SA value for index i, using the sparse SA.
-'''
-def lookup_sparse_sa(sparse_sa, i, C, O, l_to_n, bwt_x):
-	idx = i
-	steps = 0
-	while idx not in sparse_sa.keys():
-		c = bwt_x[idx]
-		a = l_to_n[c]
-		idx = C[a] + O[a, idx]
-		steps += 1
-	return sparse_sa[idx] + steps
