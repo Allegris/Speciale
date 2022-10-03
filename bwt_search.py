@@ -1,8 +1,6 @@
-import skew
 import numpy as np
 from shared import get_alphabet
-import tracemalloc
-
+from shared_bwt import lookup_sparse_sa#, bwt, construct_sa_skew, construct_sparse_sa
 
 ########################################################
 # BW search with C and O tables
@@ -33,9 +31,9 @@ def construct_O(x, sa, n_to_l):
 '''
 Pattern natch for p in x (x: implicitly as sa, n, C, O, and l_to_n)
 '''
-def bw_search(p, sa, C, O, l_to_n):
+def bw_search(bwt_x, p, sparse_sa, C, O, l_to_n):
 	# Init L and R
-	L, R = 0, len(sa)
+	L, R = 0, len(bwt_x)
 	# Update L and R
 	for c in reversed(p):
 		if L < R:
@@ -45,7 +43,8 @@ def bw_search(p, sa, C, O, l_to_n):
 		else:
 			break
 	# Find and return corresponding match indices
-	matches = [sa[i] for i in range(L, R)]
+	#matches = [sa[i] for i in range(L, R)]
+	matches = [lookup_sparse_sa(sparse_sa, i, C, O, l_to_n, bwt_x) for i in range(L, R)]
 	return sorted(matches)
 
 
@@ -72,52 +71,27 @@ def map_string_to_ints(x):
 		num_ls.append(letter_to_num_dict[char])
 	return num_to_letter_dict, letter_to_num_dict, num_ls
 
-'''
-Constructs the suffix array of x, using the Skew algorithm; time O(n)
-'''
-def construct_sa_skew(x):
-	alpha, indices = skew.map_string_to_ints(x)
-	return skew.skew_rec(indices, len(alpha))
-
-'''
-Slow, naïve suffix array construction algorithm
-'''
-def construct_sa_slow(x):
-	suffixes = [x[i:] for i in range(len(x))]
-	suffixes_sorted = sorted(suffixes)
-	sa = [len(x)-len(y) for y in suffixes_sorted]
-	return sa
-
-def construct_sparse_sa(x, k):
-	sa = construct_sa_skew(x)
-	print(sa)
-	#idcs = [i for i in range(0, len(x), k)]
-	#sparse_sa = {i: None for i in range(0, len(x), k)}
-	#sparse_sa = {}
-	sparse_sa = []
-	for idx, val in enumerate(sa):
-		if val % k == 0:
-			#sparse_sa[idx] = val
-			sparse_sa.append(idx)
-	return sparse_sa, k
-
-def lookup_sparse_sa(sparse_sa, k, i):
-	idx = sparse_sa.index(i)
-	return idx*k
-
 
 ########################################################
 # Code to run
 ########################################################
 
-print(construct_sparse_sa("0123456789012345678901234", 12))
+'''
+x = "mississippi"
+x += "$"
+sa = construct_sa_skew(x)
+bwt_x = bwt(x, sa)
+num_to_letter_dict, letter_to_num_dict, num_ls = map_string_to_ints(x)
+C = construct_C(x)
+O = construct_O(x, sa, num_to_letter_dict)
+sparse_sa = construct_sparse_sa(sa, 4)
+print(sa)
+print(sparse_sa)
+print(lookup_sparse_sa(sparse_sa, 12, C, O, letter_to_num_dict, bwt_x))
+'''
 
-sparse_sa, k = construct_sparse_sa("0123456789012345678901234", 12)
-
-print(lookup_sparse_sa(sparse_sa, k, 12))
 
 '''
-tracemalloc.start()
 x = "AACGTAAACGTAAC"
 x += "$"
 p = "AAC"
@@ -130,9 +104,6 @@ num_to_letter_dict, letter_to_num_dict, num_ls = map_string_to_ints(x)
 C = construct_C(x)
 O = construct_O(x, sa, num_to_letter_dict)
 print(bw_search(p, sa, C, O, letter_to_num_dict))
-
-print(tracemalloc.get_traced_memory()[1])
-tracemalloc.stop()
 '''
 
 

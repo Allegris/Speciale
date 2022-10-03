@@ -1,25 +1,11 @@
-import skew
 import wavelet_tree_lvl as lop
 from shared import get_alphabet
-import tracemalloc
+#from shared_bwt import bwt, construct_skew
 
 
 ########################################################
 # BWT search with wavelet trees
 ########################################################
-
-
-'''
-Construct BWT(x) using SA
-'''
-def bwt(x, sa):
-	bwt = ""
-	for i in range(len(x)):
-		if sa[i] == 0:
-			bwt += "$"
-		else:
-			bwt += x[sa[i]-1]
-	return bwt
 
 
 '''
@@ -68,20 +54,11 @@ def bw_search(p, n, sa, C, wt, pointers, ranks, codes):
 # Helper functions
 ########################################################
 
-'''
-Constructs the suffix array of x, using the Skew algorithm; time O(n)
-'''
-def construct_sa_skew(x):
-	alpha, indices = skew.map_string_to_ints(x)
-	return skew.skew_rec(indices, len(alpha))
-
-
 ########################################################
 # Code to run
 ########################################################
 
 '''
-tracemalloc.start()
 x = "AACGTAAACGTAAC"
 x += "$"
 n = len(x)
@@ -97,8 +74,6 @@ wt, codes = lo.wavelet_tree(bwt_x)
 ranks = lo.preprocess_node_ranks(wt, len(bwt_x))
 print(bw_search(p, n, sa, offset, wt, ranks, codes))
 
-print(tracemalloc.get_traced_memory()[1])
-tracemalloc.stop()
 '''
 
 
