@@ -1,5 +1,4 @@
 from shared import alphabet_size, bitvector_rank, preprocess_node_word_ranks, split_node, huffman_codes
-import sys
 
 ########################################################
 # Classes for wavelet tree internal nodes
@@ -27,7 +26,6 @@ class WaveletTreeNode:
 			self.right_child = WaveletTreeNode(s1, level+1, self.root)
 
 
-
 ########################################################
 # Rank query using wavelet tree
 ########################################################
@@ -52,35 +50,6 @@ def rank_query(root, c, i):
 # Code to run
 ########################################################
 '''
-def size_of_tree(root):
-	s = 0
-	s += sys.getsizeof(root.codes)
-	q = [root]
-	while q:
-		node = q.pop()
-		s += sys.getsizeof(node)
-		s += sys.getsizeof(node.bitvector)
-		s += sys.getsizeof(node.word_ranks)
-		s += sys.getsizeof(node.root)
-		if node.left_child:
-			q.append(node.left_child)
-		if node.right_child:
-			q.append(node.right_child)
-	return s
-
-def old_size_of_tree(root):
-	s = 0
-	s += sys.getsizeof(root.codes)
-	q = [root]
-	while q:
-		node = q.pop(0)
-		s += sys.getsizeof(node.__dict__)
-		if node.left_child:
-			q.append(node.left_child)
-		if node.right_child:
-			q.append(node.right_child)
-	return s
-
 
 #x = "mississippialpha"
 #x = "mississippi"
