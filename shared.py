@@ -1,7 +1,44 @@
 from bitarray import bitarray
 from bitarray.util import canonical_huffman#, huffman_code
 from math import floor, log2
-import sys
+import skew
+
+
+########################################################
+# Suffix arrays
+########################################################
+
+'''
+Slow, naïve suffix array construction algorithm
+'''
+def construct_sa_slow(x):
+	suffixes = [x[i:] for i in range(len(x))]
+	suffixes_sorted = sorted(suffixes)
+	sa = [len(x)-len(y) for y in suffixes_sorted]
+	return sa
+
+'''
+Constructs the suffix array of x, using the Skew algorithm; time O(n)
+'''
+def construct_sa_skew(x):
+	alpha, indices = skew.map_string_to_ints(x)
+	return skew.skew_rec(indices, len(alpha))
+
+'''
+Constructs sparse SA as dict {idx: SA_val} for only some of the indices in
+normal SA; indices: 0, k, 2k, 3k, etc.
+'''
+def construct_sparse_sa(sa, k):
+	sparse_sa = {}
+	for idx, val in enumerate(sa):
+		if val % k == 0:
+			sparse_sa[idx] = val
+	return sparse_sa
+
+
+########################################################
+# Alphabets, letter counts, Huffman codes
+########################################################
 
 '''
 Returns a lex sorted list of the letters of string x.
@@ -42,6 +79,10 @@ def huffman_codes(x):
 	return codes
 
 
+########################################################
+# Bitvector ranks: preprocess and lookup
+########################################################
+
 '''
 Preprocesses node word ranks of a bitvector of length n.
 Each word is of length floor(log2(n)) (remainder is not in a word).
@@ -72,6 +113,10 @@ def bitvector_rank(bitvector, word_ranks, c, i):
 	return word_ranks[word_no] + bitvector[scan_start:scan_end].count(c)
 
 
+########################################################
+# Wavelet tree: Split node in two
+########################################################
+
 '''
 Encodes string s using Huffman encoding in codes (index level in each code).
 
@@ -99,21 +144,20 @@ def split_node(s, codes, level):
 	return bin_s, s0, s1
 
 
+########################################################
+# Burrows-Wheeler Transform
+########################################################
+
 '''
-#codes = huffman_codes("ABCDEFG")
-
-alfa = ["A","C","G","T","$"]
-
-codes = [bitarray('0'), bitarray('100'), bitarray('101'), bitarray('110'), bitarray('111')]
-
-b = huffman_codes("ACTAGA$") #alfa
-
-bv = bitarray('0000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000111111111111111111111000000000001')
-
-print(sys.getsizeof(b))
-
-#print(huffman_codes("ACTAGA$"))
+Construct BWT(x) using SA
 '''
-
+def bwt(x, sa):
+	bwt = ""
+	for i in range(len(x)):
+		if sa[i] == 0:
+			bwt += "$"
+		else:
+			bwt += x[sa[i]-1]
+	return bwt
 
 

@@ -1,9 +1,31 @@
 import bwt_search as bwt_O
 import bwt_search_wt as bwt_wt
 import wavelet_tree_lvl as lop
-from shared_bwt import construct_sa_skew, construct_sparse_sa, bwt
+from shared import construct_sa_skew, construct_sparse_sa, bwt
 from math import floor, log2
 
+'''
+# BWT example:
+x: AACGTAAACGTAAC$
+
+$AACGTAAACGTAAC  0
+AAACGTAAC$AACGT  1
+AAC$AACGTAAACGT  2
+AACGTAAACGTAAC$  3
+AACGTAAC$AACGTA  4
+AC$AACGTAAACGTA  5
+ACGTAAACGTAAC$A  6
+ACGTAAC$AACGTAA  7
+C$AACGTAAACGTAA  8
+CGTAAACGTAAC$AA  9
+CGTAAC$AACGTAAA  10
+GTAAACGTAAC$AAC  11
+GTAAC$AACGTAAAC  12
+TAAACGTAAC$AACG  13
+TAAC$AACGTAAACG  14
+
+btw(x) = CTT$AAAAAAACCGG
+'''
 
 x = "AACGTAAACGTAAC$"
 sa = construct_sa_skew(x)
