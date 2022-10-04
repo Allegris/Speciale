@@ -1,12 +1,10 @@
 from wavelet_tree_lvl import rank_query
 from shared import get_alphabet, letter_count
 #from shared_bwt import construct_sparse_sa, bwt, construct_skew
-import bwt_search as bwt_O
-import bwt_search_wt as bwt_wt
-import wavelet_tree_lvl as lop
-from shared import huffman_codes
-from shared_bwt import construct_sa_skew, construct_sparse_sa, bwt, bwt2
-from math import floor, log2
+#import bwt_search_wt as bwt_wt
+#import wavelet_tree_lvl as lop
+#from shared import huffman_codes
+#from shared_bwt import construct_sa_skew, construct_sparse_sa, bwt, bwt2
 
 ########################################################
 # BWT search with wavelet trees
@@ -30,15 +28,12 @@ def construct_C(x):
 '''
 Finds the SA value for index i, using the sparse SA.
 '''
-def lookup_sparse_sa(sparse_sa, i, bwt_x, C, wt, n, pointers, ranks, codes):
+def lookup_sparse_sa(sparse_sa, i, bwt_x, C, wt, n, pointers, ranks, codes, SENTINEL_idx):
 	idx = i
 	steps = 0
 	while idx not in sparse_sa.keys():
 		c = bwt_x[idx]
-		if idx > SENTINEL_idx:
-			idx = C[c] + rank_query(wt, n, pointers, ranks, codes, c, idx-1)
-		else:
-			idx = C[c] + rank_query(wt, n, pointers, ranks, codes, c, idx)
+		idx = update_bwt_idx(idx, SENTINEL_idx, C, wt, n, pointers, ranks, codes, c)
 		steps += 1
 	return sparse_sa[idx] + steps
 
@@ -50,24 +45,26 @@ def bw_search(bwt_x, p, n, sparse_sa, C, wt, pointers, ranks, codes, SENTINEL_id
 	L, R = 0, len(bwt_x) # keeping n as arg, because SA will be changed to sparse, so cannot use n = len(sa)
 	for c in reversed(p):
 		if L < R:
-			if L > SENTINEL_idx:
-				L = C[c] + rank_query(wt, n, pointers, ranks, codes, c, L-1)
-			else:
-				L = C[c] + rank_query(wt, n, pointers, ranks, codes, c, L)
-			if R > SENTINEL_idx:
-				R = C[c] + rank_query(wt, n, pointers, ranks, codes, c, R-1)
-			else:
-				R = C[c] + rank_query(wt, n, pointers, ranks, codes, c, R)
+			L = update_bwt_idx(L, SENTINEL_idx, C, wt, n, pointers, ranks, codes, c)
+			R = update_bwt_idx(R, SENTINEL_idx, C, wt, n, pointers, ranks, codes, c)
 		else:
 			break
-	matches = [lookup_sparse_sa(sparse_sa, i, bwt_x, C, wt, n, pointers, ranks, codes) for i in range(L, R)]
+	matches = [lookup_sparse_sa(sparse_sa, i, bwt_x, C, wt, n, pointers, ranks, codes, SENTINEL_idx) for i in range(L, R)]
 	#matches = [sa[i] for i in range(L, R)]
 	return sorted(matches)
+
+
+def update_bwt_idx(idx, SENTINEL_idx, C, wt, n, pointers, ranks, codes, c):
+	if idx > SENTINEL_idx:
+		return C[c] + rank_query(wt, n, pointers, ranks, codes, c, idx-1)
+	else:
+		return C[c] + rank_query(wt, n, pointers, ranks, codes, c, idx)
 
 
 ########################################################
 # Code to run
 ########################################################
+'''
 
 x = "mississippi$"
 n = len(x)
@@ -89,7 +86,7 @@ ranks = lop.all_node_ranks(wt, len(bwt_x2), pointers)
 p = "ssi"
 print(bw_search(bwt_x, p, n2, sparse_sa, C_dict, wt, pointers, ranks, codes, SENTINEL_idx))
 
-
+'''
 
 
 '''

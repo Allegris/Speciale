@@ -31,13 +31,6 @@ def bwt(x, sa):
 			bwt += x[sa[i]-1]
 	return bwt
 
-def bwt2(x, sa):
-	bwt = x[-1]
-	for i in range(len(x)):
-		if sa[i] != 0:
-			bwt += x[sa[i]-1]
-	return bwt
-
 
 '''
 Constructs sparse SA as dict {idx: SA_val} for only some of the indices in
