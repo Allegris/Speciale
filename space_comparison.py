@@ -1,8 +1,10 @@
 import sys
-import one_hot_encoding as ohe
-import wavelet_tree as wt
-import wavelet_tree_lvl as wt_lvl
-from shared import huffman_codes
+#import one_hot_encoding as ohe
+#import wavelet_tree as wt_node
+#import wavelet_tree_lvl as wt_lvl
+from one_hot_encoding import one_hot_encoding, preprocess_ranks
+from wavelet_tree import WaveletTreeNode
+from wavelet_tree_lvl import wavelet_tree
 
 def get_size(obj, seen=None):
     # Recursively find size of objects
@@ -32,20 +34,16 @@ file = open("simulated_DNA.txt", "r")
 x = file.read()
 file.close()
 
-ohe_table = ohe.one_hot_encoding(x)
-ohe_ranks = ohe.preprocess_ranks(ohe_table, len(x))
+ohe_table = one_hot_encoding(x)
+ohe_ranks = preprocess_ranks(ohe_table, len(x))
 ohe_size = get_size(ohe_table) + get_size(ohe_ranks)
 print("Size of OHE:", ohe_size)
 
-wt_root = wt.WaveletTreeNode(x, 0, None) # x, level, root
-wt_size = get_size(wt_root)
-print("Size of WT Nodes:", wt_size)
+wt_root = WaveletTreeNode(x, 0, None) # x, level, root
+print("Size of WT Nodes:", get_size(wt_root))
 
-codes = huffman_codes(x)
-wt, child_dict = wt_lvl.wavelet_tree(x, codes)
-ranks = wt_lvl.all_node_ranks(wt, len(x), child_dict)
-wt_lvl_size = get_size(codes) + get_size(wt) + get_size(child_dict) + get_size(ranks)
-print("Size of WT lvl:", wt_lvl_size)
+wt2 = wavelet_tree(x)
+print("Size of WT lvl:", get_size(wt2))
 
 
 
