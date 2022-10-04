@@ -41,8 +41,7 @@ def lookup_sparse_sa(sparse_sa, i, bwt_x, C, wt, n, pointers, ranks, codes, SENT
 Pattern match using wavelet tree of BWT(x)
 '''
 def bw_search(bwt_x, p, n, sparse_sa, C, wt, pointers, ranks, codes, SENTINEL_idx):
-	print("bwt(x)", bwt_x)
-	L, R = 0, len(bwt_x) # keeping n as arg, because SA will be changed to sparse, so cannot use n = len(sa)
+	L, R = 0, len(bwt_x)
 	for c in reversed(p):
 		if L < R:
 			L = update_bwt_idx(L, SENTINEL_idx, C, wt, n, pointers, ranks, codes, c)

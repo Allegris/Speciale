@@ -27,43 +27,54 @@ codes = huffman_codes(x2)
 wt, pointers = lop.wavelet_tree(bwt_x2, codes)
 ranks = lop.all_node_ranks(wt, len(bwt_x2), pointers)
 
+
+
+def O_hits_AACGTAAACGTAAC(p):
+	return bwt_O.bw_search(bwt_x, p, sparse_sa, C, O, letter_to_num_dict)
+
+def wt_hits_AACGTAAACGTAAC(p):
+	return bwt_wt.bw_search(bwt_x, p, n2, sparse_sa, C_dict, wt, pointers, ranks, codes, SENTINEL_idx)
+
+
 def test_AACGTAAACGTAAC_AAC():
 	p = "AAC"
 	ls = [0, 6, 11]
-	assert bwt_O.bw_search(bwt_x, p, sparse_sa, C, O, letter_to_num_dict) == ls
-	assert bwt_wt.bw_search(bwt_x, p, n2, sparse_sa, C_dict, wt, pointers, ranks, codes, SENTINEL_idx) == ls
+	assert ls == O_hits_AACGTAAACGTAAC(p)
+	assert ls == wt_hits_AACGTAAACGTAAC(p)
+
 
 def test_AACGTAAACGTAAC_ACC():
 	p = "ACC"
 	ls = []
-	assert bwt_O.bw_search(bwt_x, p, sparse_sa, C, O, letter_to_num_dict) == ls
-	assert bwt_wt.bw_search(bwt_x, p, n2, sparse_sa, C_dict, wt, pointers, ranks, codes, SENTINEL_idx) == ls
+	assert ls == O_hits_AACGTAAACGTAAC(p)
+	assert ls == wt_hits_AACGTAAACGTAAC(p)
 
 def test_AACGTAAACGTAAC_AA():
 	p = "AA"
 	ls = [0, 5, 6, 11]
-	assert bwt_O.bw_search(bwt_x, p, sparse_sa, C, O, letter_to_num_dict) == ls
-	assert bwt_wt.bw_search(bwt_x, p, n2, sparse_sa, C_dict, wt, pointers, ranks, codes, SENTINEL_idx) == ls
+	assert ls == O_hits_AACGTAAACGTAAC(p)
+	assert ls == wt_hits_AACGTAAACGTAAC(p)
 
 def test_AACGTAAACGTAAC_A():
 	p = "A"
 	ls = [0, 1, 5, 6, 7, 11, 12]
-	assert bwt_O.bw_search(bwt_x, p, sparse_sa, C, O, letter_to_num_dict) == ls
-	assert bwt_wt.bw_search(bwt_x, p, n2, sparse_sa, C_dict, wt, pointers, ranks, codes, SENTINEL_idx) == ls
+	assert ls == O_hits_AACGTAAACGTAAC(p)
+	assert ls == wt_hits_AACGTAAACGTAAC(p)
 
 def test_AACGTAAACGTAAC_AACGTAAACGTAACA():
 	p = "AACGTAAACGTAACA"
 	ls = []
-	assert bwt_O.bw_search(bwt_x, p, sparse_sa, C, O, letter_to_num_dict) == ls
-	assert bwt_wt.bw_search(bwt_x, p, n2, sparse_sa, C_dict, wt, pointers, ranks, codes, SENTINEL_idx) == ls
+	assert ls == O_hits_AACGTAAACGTAAC(p)
+	assert ls == wt_hits_AACGTAAACGTAAC(p)
 
 def test_AACGTAAACGTAAC_C():
 	p = "C"
 	ls = [2, 8, 13]
-	assert bwt_O.bw_search(bwt_x, p, sparse_sa, C, O, letter_to_num_dict) == ls
-	assert bwt_wt.bw_search(bwt_x, p, n2, sparse_sa, C_dict, wt, pointers, ranks, codes, SENTINEL_idx) == ls
+	assert ls == O_hits_AACGTAAACGTAAC(p)
+	assert ls == wt_hits_AACGTAAACGTAAC(p)
 
 
+###############################################################################
 
 mis = "mississippi$"
 n_mis = len(mis)
@@ -87,24 +98,30 @@ wt_mis, pointers_mis = lop.wavelet_tree(bwt_mis2, codes_mis)
 ranks_mis = lop.all_node_ranks(wt_mis, len(bwt_mis2), pointers_mis)
 
 
+def O_hits_mississippi(p):
+	return bwt_O.bw_search(bwt_mis, p, sparse_sa_mis, C_mis, O_mis, letter_to_num_dict_mis)
+
+def wt_hits_mississippi(p):
+	return bwt_wt.bw_search(bwt_mis, p, n2_mis, sparse_sa_mis, C_dict_mis, wt_mis, pointers_mis, ranks_mis, codes_mis, SENTINEL_idx_mis)
+
+
 def test_mississippi_m():
 	p = "m"
 	ls = [0]
-	assert bwt_O.bw_search(bwt_mis, p, sparse_sa_mis, C_mis, O_mis, letter_to_num_dict_mis) == ls
-	assert bwt_wt.bw_search(bwt_mis, p, n2_mis, sparse_sa_mis, C_dict_mis, wt_mis, pointers_mis, ranks_mis, codes_mis, SENTINEL_idx_mis) == ls
+	assert ls == O_hits_mississippi(p)
+	assert ls == wt_hits_mississippi(p)
 
 def test_mississippi_iss():
 	p = "iss"
 	ls = [1, 4]
-	assert bwt_O.bw_search(bwt_mis, p, sparse_sa_mis, C_mis, O_mis, letter_to_num_dict_mis) == ls
-	assert bwt_wt.bw_search(bwt_mis, p, n2_mis, sparse_sa_mis, C_dict_mis, wt_mis, pointers_mis, ranks_mis, codes_mis, SENTINEL_idx_mis) == ls
+	assert ls == O_hits_mississippi(p)
+	assert ls == wt_hits_mississippi(p)
 
 def test_mississippi_ssi():
 	p = "ssi"
 	ls = [2, 5]
-	assert bwt_O.bw_search(bwt_mis, p, sparse_sa_mis, C_mis, O_mis, letter_to_num_dict_mis) == ls
-	assert bwt_wt.bw_search(bwt_mis, p, n2_mis, sparse_sa_mis, C_dict_mis, wt_mis, pointers_mis, ranks_mis, codes_mis, SENTINEL_idx_mis) == ls
-
+	assert ls == O_hits_mississippi(p)
+	assert ls == wt_hits_mississippi(p)
 
 
 
