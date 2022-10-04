@@ -26,6 +26,7 @@ bwt_x2 = bwt_x.replace("$", "") # remove sentinel from bwt(x)
 codes = huffman_codes(x2)
 wt, pointers = lop.wavelet_tree(bwt_x2, codes)
 ranks = lop.all_node_ranks(wt, len(bwt_x2), pointers)
+wt_tuple = (wt, pointers, ranks, codes, n2)
 
 
 
@@ -33,7 +34,7 @@ def O_hits_AACGTAAACGTAAC(p):
 	return bwt_O.bw_search(bwt_x, p, sparse_sa, C, O, letter_to_num_dict)
 
 def wt_hits_AACGTAAACGTAAC(p):
-	return bwt_wt.bw_search(bwt_x, p, n2, sparse_sa, C_dict, wt, pointers, ranks, codes, SENTINEL_idx)
+	return bwt_wt.bw_search(p, bwt_x, SENTINEL_idx, sparse_sa, C_dict, wt_tuple)
 
 
 def test_AACGTAAACGTAAC_AAC():
@@ -96,13 +97,13 @@ bwt_mis2 = bwt_mis.replace("$", "") # remove sentinel from bwt(x)
 codes_mis = huffman_codes(mis2)
 wt_mis, pointers_mis = lop.wavelet_tree(bwt_mis2, codes_mis)
 ranks_mis = lop.all_node_ranks(wt_mis, len(bwt_mis2), pointers_mis)
-
+wt_tuple_mis = (wt_mis, pointers_mis, ranks_mis, codes_mis, n2_mis)
 
 def O_hits_mississippi(p):
 	return bwt_O.bw_search(bwt_mis, p, sparse_sa_mis, C_mis, O_mis, letter_to_num_dict_mis)
 
 def wt_hits_mississippi(p):
-	return bwt_wt.bw_search(bwt_mis, p, n2_mis, sparse_sa_mis, C_dict_mis, wt_mis, pointers_mis, ranks_mis, codes_mis, SENTINEL_idx_mis)
+	return bwt_wt.bw_search(p, bwt_mis, SENTINEL_idx_mis, sparse_sa_mis, C_dict_mis, wt_tuple_mis)
 
 
 def test_mississippi_m():

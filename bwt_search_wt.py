@@ -28,32 +28,33 @@ def construct_C(x):
 '''
 Finds the SA value for index i, using the sparse SA.
 '''
-def lookup_sparse_sa(sparse_sa, i, bwt_x, C, wt, n, pointers, ranks, codes, SENTINEL_idx):
+def lookup_sparse_sa(i, bwt_x, SENTINEL_idx, sparse_sa, C, wt_tuple):
 	idx = i
 	steps = 0
 	while idx not in sparse_sa.keys():
 		c = bwt_x[idx]
-		idx = update_bwt_idx(idx, SENTINEL_idx, C, wt, n, pointers, ranks, codes, c)
+		idx = update_bwt_idx(idx, SENTINEL_idx, C, c, wt_tuple)
 		steps += 1
 	return sparse_sa[idx] + steps
 
 '''
 Pattern match using wavelet tree of BWT(x)
 '''
-def bw_search(bwt_x, p, n, sparse_sa, C, wt, pointers, ranks, codes, SENTINEL_idx):
+def bw_search(p, bwt_x, SENTINEL_idx, sparse_sa, C, wt_tuple):
 	L, R = 0, len(bwt_x)
 	for c in reversed(p):
 		if L < R:
-			L = update_bwt_idx(L, SENTINEL_idx, C, wt, n, pointers, ranks, codes, c)
-			R = update_bwt_idx(R, SENTINEL_idx, C, wt, n, pointers, ranks, codes, c)
+			L = update_bwt_idx(L, SENTINEL_idx, C, c, wt_tuple)
+			R = update_bwt_idx(R, SENTINEL_idx, C, c, wt_tuple)
 		else:
 			break
-	matches = [lookup_sparse_sa(sparse_sa, i, bwt_x, C, wt, n, pointers, ranks, codes, SENTINEL_idx) for i in range(L, R)]
+	matches = [lookup_sparse_sa(i, bwt_x, SENTINEL_idx, sparse_sa, C, wt_tuple) for i in range(L, R)]
 	#matches = [sa[i] for i in range(L, R)]
 	return sorted(matches)
 
 
-def update_bwt_idx(idx, SENTINEL_idx, C, wt, n, pointers, ranks, codes, c):
+def update_bwt_idx(idx, SENTINEL_idx, C, c, wt_tuple):
+	wt, pointers, ranks, codes, n = wt_tuple
 	if idx > SENTINEL_idx:
 		return C[c] + rank_query(wt, n, pointers, ranks, codes, c, idx-1)
 	else:
