@@ -25,16 +25,14 @@ class WaveletTreeNode:
 		if alphabet_size(s1) > 1:
 			self.right_child = WaveletTreeNode(s1, level+1, self.root)
 
-
 ########################################################
 # Rank query using wavelet tree
 ########################################################
-
 '''
 Iterates a wavelet tree, starting from the root, and returns the rank of a
 given char c and a given index i.
 '''
-def rank_query(root, c, i):
+def rank(root, c, i):
 	# Current node and rank
 	node = root
 	rank = i
@@ -50,18 +48,8 @@ def rank_query(root, c, i):
 # Code to run
 ########################################################
 '''
-
-#x = "mississippialpha"
-#x = "mississippi"
-x = "ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ123456789"
-wt_root = WaveletTreeNode(x, 0, None) # x, level, root
-#print(wt_root.__dict__)
-#print(wt_root.right_child.__dict__)
-#print(wt_root.word_ranks)
-#print(rank_query(wt_root, "i", 8))
-
-
-print(size_of_tree(wt_root))
+x = "mississippi"
+root = WaveletTreeNode(x, 0, None) # x, level, root
+print(rank(root, "m", 0))
 
 '''
-

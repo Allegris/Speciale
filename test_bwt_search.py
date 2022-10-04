@@ -6,9 +6,8 @@ from math import floor, log2
 
 
 x = "AACGTAAACGTAAC$"
-n = len(x)
 sa = construct_sa_skew(x)
-sparse_sa = construct_sparse_sa(sa, floor(log2(n)))
+sparse_sa = construct_sparse_sa(sa, floor(log2(len(x))))
 bwt_x = bwt(x, sa)
 
 # BW search with O table
@@ -21,7 +20,6 @@ SENTINEL_idx = bwt_x.index("$")
 C_dict = bwt_wt.construct_C(x)
 # Remove sentinel from bwt(x) before constructing WT
 wt = lop.wavelet_tree(bwt_x.replace("$", ""))
-
 
 
 def O_hits_AACGTAAACGTAAC(p):
@@ -72,9 +70,8 @@ def test_AACGTAAACGTAAC_C():
 ###############################################################################
 
 mis = "mississippi$"
-n_mis = len(mis)
 sa_mis = construct_sa_skew(mis)
-sparse_sa_mis = construct_sparse_sa(sa_mis, 4)
+sparse_sa_mis = construct_sparse_sa(sa_mis, floor(log2(len(mis))))
 bwt_mis = bwt(mis, sa_mis)
 
 # BW search with O table

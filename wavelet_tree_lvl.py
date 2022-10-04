@@ -127,7 +127,7 @@ class wavelet_tree:
 # Code to run
 ########################################################
 
-
+'''
 #x = "mississippialphaaaaaiiiiiiiiiiiiiiipppppppppppppabcdefghijklmnopqrstuvwxyzøæåjkfadnkcdnoeuhritnodhnijsbdakflne"
 #x = "mississippialpha"
 #x = "mississippi"
@@ -135,20 +135,7 @@ x = "ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ123456789"
 wt = wavelet_tree(x)
 
 print(wt.rank("A", 0))
-
-#codes = huffman_codes(x)
-#wt, child_dict = wavelet_tree(x, codes)
-#ranks = all_node_ranks(wt, len(x), child_dict)
-
-
-#print(wt)
-#print(child_dict)
-#print(codes)
-#print(ranks)
-
-#print(rank_query(wt, len(x), child_dict, ranks, codes, "s", 4))
-
-
+'''
 
 
 
