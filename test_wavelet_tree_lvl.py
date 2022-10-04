@@ -1,128 +1,114 @@
-import wavelet_tree_lvl as lop
-from shared import huffman_codes
+from wavelet_tree_lvl import wavelet_tree
 
 
 x = "mississippi"
-codes = huffman_codes(x)
-n = len(x)
-wt, pointers = lop.wavelet_tree(x, codes)
-ranks = lop.all_node_ranks(wt, n, pointers)
+wt = wavelet_tree(x)
 
 def test_mississippi_m_0():
-	assert lop.rank_query(wt, n, pointers, ranks, codes, "m", 0) == 0
+	assert wt.rank("m", 0) == 0
 
 def test_mississippi_m_12():
-	assert lop.rank_query(wt, n, pointers, ranks, codes, "m", 11) == 1
+	assert wt.rank("m", 11) == 1
 
 def test_mississippi_i_1():
-	assert lop.rank_query(wt, n, pointers, ranks, codes, "i", 1) == 0
+	assert wt.rank("i", 1) == 0
 
 def test_mississippi_i_2():
-	assert lop.rank_query(wt, n, pointers, ranks, codes, "i", 2) == 1
+	assert wt.rank("i", 2) == 1
 
 def test_mississippi_i_3():
-	assert lop.rank_query(wt, n, pointers, ranks, codes, "i", 3) == 1
+	assert wt.rank("i", 3) == 1
 
 def test_mississippi_i_4():
-	assert lop.rank_query(wt, n, pointers, ranks, codes, "i", 4) == 1
+	assert wt.rank("i", 4) == 1
 
 def test_mississippi_i_5():
-	assert lop.rank_query(wt, n, pointers, ranks, codes, "i", 5) == 2
+	assert wt.rank("i", 5) == 2
 
 def test_mississippi_i_10():
-	assert lop.rank_query(wt, n, pointers, ranks, codes, "i", 10) == 3
+	assert wt.rank("i", 10) == 3
 
 def test_mississippi_i_11():
-	assert lop.rank_query(wt, n, pointers, ranks, codes, "i", 11) == 4
+	assert wt.rank("i", 11) == 4
 
 def test_mississippi_s_6():
-	assert lop.rank_query(wt, n, pointers, ranks, codes, "s", 6) == 3
+	assert wt.rank("s", 6) == 3
 
 
 
 
 x2 = "mississippii"
-codes2 = huffman_codes(x2)
-n2 = len(x2)
-wt2, pointers2 = lop.wavelet_tree(x2, codes2)
-ranks2 = lop.all_node_ranks(wt2, n2, pointers2)
+wt2 = wavelet_tree(x2)
 
 def test_mississippii_i_11():
-		assert lop.rank_query(wt, n2, pointers, ranks, codes, "i", 11) == 4
+		assert wt2.rank("i", 11) == 4
 
 def test_mississippii_i_10():
-	assert lop.rank_query(wt, n2, pointers, ranks, codes, "i", 10) == 3
+	assert wt2.rank("i", 10) == 3
 
 def test_mississippii_i_9():
-	assert lop.rank_query(wt, n2, pointers, ranks, codes, "i", 9) == 3
+	assert wt2.rank("i", 9) == 3
 
 
 
 
-dna = "AGTCCTGAANCTGAGCCTTNAGG"
-dna_codes = huffman_codes(dna)
-dna_n = len(dna)
-dna_wt, dna_pointers = lop.wavelet_tree(dna, dna_codes)
-dna_ranks = lop.all_node_ranks(dna_wt, dna_n, dna_pointers)
-
+x3 = "AGTCCTGAANCTGAGCCTTNAGG"
+wt3 = wavelet_tree(x3)
 
 def test_dna_a_0():
-	assert lop.rank_query(dna_wt, dna_n, dna_pointers, dna_ranks, dna_codes, "A", 0) == 0
+	assert wt3.rank("A", 0) == 0
 
 def test_dna_a_1():
-	assert lop.rank_query(dna_wt, dna_n, dna_pointers, dna_ranks, dna_codes, "A", 1) == 1
+	wt3.rank("A", 1) == 1
 
 def test_dna_c_5():
-		assert lop.rank_query(dna_wt, dna_n, dna_pointers, dna_ranks, dna_codes, "C", 5) == 2
+	wt3.rank("C", 5) == 2
 
 def test_dna_G_21():
-	assert lop.rank_query(dna_wt, dna_n, dna_pointers, dna_ranks, dna_codes, "G", 21) == 4
+	wt3.rank("G", 21) == 4
 
 def test_dna_G_22():
-	assert lop.rank_query(dna_wt, dna_n, dna_pointers, dna_ranks, dna_codes, "G", 22) == 5
+	wt3.rank("G", 22) == 5
 
 def test_dna_G_23():
-	assert lop.rank_query(dna_wt, dna_n, dna_pointers, dna_ranks, dna_codes, "G", 23) == 6
+	wt3.rank("G", 23) == 6
 
 def test_dna_C_4():
-	assert lop.rank_query(dna_wt, dna_n, dna_pointers, dna_ranks, dna_codes, "C", 4) == 1
+	wt3.rank("C", 4) == 1
 
 def test_dna_C_5():
-	assert lop.rank_query(dna_wt, dna_n, dna_pointers, dna_ranks, dna_codes, "C", 5) == 2
+	wt3.rank("C", 5) == 2
 
 
 
 
-big = "ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ123456789"
-big_codes = huffman_codes(big)
-big_n = len(big)
-big_wt, big_pointers = lop.wavelet_tree(big, big_codes)
-big_ranks = lop.all_node_ranks(big_wt, big_n, big_pointers)
+x4 = "ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ123456789"
+wt4 = wavelet_tree(x4)
 
 
 def test_big_a_0():
-	assert lop.rank_query(big_wt, big_n, big_pointers, big_ranks, big_codes, "A", 0) == 0
+	wt4.rank("A", 0) == 0
 
 def test_big_a_1():
-	assert lop.rank_query(big_wt, big_n, big_pointers, big_ranks, big_codes, "A", 1) == 1
+	wt4.rank("A", 1) == 1
 
 def test_big_b_1():
-	assert lop.rank_query(big_wt, big_n, big_pointers, big_ranks, big_codes, "B", 1) == 0
+	wt4.rank("B", 1) == 0
 
 def test_big_b_2():
-	assert lop.rank_query(big_wt, big_n, big_pointers, big_ranks, big_codes, "B", 2) == 1
+	wt4.rank("B", 2) == 1
 
 def test_big_z_25():
-	assert lop.rank_query(big_wt, big_n, big_pointers, big_ranks, big_codes, "Z", 25) == 0
+	wt4.rank("Z", 25) == 0
 
 def test_big_z_26():
-	assert lop.rank_query(big_wt, big_n, big_pointers, big_ranks, big_codes, "Z", 26) == 1
+	wt4.rank("Z", 26) == 1
 
 def test_big_9_37():
-	assert lop.rank_query(big_wt, big_n, big_pointers, big_ranks, big_codes, "9", 37) == 0
+	wt4.rank("9", 37) == 0
 
 def test_big_9_38():
-	assert lop.rank_query(big_wt, big_n, big_pointers, big_ranks, big_codes, "9", 38) == 1
+	wt4.rank("9", 38) == 1
 
 
 

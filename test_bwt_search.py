@@ -1,7 +1,6 @@
 import bwt_search as bwt_O
 import bwt_search_wt as bwt_wt
 import wavelet_tree_lvl as lop
-from shared import huffman_codes
 from shared_bwt import construct_sa_skew, construct_sparse_sa, bwt
 from math import floor, log2
 
@@ -20,13 +19,8 @@ O = bwt_O.construct_O(x, sa, num_to_letter_dict)
 # BW search with wavelet tree rank query (level order wt)
 SENTINEL_idx = bwt_x.index("$")
 C_dict = bwt_wt.construct_C(x)
-x2 = x[:-1] # remove sentinel from x
-n2 = len(x2)
-bwt_x2 = bwt_x.replace("$", "") # remove sentinel from bwt(x)
-codes = huffman_codes(x2)
-wt, pointers = lop.wavelet_tree(bwt_x2, codes)
-ranks = lop.all_node_ranks(wt, len(bwt_x2), pointers)
-wt_tuple = (wt, pointers, ranks, codes, n2)
+# Remove sentinel from bwt(x) before constructing WT
+wt = lop.wavelet_tree(bwt_x.replace("$", ""))
 
 
 
@@ -34,7 +28,7 @@ def O_hits_AACGTAAACGTAAC(p):
 	return bwt_O.bw_search(bwt_x, p, sparse_sa, C, O, letter_to_num_dict)
 
 def wt_hits_AACGTAAACGTAAC(p):
-	return bwt_wt.bw_search(p, bwt_x, SENTINEL_idx, sparse_sa, C_dict, wt_tuple)
+	return bwt_wt.bw_search(p, bwt_x, SENTINEL_idx, sparse_sa, C_dict, wt)
 
 
 def test_AACGTAAACGTAAC_AAC():
@@ -91,19 +85,14 @@ O_mis = bwt_O.construct_O(mis, sa_mis, num_to_letter_dict_mis)
 # BW search with wavelet tree rank query (level order wt)
 SENTINEL_idx_mis = bwt_mis.index("$")
 C_dict_mis = bwt_wt.construct_C(mis)
-mis2 = mis[:-1] # remove sentinel from x
-n2_mis = len(x2)
-bwt_mis2 = bwt_mis.replace("$", "") # remove sentinel from bwt(x)
-codes_mis = huffman_codes(mis2)
-wt_mis, pointers_mis = lop.wavelet_tree(bwt_mis2, codes_mis)
-ranks_mis = lop.all_node_ranks(wt_mis, len(bwt_mis2), pointers_mis)
-wt_tuple_mis = (wt_mis, pointers_mis, ranks_mis, codes_mis, n2_mis)
+# Remove sentinel from bwt(x) before constructing WT
+wt_mis = lop.wavelet_tree(bwt_mis.replace("$", ""))
 
 def O_hits_mississippi(p):
 	return bwt_O.bw_search(bwt_mis, p, sparse_sa_mis, C_mis, O_mis, letter_to_num_dict_mis)
 
 def wt_hits_mississippi(p):
-	return bwt_wt.bw_search(p, bwt_mis, SENTINEL_idx_mis, sparse_sa_mis, C_dict_mis, wt_tuple_mis)
+	return bwt_wt.bw_search(p, bwt_mis, SENTINEL_idx_mis, sparse_sa_mis, C_dict_mis, wt_mis)
 
 
 def test_mississippi_m():
