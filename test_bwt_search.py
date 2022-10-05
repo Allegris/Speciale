@@ -33,18 +33,20 @@ sa = construct_sa_skew(x)
 sparse_sa = construct_sparse_sa(sa, floor(log2(len(x))))
 bwt_x = bwt(x, sa)
 
-# BW search with O table
+##### BW search with O table #####
 num_to_letter_dict, letter_to_num_dict, _ = bwt_O.map_string_to_ints(x)
 C = bwt_O.construct_C(x)
 O = bwt_O.construct_O(x, sa, num_to_letter_dict)
 
-# BW search with wavelet tree rank query (level order wt)
+##### BW search with wavelet tree rank query #####
 SENTINEL_idx = bwt_x.index("$")
 C_dict = bwt_wt.construct_C(x)
-# Remove sentinel from bwt(x) before constructing WT
-wt_lvl_obj = wt_lvl.wavelet_tree(bwt_x.replace("$", ""))
 
-wt_obj = wt.wavelet_tree(bwt_x.replace("$", "")) #WaveletTreeNode(bwt_x.replace("$", ""), 0, None)
+# WT Node tree
+wt_obj = wt.wavelet_tree(bwt_x.replace("$", "")) # remove sentinel
+# WT level order
+wt_lvl_obj = wt_lvl.wavelet_tree(bwt_x.replace("$", "")) # remove sentinel
+
 
 
 def O_hits_AACGTAAACGTAAC(p):
@@ -55,6 +57,7 @@ def wt_lvl_hits_AACGTAAACGTAAC(p):
 
 def wt_hits_AACGTAAACGTAAC(p):
 	return bwt_wt.bw_search(p, bwt_x, SENTINEL_idx, sparse_sa, C_dict, wt_obj)
+
 
 
 def test_AACGTAAACGTAAC_AAC():
@@ -108,18 +111,21 @@ sa_mis = construct_sa_skew(mis)
 sparse_sa_mis = construct_sparse_sa(sa_mis, floor(log2(len(mis))))
 bwt_mis = bwt(mis, sa_mis)
 
-# BW search with O table
+##### BW search with O table #####
 num_to_letter_dict_mis, letter_to_num_dict_mis, _ = bwt_O.map_string_to_ints(mis)
 C_mis = bwt_O.construct_C(mis)
 O_mis = bwt_O.construct_O(mis, sa_mis, num_to_letter_dict_mis)
 
-# BW search with wavelet tree rank query (level order wt)
+##### BW search with wavelet tree rank query #####
 SENTINEL_idx_mis = bwt_mis.index("$")
 C_dict_mis = bwt_wt.construct_C(mis)
-# Remove sentinel from bwt(x) before constructing WT
-wt_obj_lvl_mis = wt_lvl.wavelet_tree(bwt_mis.replace("$", ""))
 
-wt_obj_mis = wt.wavelet_tree(bwt_mis.replace("$", "")) #WaveletTreeNode(bwt_mis.replace("$", ""), 0, None)
+# WT Node tree
+wt_obj_mis = wt.wavelet_tree(bwt_mis.replace("$", "")) # remove sentinel
+# WT level order
+wt_obj_lvl_mis = wt_lvl.wavelet_tree(bwt_mis.replace("$", "")) # remove sentinel
+
+
 
 def O_hits_mississippi(p):
 	return bwt_O.bw_search(bwt_mis, p, sparse_sa_mis, C_mis, O_mis, letter_to_num_dict_mis)
