@@ -1,8 +1,7 @@
 import bwt_search as bwt_O
-import bwt_search_wt_lvl as bwt_wt_lvl
 import bwt_search_wt as bwt_wt
-from wavelet_tree_lvl import wavelet_tree
-from wavelet_tree import WaveletTreeNode
+import wavelet_tree as wt
+import wavelet_tree_lvl as wt_lvl
 from shared import construct_sa_skew, construct_sparse_sa, bwt
 from math import floor, log2
 
@@ -41,21 +40,21 @@ O = bwt_O.construct_O(x, sa, num_to_letter_dict)
 
 # BW search with wavelet tree rank query (level order wt)
 SENTINEL_idx = bwt_x.index("$")
-C_dict = bwt_wt_lvl.construct_C(x)
+C_dict = bwt_wt.construct_C(x)
 # Remove sentinel from bwt(x) before constructing WT
-wt = wavelet_tree(bwt_x.replace("$", ""))
+wt_lvl_obj = wt_lvl.wavelet_tree(bwt_x.replace("$", ""))
 
-wt_root = WaveletTreeNode(bwt_x.replace("$", ""), 0, None)
+wt_obj = wt.wavelet_tree(bwt_x.replace("$", "")) #WaveletTreeNode(bwt_x.replace("$", ""), 0, None)
 
 
 def O_hits_AACGTAAACGTAAC(p):
 	return bwt_O.bw_search(bwt_x, p, sparse_sa, C, O, letter_to_num_dict)
 
 def wt_lvl_hits_AACGTAAACGTAAC(p):
-	return bwt_wt_lvl.bw_search(p, bwt_x, SENTINEL_idx, sparse_sa, C_dict, wt)
+	return bwt_wt.bw_search(p, bwt_x, SENTINEL_idx, sparse_sa, C_dict, wt_lvl_obj)
 
 def wt_hits_AACGTAAACGTAAC(p):
-	return bwt_wt.bw_search(p, bwt_x, SENTINEL_idx, sparse_sa, C_dict, wt_root)
+	return bwt_wt.bw_search(p, bwt_x, SENTINEL_idx, sparse_sa, C_dict, wt_obj)
 
 
 def test_AACGTAAACGTAAC_AAC():
@@ -116,20 +115,20 @@ O_mis = bwt_O.construct_O(mis, sa_mis, num_to_letter_dict_mis)
 
 # BW search with wavelet tree rank query (level order wt)
 SENTINEL_idx_mis = bwt_mis.index("$")
-C_dict_mis = bwt_wt_lvl.construct_C(mis)
+C_dict_mis = bwt_wt.construct_C(mis)
 # Remove sentinel from bwt(x) before constructing WT
-wt_mis = wavelet_tree(bwt_mis.replace("$", ""))
+wt_obj_lvl_mis = wt_lvl.wavelet_tree(bwt_mis.replace("$", ""))
 
-wt_root_mis = WaveletTreeNode(bwt_mis.replace("$", ""), 0, None)
+wt_obj_mis = wt.wavelet_tree(bwt_mis.replace("$", "")) #WaveletTreeNode(bwt_mis.replace("$", ""), 0, None)
 
 def O_hits_mississippi(p):
 	return bwt_O.bw_search(bwt_mis, p, sparse_sa_mis, C_mis, O_mis, letter_to_num_dict_mis)
 
 def wt_lvl_hits_mississippi(p):
-	return bwt_wt_lvl.bw_search(p, bwt_mis, SENTINEL_idx_mis, sparse_sa_mis, C_dict_mis, wt_mis)
+	return bwt_wt.bw_search(p, bwt_mis, SENTINEL_idx_mis, sparse_sa_mis, C_dict_mis, wt_obj_lvl_mis)
 
 def wt_hits_mississippi(p):
-	return bwt_wt.bw_search(p, bwt_mis, SENTINEL_idx_mis, sparse_sa_mis, C_dict_mis, wt_root_mis)
+	return bwt_wt.bw_search(p, bwt_mis, SENTINEL_idx_mis, sparse_sa_mis, C_dict_mis, wt_obj_mis)
 
 
 

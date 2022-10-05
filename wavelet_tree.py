@@ -1,7 +1,35 @@
 from shared import alphabet_size, bitvector_rank, preprocess_node_word_ranks, split_node, huffman_codes
 
+
 ########################################################
-# Classes for wavelet tree internal nodes
+# Class for wavelet tree
+########################################################
+
+class wavelet_tree:
+	def __init__(self, x):
+		self.root = WaveletTreeNode(x, 0, None)
+
+	'''
+	Iterates a wavelet tree, starting from the root, and returns the rank of a
+	given char c and a given index i.
+	'''
+	def rank(self, c, i):
+		# Current node and rank
+		node = self.root
+		rank = i
+		# Iterate chars in code
+		for char in self.root.codes[c]:
+			# Update rank and node
+			rank = bitvector_rank(node.bitvector, node.word_ranks[char], char, rank)
+			node = node.right_child if char else node.left_child
+		return rank
+
+
+
+
+
+########################################################
+# Class for wavelet tree internal nodes
 ########################################################
 
 class WaveletTreeNode:
@@ -28,10 +56,12 @@ class WaveletTreeNode:
 ########################################################
 # Rank query using wavelet tree
 ########################################################
+
+
 '''
 Iterates a wavelet tree, starting from the root, and returns the rank of a
 given char c and a given index i.
-'''
+
 def rank(root, c, i):
 	# Current node and rank
 	node = root
@@ -42,7 +72,7 @@ def rank(root, c, i):
 		rank = bitvector_rank(node.bitvector, node.word_ranks[char], char, rank)
 		node = node.right_child if char else node.left_child
 	return rank
-
+'''
 
 ########################################################
 # Code to run
