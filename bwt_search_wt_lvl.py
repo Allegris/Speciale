@@ -1,5 +1,4 @@
 from shared import get_alphabet, letter_count
-from wavelet_tree import rank
 
 ########################################################
 # BWT search using wavelet tree
@@ -56,11 +55,11 @@ def lookup_sparse_sa(i, bwt_x, SENTINEL_idx, sparse_sa, C, wt):
 Uses the FM-mapping to find row idx in the BW matrix corresponding to a
 left-rotation of the row at idx
 '''
-def update_bwt_idx(idx, SENTINEL_idx, C, c, wt_root):
+def update_bwt_idx(idx, SENTINEL_idx, C, c, wt):
 	if idx > SENTINEL_idx:
-		return C[c] + rank(wt_root, c, idx-1)
+		return C[c] + wt.rank(c, idx-1)
 	else:
-		return C[c] + rank(wt_root, c, idx)
+		return C[c] + wt.rank(c, idx)
 
 
 ########################################################
