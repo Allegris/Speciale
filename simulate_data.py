@@ -1,111 +1,42 @@
 from numpy.random import choice
-import numpy
+from shared import get_alphabet
 
-alpha = ["A", "C", "G", "T"]
+
+#alpha = ["A", "C", "G", "T"]
 #probs = [0.25] * len(alpha)
-probs = [0.4, 0.1, 0.1, 0.4]
+#probs = [0.4, 0.1, 0.1, 0.4]
+
+# Alpha size 43
+x = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sed turpis tincidunt id aliquet risus feugiat in ante metus. Et malesuada fames ac turpis egestas maecenas pharetra. Turpis egestas integer eget aliquet. Semper eget duis at tellus at urna condimentum mattis pellentesque. Phasellus faucibus scelerisque eleifend donec pretium vulputate sapien nec sagittis. Sed augue lacus viverra vitae congue eu. Nulla facilisi etiam dignissim diam quis enim lobortis scelerisque fermentum. Non odio euismod lacinia at. Libero justo laoreet sit amet cursus sit amet. Malesuada nunc vel risus commodo viverra maecenas accumsan lacus vel. Ipsum faucibus vitae aliquet nec ullamcorper sit. Viverra mauris in aliquam sem fringilla. Sed augue lacus viverra vitae congue. Hendrerit gravida rutrum quisque non tellus. Turpis nunc eget lorem dolor sed viverra ipsum nunc aliquet. Porttitor rhoncus dolor purus non enim praesent elementum facilisis. Lorem ipsum dolor sit amet consectetur adipiscing elit. At tellus at urna condimentum mattis pellentesque id nibh. Placerat vestibulum lectus mauris ultrices eros in. Massa tincidunt dui ut ornare lectus sit. Nunc mi ipsum faucibus vitae aliquet nec. Dolor sit amet consectetur adipiscing elit ut aliquam. Magna ac placerat vestibulum lectus mauris ultrices eros. Dictum non consectetur a erat nam at lectus. Mattis aliquam faucibus purus in massa. Tellus in metus vulputate eu scelerisque felis imperdiet proin fermentum. Rhoncus dolor purus non enim praesent. Et sollicitudin ac orci phasellus egestas. Vitae nunc sed velit dignissim sodales ut eu sem. In massa tempor nec feugiat nisl. Sagittis aliquam malesuada bibendum arcu vitae elementum. Justo eget magna fermentum iaculis eu non. Ultricies mi quis hendrerit dolor magna. Porta non pulvinar neque laoreet suspendisse. Facilisi nullam vehicula ipsum a arcu cursus vitae congue mauris. Leo vel fringilla est ullamcorper eget nulla facilisi etiam. Id velit ut tortor pretium viverra. Diam sit amet nisl suscipit adipiscing. Posuere sollicitudin aliquam ultrices sagittis orci. Ac tortor vitae purus faucibus ornare suspendisse sed. Diam volutpat commodo sed egestas. Euismod in pellentesque massa placerat duis ultricies lacus sed turpis. Eros donec ac odio tempor orci dapibus ultrices. Massa sed elementum tempus egestas sed sed risus. Amet consectetur adipiscing elit pellentesque habitant. Pharetra pharetra massa massa ultricies mi quis. Nulla facilisi etiam dignissim diam quis. Sagittis eu volutpat odio facilisis mauris. Dolor morbi non arcu risus quis varius quam quisque id. Amet consectetur adipiscing elit duis. Rhoncus aenean vel elit scelerisque mauris pellentesque. Convallis convallis tellus id interdum velit laoreet. Elit sed vulputate mi sit amet mauris commodo quis. Ullamcorper a lacus vestibulum sed arcu non odio euismod lacinia. Platea dictumst quisque sagittis purus sit amet volutpat consequat mauris. Eget est lorem ipsum dolor. Sapien eget mi proin sed libero enim sed faucibus. Orci ac auctor augue mauris augue. Sociis natoque penatibus et magnis dis parturient montes nascetur ridiculus. Viverra ipsum nunc aliquet bibendum. Ipsum dolor sit amet consectetur. Nec tincidunt praesent semper feugiat nibh sed pulvinar proin gravida. Urna molestie at elementum eu facilisis sed odio morbi. Pellentesque habitant morbi tristique senectus. Quam viverra orci sagittis eu volutpat odio facilisis mauris. Consequat ac felis donec et odio pellentesque diam volutpat commodo. Integer feugiat scelerisque varius morbi enim nunc faucibus. Dolor purus non enim praesent. Integer enim neque volutpat ac tincidunt vitae semper."
+alpha = get_alphabet(x)
+probs = [1 / len(alpha)] * len(alpha) # equal probs
 
 
-def common_ancestor(n):
+def generate_string(n):
 	return "".join(choice(alpha, n, p=probs))
 
-def descendants(anc, alpha, sub_rate, indel_rate, k):
-	res = []
-	for i in range(k):
-		res.append(descendant(anc, alpha, sub_rate, indel_rate))
-	return res
 
-def descendant(anc, alpha, sub_rate, indel_rate):
-	res = ""
-	for char in anc:
-		#print("****CHAR", char)
-		# Insert symbol before char?
-		insert = binary_choice(indel_rate)
-		if insert:
-			res += random_symbol(alpha)
-			#print("INS before", char, ":", res[-1])
-		# Delete char?
-		delete = binary_choice(indel_rate)
-		if delete:
-			#print("DEL", char)
-			continue
-		else:
-			# Substitute char?
-			sub = binary_choice(sub_rate)
-			if sub:
-				res += random_symbol(alpha)
-				#print("SUB", char, "for", res[-1])
-			else:
-				#print("Adding char", char)
-				res += char
-	return res
-
-
-def random_symbol(alpha):
-	return "".join(choice(alpha, 1))
-
-def binary_choice(rate):
-	return choice([True, False], 1, p=[rate, 1 - rate])
-
-#Writes a fasta file with the aligned sequences
-def print_seqs_to_file(seq_list, n, k):
-	path = "simulated_data\\n" + str(n) + "\\"
-	title = path + "test_seq_" + "n" + str(n) + "_k" + str(k) + ".fasta"
-	x = open(title, "w")
-	for i in range(len(seq_list)):
-		x.write(">seq" + str(i+1) + "\n" + seq_list[i] + "\n")
-	x.close()
-
+def print_to_file(n):
+	title = "simulated_data\\simulated_DNA_n" + str(n) + ".txt"
+	file = open(title, "w")
+	file.write(generate_string(n))
+	file.close()
 
 
 ##########################################################################
 # Code to run
 ##########################################################################
 
-file = open("simulated_DNA.txt", "w")
-file.write(common_ancestor(10000000))
-file.close
+#file = open("simulated_DNA.txt", "w")
+#file.write(common_ancestor(10000000))
+#file.close()
 
 
-
-'''
-ns = [10, 50, 100, 150] #[150, 200, 250, 300]
-sub_rate = 1 #0.05 # 1 corresponds to random strings
-indel_rate = sub_rate / 5
-
+ns = [100, 1000, 10000, 100000, 1000000, 10000000]
 
 for n in ns:
-	anc = common_ancestor(n)
-	for k in range(5, 41, 5):
-		d = descendants(anc, alpha, sub_rate, indel_rate, k)
-		print_seqs_to_file(d, n, k)
-'''
+	print_to_file(n)
 
-'''
-# 2 ancestors
-for n in ns:
-	anc1 = common_ancestor(n)
-	anc2 = common_ancestor(n) #"A" * n
-	for k in range(1, 11):
-		d1 = descendants(anc1, alpha, sub_rate, indel_rate, k)
-		d2 = descendants(anc2, alpha, sub_rate, indel_rate, k)
-		print_seqs_to_file(d1 + d2, n, k*2)
-'''
-
-'''
-# 4 ancestors
-for n in ns:
-	anc1 = common_ancestor(n)
-	anc2 = common_ancestor(n)
-	anc3 = common_ancestor(n)
-	anc4 = common_ancestor(n)
-	for k in range(1, 6):
-		d1 = descendants(anc1, alpha, sub_rate, indel_rate, k)
-		d2 = descendants(anc2, alpha, sub_rate, indel_rate, k)
-		d3 = descendants(anc3, alpha, sub_rate, indel_rate, k)
-		d4 = descendants(anc4, alpha, sub_rate, indel_rate, k)
-		print_seqs_to_file(d1 + d2 + d3 + d4, n, k*4)
-'''
 
 
 
