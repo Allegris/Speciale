@@ -26,7 +26,7 @@ def construct_sa_skew(x):
 
 '''
 Constructs sparse SA as dict {idx: SA_val} for only some of the indices in
-normal SA; indices: 0, k, 2k, 3k, etc.
+normal SA; namely for SA_vals = 0, k, 2k, 3k, etc.
 '''
 def construct_sparse_sa(sa, k):
 	sparse_sa = {}
