@@ -45,7 +45,6 @@ def lookup_sparse_sa(i, bwt_x, SENTINEL_idx, sparse_sa, C, wt):
 	idx = i
 	steps = 0
 	while sparse_sa.get(idx) == None: #idx not in sparse_sa.keys():
-		print(sparse_sa.get(idx))
 		c = bwt_x[idx]
 		idx = update_bwt_idx(idx, SENTINEL_idx, C, c, wt)
 		steps += 1
