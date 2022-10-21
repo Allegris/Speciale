@@ -28,58 +28,59 @@ def get_size(obj, seen=None):
         size += sum([get_size(i, seen) for i in obj])
     return size
 
+if __name__ == "__main__":
+	#ns = [100, 1000, 10000, 100000, 1000000, 10000000]
+	#ns = [100000, 1000000, 10000000]
+	ns = list(range(500, 10000, 500))
+	o_ls = []
+	ohe_ls = []
+	wt_node_ls = []
+	wt_lvl_ls = []
 
-#ns = [100, 1000, 10000, 100000, 1000000, 10000000]
-#ns = [100000, 1000000, 10000000]
-ns = [100, 1000, 10000, 100000, 1000000]
-o_ls = []
-ohe_ls = []
-wt_node_ls = []
-wt_lvl_ls = []
+	for n in ns:
+		print(n)
+		title = f"simulated_data\\simulated_DNA_n{n}.txt"
+		file = open(title, "r")
+		x = file.read()
+		file.close()
 
-for n in ns:
-	print(n)
-	title = "simulated_data\\simulated_DNA_n" + str(n) + ".txt"
-	file = open(title, "r")
-	x = file.read()
-	file.close()
+		# One hot encoding
+		ohe_table = one_hot_encoding(x)
+		ohe_ranks = preprocess_ranks(ohe_table, len(x))
+		ohe_size =  get_size(ohe_table) + get_size(ohe_ranks)
+		ohe_ls.append(ohe_size)
 
-	# One hot encoding
-	ohe_table = one_hot_encoding(x)
-	ohe_ranks = preprocess_ranks(ohe_table, len(x))
-	ohe_size = get_size(ohe_table) + get_size(ohe_ranks)
-	ohe_ls.append(ohe_size)
+		# Wavelet tree - node representation
+		wt_root = WaveletTreeNode(x, 0, None) # x, level, root
+		wt_node_ls.append(get_size(wt_root))
 
-	# Wavelet tree - node representation
-	wt_root = WaveletTreeNode(x, 0, None) # x, level, root
-	wt_node_ls.append(get_size(wt_root))
+		# Wavelet tree - level order representation
+		wt2 = wavelet_tree(x)
+		wt_lvl_ls.append(get_size(wt2))
 
-	# Wavelet tree - level order representation
-	wt2 = wavelet_tree(x)
-	wt_lvl_ls.append(get_size(wt2))
+		'''
+		# O table
+		x += "0" # Add sentinel to x - needed by Skew
+		sa = construct_sa_skew(x)
+		num_to_letter_dict, _, _ = map_string_to_ints(x)
+		O = construct_O(x, sa, num_to_letter_dict)
+		o_ls.append(get_size(O))
+		'''
 
-	# O table
-	x += "0" # Add sentinel to x - needed by Skew
-	sa = construct_sa_skew(x)
-	num_to_letter_dict, _, _ = map_string_to_ints(x)
-	O = construct_O(x, sa, num_to_letter_dict)
-	o_ls.append(get_size(O))
+	##### PLOTS #####
 
-
-##### PLOTS #####
-
-plt.scatter(ns, o_ls, color = "orange", s=50, alpha = 0.5)
-plt.scatter(ns, ohe_ls, color = "red", s=50, alpha = 0.5)
-plt.scatter(ns, wt_node_ls, color = "blue", s=50, alpha = 0.5)
-plt.scatter(ns, wt_lvl_ls, color = "green", s=50, alpha = 0.5)
-#plt.ylim(0, 6*(10**(-6)))
-plt.xscale("log", basex = 10)
-plt.yscale("log", basey = 10)
-plt.xlabel("n", fontsize = 13)
-plt.ylabel("Memory usage (bytes)", fontsize = 13)
-plt.savefig("Space_usage_random")
-plt.show()
-plt.clf() # Clear plot
+	#plt.scatter(ns, o_ls, color = "orange", s=50, alpha = 0.5)
+	#plt.scatter(ns, ohe_ls, color = "red", s=50, alpha = 0.5)
+	plt.scatter(ns, wt_node_ls, color = "blue", s=50, alpha = 0.5)
+	plt.scatter(ns, wt_lvl_ls, color = "green", s=50, alpha = 0.5)
+	#plt.ylim(0, 6*(10**(-6)))
+	#plt.xscale("log", basex = 10)
+	#plt.yscale("log", basey = 10)
+	plt.xlabel("n", fontsize = 13)
+	plt.ylabel("Memory usage (bytes)", fontsize = 13)
+	plt.savefig("Space_usage_random")
+	plt.show()
+	plt.clf() # Clear plot
 
 
 

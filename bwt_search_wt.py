@@ -44,7 +44,7 @@ Finds the SA value for index i, using the sparse SA.
 def lookup_sparse_sa(i, bwt_x, SENTINEL_idx, sparse_sa, C, wt):
 	idx = i
 	steps = 0
-	while sparse_sa.get(idx) == None: #idx not in sparse_sa.keys():
+	while idx not in sparse_sa:
 		c = bwt_x[idx]
 		idx = update_bwt_idx(idx, SENTINEL_idx, C, c, wt)
 		steps += 1
@@ -65,4 +65,5 @@ def update_bwt_idx(idx, SENTINEL_idx, C, c, wt):
 ########################################################
 # Code to run
 ########################################################
+
 
