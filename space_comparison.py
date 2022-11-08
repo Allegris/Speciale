@@ -31,14 +31,14 @@ def get_size(obj, seen=None):
 if __name__ == "__main__":
 	#ns = [100, 1000, 10000, 100000, 1000000, 10000000]
 	#ns = [100000, 1000000, 10000000]
-	ns = list(range(500, 10000, 500))
+	ns = list(range(500, 10001, 500))
 	o_ls = []
 	ohe_ls = []
 	wt_node_ls = []
 	wt_lvl_ls = []
 
 	for n in ns:
-		print(n)
+		print("n", n)
 		title = f"simulated_data\\simulated_DNA_n{n}.txt"
 		file = open(title, "r")
 		x = file.read()
@@ -51,28 +51,35 @@ if __name__ == "__main__":
 		ohe_ls.append(ohe_size)
 
 		# Wavelet tree - node representation
-		wt_root = WaveletTreeNode(x, 0, None) # x, level, root
-		wt_node_ls.append(get_size(wt_root))
+		summ = 0
+		for _ in range(10):
+			wt_root = WaveletTreeNode(x, 0, None) # x, level, root
+			summ += get_size(wt_root)
+		#wt_node_ls.append(get_size(wt_root))
+		wt_node_ls.append(summ/10)
 
 		# Wavelet tree - level order representation
 		wt2 = wavelet_tree(x)
 		wt_lvl_ls.append(get_size(wt2))
 
-		'''
 		# O table
 		x += "0" # Add sentinel to x - needed by Skew
 		sa = construct_sa_skew(x)
 		num_to_letter_dict, _, _ = map_string_to_ints(x)
-		O = construct_O(x, sa, num_to_letter_dict)
-		o_ls.append(get_size(O))
-		'''
+		summ = 0
+		for _ in range(10):
+			O = construct_O(x, sa, num_to_letter_dict)
+			summ += get_size(O)
+		#o_ls.append(get_size(O))
+		o_ls.append(summ/10)
+
 
 	##### PLOTS #####
 
-	#plt.scatter(ns, o_ls, color = "orange", s=50, alpha = 0.5)
+	plt.scatter(ns, o_ls, color = "red", s=50, alpha = 0.5)
 	#plt.scatter(ns, ohe_ls, color = "red", s=50, alpha = 0.5)
 	plt.scatter(ns, wt_node_ls, color = "blue", s=50, alpha = 0.5)
-	plt.scatter(ns, wt_lvl_ls, color = "green", s=50, alpha = 0.5)
+	#plt.scatter(ns, wt_lvl_ls, color = "green", s=50, alpha = 0.5)
 	#plt.ylim(0, 6*(10**(-6)))
 	#plt.xscale("log", basex = 10)
 	#plt.yscale("log", basey = 10)

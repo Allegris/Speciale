@@ -68,6 +68,21 @@ def lookup_sparse_sa(sparse_sa, i, bwt_x, C, O, l_to_n):
 
 
 '''
+COMPACT VERSION FOR REPORT
+'''
+'''
+def lookup_sparse_sa(i, bwt, sparse_sa, C, O):
+	idx = i
+	steps = 0
+	while idx not in sparse_sa:
+		c = bwt[idx]
+		idx = C[c] + O[c, idx]
+		steps += 1
+	return sparse_sa[idx] + steps
+'''
+
+
+'''
 Returns a mapping between numbers and letter, eg. {0: "0", 1: "A", 2: "C", 3: "G", 4: "T"}, 0 is the sentinel
 and a list of the string, eg. for "ACGT" we get [1, 2, 3, 4]
 '''
@@ -90,7 +105,5 @@ def map_string_to_ints(x):
 ########################################################
 # Code to run
 ########################################################
-
-
 
 

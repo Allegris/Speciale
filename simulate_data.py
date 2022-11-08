@@ -34,7 +34,7 @@ def print_to_file(n):
 
 #ns = [100, 1000, 2000, 3000, 4000, 5000, 100000, 1000000]
 
-ns = list(range(500, 10000, 500))
+ns = list(range(500, 10001, 500))
 
 for n in ns:
 	print_to_file(n)
