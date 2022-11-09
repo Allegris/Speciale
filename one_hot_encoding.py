@@ -51,8 +51,9 @@ Inputs are:
 def preprocess_ranks(ohe, n):
 	ranks = {char: [0] for char in ohe.keys()}
 	word_size = floor(log2(n))
+	# Iterate over letters
 	for char in ohe.keys():
-		# Iterate over the words
+		# Iterate over words
 		for i in range(n // word_size):
 			# Rank of this word
 			count = ohe[char][i*word_size : (i+1)*word_size].count(1)

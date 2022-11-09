@@ -45,10 +45,13 @@ if __name__ == "__main__":
 		file.close()
 
 		# One hot encoding
-		ohe_table = one_hot_encoding(x)
-		ohe_ranks = preprocess_ranks(ohe_table, len(x))
-		ohe_size =  get_size(ohe_table) + get_size(ohe_ranks)
-		ohe_ls.append(ohe_size)
+		summ = 0
+		for _ in range(10):
+			ohe_table = one_hot_encoding(x)
+			ohe_ranks = preprocess_ranks(ohe_table, len(x))
+			ohe_size =  get_size(ohe_table) + get_size(ohe_ranks)
+			summ += ohe_size
+		ohe_ls.append(summ/10)
 
 		# Wavelet tree - node representation
 		summ = 0
@@ -58,9 +61,13 @@ if __name__ == "__main__":
 		#wt_node_ls.append(get_size(wt_root))
 		wt_node_ls.append(summ/10)
 
+
 		# Wavelet tree - level order representation
-		wt2 = wavelet_tree(x)
-		wt_lvl_ls.append(get_size(wt2))
+		summ = 0
+		for _ in range(10):
+			wt2 = wavelet_tree(x)
+			summ += get_size(wt2)
+		wt_lvl_ls.append(summ/10)
 
 		# O table
 		x += "0" # Add sentinel to x - needed by Skew
@@ -77,9 +84,9 @@ if __name__ == "__main__":
 	##### PLOTS #####
 
 	plt.scatter(ns, o_ls, color = "red", s=50, alpha = 0.5)
-	#plt.scatter(ns, ohe_ls, color = "red", s=50, alpha = 0.5)
+	plt.scatter(ns, ohe_ls, color = "orange", s=50, alpha = 0.5)
 	plt.scatter(ns, wt_node_ls, color = "blue", s=50, alpha = 0.5)
-	#plt.scatter(ns, wt_lvl_ls, color = "green", s=50, alpha = 0.5)
+	plt.scatter(ns, wt_lvl_ls, color = "green", s=50, alpha = 0.5)
 	#plt.ylim(0, 6*(10**(-6)))
 	#plt.xscale("log", basex = 10)
 	#plt.yscale("log", basey = 10)
