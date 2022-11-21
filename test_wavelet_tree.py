@@ -1,7 +1,7 @@
-from wavelet_tree import wavelet_tree
+from wavelet_tree import WaveletTree
 
 x = "mississippi"
-root = wavelet_tree(x)
+root = WaveletTree(x)
 
 
 def test_mississippi_m_0():
@@ -45,7 +45,7 @@ def test_mississippi_p_10():
 
 
 x2 = "mississippii$"
-root2 = wavelet_tree(x2)
+root2 = WaveletTree(x2)
 
 def test_mississippii_sentinel_13():
 	assert root2.rank("$", 13) == 1
@@ -68,7 +68,7 @@ def test_mississippii_i_9():
 
 
 x3 = "AGTCCTGAANCTGAGCCTTNAGG"
-root3 = wavelet_tree(x3)
+root3 = WaveletTree(x3)
 
 
 def test_dna_a_0():
@@ -98,7 +98,7 @@ def test_dna_C_5():
 
 
 x4 = "ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ123456789"
-root4 = wavelet_tree(x4)
+root4 = WaveletTree(x4)
 
 
 def test_big_a_0():

@@ -6,7 +6,7 @@ from shared import alphabet_size, bitvector_rank, preprocess_node_word_ranks, sp
 # Construct level order wavelet tree
 ########################################################
 
-class wavelet_tree:
+class WaveletTree:
 	def __init__(self, x):
 		self.n = len(x)
 		self.codes = huffman_codes(x)

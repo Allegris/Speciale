@@ -1,8 +1,8 @@
-from wavelet_tree_lvl import wavelet_tree
+from wavelet_tree_lvl import WaveletTree
 
 
 x = "mississippi"
-wt = wavelet_tree(x)
+wt = WaveletTree(x)
 
 def test_mississippi_m_0():
 	assert wt.rank("m", 0) == 0
@@ -38,7 +38,7 @@ def test_mississippi_s_6():
 
 
 x2 = "mississippii"
-wt2 = wavelet_tree(x2)
+wt2 = WaveletTree(x2)
 
 def test_mississippii_i_11():
 		assert wt2.rank("i", 11) == 4
@@ -53,7 +53,7 @@ def test_mississippii_i_9():
 
 
 x3 = "AGTCCTGAANCTGAGCCTTNAGG"
-wt3 = wavelet_tree(x3)
+wt3 = WaveletTree(x3)
 
 def test_dna_a_0():
 	assert wt3.rank("A", 0) == 0
@@ -83,7 +83,7 @@ def test_dna_C_5():
 
 
 x4 = "ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ123456789"
-wt4 = wavelet_tree(x4)
+wt4 = WaveletTree(x4)
 
 
 def test_big_a_0():

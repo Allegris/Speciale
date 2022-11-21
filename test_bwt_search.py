@@ -43,9 +43,9 @@ SENTINEL_idx = bwt_x.index("$")
 C_dict = bwt_wt.construct_C(x)
 
 # WT Node tree
-wt_obj = wt.wavelet_tree(bwt_x.replace("$", "")) # remove sentinel
+wt_obj = wt.WaveletTree(bwt_x.replace("$", "")) # remove sentinel
 # WT level order
-wt_lvl_obj = wt_lvl.wavelet_tree(bwt_x.replace("$", "")) # remove sentinel
+wt_lvl_obj = wt_lvl.WaveletTree(bwt_x.replace("$", "")) # remove sentinel
 
 
 
@@ -121,9 +121,9 @@ SENTINEL_idx_mis = bwt_mis.index("$")
 C_dict_mis = bwt_wt.construct_C(mis)
 
 # WT Node tree
-wt_obj_mis = wt.wavelet_tree(bwt_mis.replace("$", "")) # remove sentinel
+wt_obj_mis = wt.WaveletTree(bwt_mis.replace("$", "")) # remove sentinel
 # WT level order
-wt_obj_lvl_mis = wt_lvl.wavelet_tree(bwt_mis.replace("$", "")) # remove sentinel
+wt_obj_lvl_mis = wt_lvl.WaveletTree(bwt_mis.replace("$", "")) # remove sentinel
 
 
 

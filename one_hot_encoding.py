@@ -1,4 +1,5 @@
 from bitarray import bitarray
+from bitarray.util import zeros
 from math import log2, floor
 from shared import get_alphabet, bitvector_rank
 import sys
@@ -18,9 +19,7 @@ where the given letter appear in string x. E.g., for x = "mississippi$", it retu
 '''
 def one_hot_encoding(x):
 	# Initiate dict {letter: bitarray}, bitarray is all zeros
-	ohe = {char: bitarray(len(x)) for char in get_alphabet(x)}
-	for bv in ohe.values():
-		bv.setall(0)
+	ohe = {letter: zeros(len(x)) for letter in get_alphabet(x)}
 	# Set bits corresponding to chars in x
 	for i, char in enumerate(x):
 		ohe[char][i] = 1
@@ -51,12 +50,14 @@ Inputs are:
 def preprocess_ranks(ohe, n):
 	ranks = {char: [0] for char in ohe.keys()}
 	word_size = floor(log2(n))
+	print("AAA",n, word_size, n // word_size)
 	# Iterate over letters
 	for char in ohe.keys():
 		# Iterate over words
 		for i in range(n // word_size):
-			# Rank of this word
+			# Count set bits in word
 			count = ohe[char][i*word_size : (i+1)*word_size].count(1)
+			# New word rank: Add count to previous word rank
 			ranks[char].append(ranks[char][i] + count)
 	return ranks
 
@@ -99,3 +100,7 @@ print(size_of_encoding(ohe, ranks))
 
 '''
 
+x = "AG$TAACAA"
+o = one_hot_encoding(x)
+print(o)
+print(preprocess_ranks(o, len(x)))

@@ -1,0 +1,29 @@
+---
+title: "Linear regression"
+output:
+  html_document: 
+    theme: readable
+editor_options: 
+  chunk_output_type: console
+---
+
+
+
+```{r}
+
+library(tidyverse)
+
+df <- read_csv(file = "data_wt.csv")
+#df
+fit <- lm(bytes ~ n, data=df)
+#summary(fit)
+coef(fit)
+
+ggplot(df, aes(x = n, y = bytes)) + 
+  geom_point() +
+  stat_smooth(method = "lm") +
+  theme_classic()
+
+
+```
+

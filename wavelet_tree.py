@@ -5,7 +5,7 @@ from shared import alphabet_size, bitvector_rank, preprocess_node_word_ranks, sp
 # Class for wavelet tree
 ########################################################
 
-class wavelet_tree:
+class WaveletTree:
 	def __init__(self, x):
 		self.root = WaveletTreeNode(x, 0, None)
 
@@ -83,3 +83,36 @@ root = WaveletTreeNode(x, 0, None) # x, level, root
 print(rank(root, "m", 0))
 
 '''
+
+
+'''
+# For report (simplified version)
+def rank(root, codes, c, i):
+	# Current node and rank
+	node = root
+	rank = i
+	# Iterate chars in code
+	for char in codes[c]:
+		# Update rank and go to child node
+		rank = bv_rank(node.bitvector, char, rank)
+		node = node.right_child if char else node.left_child
+	return rank
+'''
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

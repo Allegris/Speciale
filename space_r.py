@@ -28,6 +28,23 @@ def get_size(obj, seen=None):
         size += sum([get_size(i, seen) for i in obj])
     return size
 
+
+data_ohe_title = f"data_ohe.txt"
+data_ohe_file = open(data_ohe_title, "w")
+data_ohe_file.write("\"\"," + "\"n\"," + "\"bytes\"" + "\n")
+data_ohe_file.close()
+
+
+data_occ_title = f"data_occ.txt"
+data_occ_file = open(data_occ_title, "w")
+data_occ_file.write("\"\"," + "\"n\"," + "\"bytes\"" + "\n")
+data_occ_file.close()
+
+data_wt_title = f"data_wt.txt"
+data_wt_file = open(data_wt_title, "w")
+data_wt_file.write("\"\"," + "\"n\"," + "\"bytes\"" + "\n")
+data_wt_file.close()
+
 if __name__ == "__main__":
 	#ns = [100, 1000, 10000, 100000, 1000000, 10000000]
 	#ns = [100000, 1000000, 10000000]
@@ -37,7 +54,7 @@ if __name__ == "__main__":
 	wt_node_ls = []
 	wt_lvl_ls = []
 
-	for n in ns:
+	for i, n in enumerate(ns):
 		print("n", n)
 		title = f"simulated_data\\simulated_DNA_n{n}.txt"
 		file = open(title, "r")
@@ -51,7 +68,11 @@ if __name__ == "__main__":
 			ohe_ranks = preprocess_ranks(ohe_table, len(x))
 			ohe_size =  get_size(ohe_table) + get_size(ohe_ranks)
 			summ += ohe_size
-		ohe_ls.append(summ/10)
+		s = summ/10
+		ohe_ls.append(s)
+		data_ohe_file = open(data_ohe_title, "a")
+		data_ohe_file.write("\"" + str(i+1) + "\"" + "," + str(n) + "," + str(s) + "\n")
+		data_ohe_file.close()
 
 		# Wavelet tree - node representation
 		summ = 0
@@ -59,8 +80,11 @@ if __name__ == "__main__":
 			wt_root = WaveletTreeNode(x, 0, None) # x, level, root
 			summ += get_size(wt_root)
 		#wt_node_ls.append(get_size(wt_root))
-		wt_node_ls.append(summ/10)
-
+		s = summ/10
+		wt_node_ls.append(s)
+		data_wt_file = open(data_wt_title, "a")
+		data_wt_file.write("\"" + str(i+1) + "\"" + "," + str(n) + "," + str(s) + "\n")
+		data_wt_file.close()
 
 		# Wavelet tree - level order representation
 		summ = 0
@@ -68,6 +92,7 @@ if __name__ == "__main__":
 			wt2 = wavelet_tree(x)
 			summ += get_size(wt2)
 		wt_lvl_ls.append(summ/10)
+
 
 		# O table
 		x += "0" # Add sentinel to x - needed by Skew
@@ -77,8 +102,12 @@ if __name__ == "__main__":
 		for _ in range(10):
 			O = construct_O(x, sa, num_to_letter_dict)
 			summ += get_size(O)
-		#o_ls.append(get_size(O))
-		o_ls.append(summ/10)
+		s = summ/10
+		o_ls.append(s)
+		data_occ_file = open(data_occ_title, "a")
+		data_occ_file.write("\"" + str(i+1) + "\"" + "," + str(n) + "," + str(s) + "\n")
+		data_occ_file.close()
+
 
 
 	##### PLOTS #####
@@ -87,10 +116,10 @@ if __name__ == "__main__":
 	print("occ:", o_ls)
 	print("ohe:", ohe_ls)
 	print("wt:", wt_node_ls)
-	plt.scatter(ns, o_ls, color = "red", s=50, alpha = 0.5)
+	#plt.scatter(ns, o_ls, color = "red", s=50, alpha = 0.5)
 	plt.scatter(ns, ohe_ls, color = "orange", s=50, alpha = 0.5)
-	plt.scatter(ns, wt_node_ls, color = "blue", s=50, alpha = 0.5)
-	plt.scatter(ns, wt_lvl_ls, color = "green", s=50, alpha = 0.5)
+	#plt.scatter(ns, wt_node_ls, color = "blue", s=50, alpha = 0.5)
+	#plt.scatter(ns, wt_lvl_ls, color = "green", s=50, alpha = 0.5)
 	#plt.ylim(0, 6*(10**(-6)))
 	#plt.xscale("log", basex = 10)
 	#plt.yscale("log", basey = 10)
