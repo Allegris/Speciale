@@ -1,8 +1,8 @@
 import sys
 import matplotlib.pyplot as plt
 from one_hot_encoding import one_hot_encoding, preprocess_ranks
-from wavelet_tree import WaveletTreeNode
-from wavelet_tree_lvl import wavelet_tree
+from wavelet_tree import WaveletTree
+from wavelet_tree_lvl import WaveletTree
 from bwt_search import construct_O, map_string_to_ints
 from shared import construct_sa_skew
 
@@ -27,6 +27,7 @@ def get_size(obj, seen=None):
     elif hasattr(obj, '__iter__') and not isinstance(obj, (str, bytes, bytearray)):
         size += sum([get_size(i, seen) for i in obj])
     return size
+
 
 if __name__ == "__main__":
 	#ns = [100, 1000, 10000, 100000, 1000000, 10000000]
@@ -56,9 +57,9 @@ if __name__ == "__main__":
 		# Wavelet tree - node representation
 		summ = 0
 		for _ in range(10):
-			wt_root = WaveletTreeNode(x, 0, None) # x, level, root
-			summ += get_size(wt_root)
-		#wt_node_ls.append(get_size(wt_root))
+			wt = WaveletTree(x)
+			summ += get_size(wt)
+		#wt_node_ls.append(get_size(wt))
 		wt_node_ls.append(summ/10)
 
 
@@ -99,7 +100,6 @@ if __name__ == "__main__":
 	plt.savefig("Space_usage_random")
 	plt.show()
 	plt.clf() # Clear plot
-
 
 
 

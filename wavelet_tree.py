@@ -20,7 +20,8 @@ class WaveletTree:
 		# Iterate chars in code
 		for char in self.codes[c]:
 			# Update rank and node
-			rank = bitvector_rank(node.bitvector, node.word_ranks[char], char, rank)
+			rank = bitvector_rank(node.bitvector,
+						 node.word_ranks[char], char, rank)
 			node = node.right_child if char else node.left_child
 		return rank
 

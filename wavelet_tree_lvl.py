@@ -26,9 +26,9 @@ class WaveletTree:
 	E.g., for x = "mississippi", it returns:
 	bitarray('101101101101000011011')
 
-	{0: {'left': (None, None), 'right': (11, 18)},
-	11: {'left': (None, None), 'right': (18, 21)},
-	18: {'left': (None, None), 'right': (None, None)}}
+	{0: {0: (None, None), 1: (11, 18)},
+	11: {0: (None, None), 1: (18, 21)},
+	18: {0: (None, None), 1: (None, None)}}
 
 	{'i': bitarray('0'),
 	 's': bitarray('10'),
@@ -45,22 +45,24 @@ class WaveletTree:
 		# The indices of inner nodes should be corrected for the number
 		# of leaf chars that we encounter, so store this
 		leaf_chars = 0
+		# While queue non-empty
 		while inner_nodes:
 			s, idx, level = inner_nodes.pop(0)
 			s_bitvector, s0, s1 = split_node(s, codes, level)
 			wt_bitvector += s_bitvector
-			child_dict[idx] = {"left": (None, None), "right": (None, None)}
+			# 0 is left, 1 is right
+			child_dict[idx] = {0: (None, None), 1: (None, None)}
 			# If left child is an inner node
 			if alphabet_size(s0) > 1:
 				i, j = self.left_child(s_bitvector, idx+len(x)-leaf_chars)
-				child_dict[idx]["left"] = (i, j)
+				child_dict[idx][0] = (i, j) # 0 is left
 				inner_nodes.append((s0, i, level+1))
 			else: # If left child is a leaf
 				leaf_chars += len(s0)
 			# If right child is an inner node
 			if alphabet_size(s1) > 1:
 				i, j = self.right_child(s_bitvector, idx+len(x)-leaf_chars)
-				child_dict[idx]["right"] = (i, j)
+				child_dict[idx][1] = (i, j) # 1 is right
 				inner_nodes.append((s1, i, level+1))
 			else: # If right child is a leaf
 				leaf_chars += len(s1)
@@ -98,8 +100,8 @@ class WaveletTree:
 		ranks[0] = preprocess_node_word_ranks(wt[0:n]) # Root ranks
 		# Iterate over nodes
 		for children in child_dict.values():
-			for path in ["left", "right"]:
-				i, j = children[path]
+			for child in [0, 1]:
+				i, j = children[child]
 				if i and j: # If inner node, calculate word ranks
 					ranks[i] = preprocess_node_word_ranks(wt[i:j])
 		return ranks
@@ -119,23 +121,16 @@ class WaveletTree:
 		for char in self.codes[c]:
 			# Update rank and node
 			rank = bitvector_rank(self.bitvector[L:R], self.ranks[L][char], char, rank)
-			L, R = self.child_dict[L]["right"] if char else self.child_dict[L]["left"]
+			L, R = self.child_dict[L][1] if char else self.child_dict[L][0] # 0 is left, 1 is right
 		return rank
 
 
 ########################################################
 # Code to run
 ########################################################
-
 '''
-#x = "mississippialphaaaaaiiiiiiiiiiiiiiipppppppppppppabcdefghijklmnopqrstuvwxyzøæåjkfadnkcdnoeuhritnodhnijsbdakflne"
-#x = "mississippialpha"
-#x = "mississippi"
-x = "ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ123456789"
-wt = wavelet_tree(x)
-
-print(wt.rank("A", 0))
+x = "mississippi"
+wt = WaveletTree(x)
+print(wt.rank("m", 2))
 '''
-
-
 

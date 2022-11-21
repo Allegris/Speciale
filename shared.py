@@ -127,7 +127,7 @@ Returns:
 	s1: The part of s that corresponds to 1s
 
 E.g., for s = "mississippi" at level 0, it returns:
-	1) bitarray('00110110110') miiii sssspp
+	bitarray('00110110110') miiii sssspp
 '''
 def split_node(s, codes, level):
 	alpha = get_alphabet(s)
