@@ -20,7 +20,7 @@ class WaveletTree:
 
 	Returns the wavelet tree as:
 		- A bitvector (representing level order representation).
-		- Child dict {parent_idx: {'left': left_child_idx, 'right': right_child_idx}}.
+		- Child dict {parent_idx: {0: left_child_idx, 1: right_child_idx}}.
 		  Note, if child_idx is (None, None), then the child is a leaf in the tree.
 
 	E.g., for x = "mississippi", it returns:
