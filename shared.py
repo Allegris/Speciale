@@ -1,5 +1,5 @@
 from bitarray import bitarray
-from bitarray.util import huffman_code #canonical_huffman
+from bitarray.util import huffman_code, canonical_huffman
 from math import floor, log2
 import skew
 
@@ -75,8 +75,8 @@ E.g., for x = "mississippi", it returns:
 '''
 def huffman_codes(x):
 	count = letter_count(x)
-	#codes, _, _ = canonical_huffman(count)
-	codes = huffman_code(count)
+	codes, _, _ = canonical_huffman(count) # lexicographical order, if equal count
+	#codes = huffman_code(count) # non-lexicographical order, uf equal count
 	return codes
 
 

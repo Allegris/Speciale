@@ -51,10 +51,11 @@ class WaveletTreeNode:
 ########################################################
 # Code to run
 ########################################################
+
 '''
-x = "mississippi"
+x = "AG$TAAC"
 wt = WaveletTree(x)
-print(wt.rank("m", 2))
+#print(wt.rank("A", 2))
 '''
 
 

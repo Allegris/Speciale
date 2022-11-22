@@ -10,7 +10,7 @@ class WaveletTree:
 	def __init__(self, x):
 		self.n = len(x)
 		self.codes = huffman_codes(x)
-		self.bitvector, self.child_dict = self.wt_bitvector_and_child_dict(x, self.codes)
+		self.bitvector, self.child_dict = self.wt_bitvector_and_child_dict(x, self.n, self.codes)
 		self.ranks = self.all_node_ranks(self.bitvector, len(x), self.child_dict)
 
 
@@ -36,10 +36,9 @@ class WaveletTree:
 	 'p': bitarray('111')}
 
 	'''
-	def wt_bitvector_and_child_dict(self, x, codes):
-		# Implicit tree: bitvector and child dict
+	def wt_bitvector_and_child_dict(self, x, n, codes):
 		wt_bitvector = bitarray()
-		child_dict = {} # {parent_idx: {'left': left_idx, 'right': right_idx}}
+		child_dict = {} # {parent_idx: {0: left_interval, 1: right_interval}}
 		# Queue of inner nodes - s.t. we run through them in level order
 		inner_nodes = [(x, 0, 0)] # (string, idx, level)
 		# The indices of inner nodes should be corrected for the number
@@ -54,14 +53,14 @@ class WaveletTree:
 			child_dict[idx] = {0: (None, None), 1: (None, None)}
 			# If left child is an inner node
 			if alphabet_size(s0) > 1:
-				i, j = self.left_child(s_bitvector, idx+len(x)-leaf_chars)
+				i, j = self.left_child(s_bitvector, idx + n - leaf_chars)
 				child_dict[idx][0] = (i, j) # 0 is left
 				inner_nodes.append((s0, i, level+1))
 			else: # If left child is a leaf
 				leaf_chars += len(s0)
 			# If right child is an inner node
 			if alphabet_size(s1) > 1:
-				i, j = self.right_child(s_bitvector, idx+len(x)-leaf_chars)
+				i, j = self.right_child(s_bitvector, idx + n - leaf_chars)
 				child_dict[idx][1] = (i, j) # 1 is right
 				inner_nodes.append((s1, i, level+1))
 			else: # If right child is a leaf
@@ -120,17 +119,56 @@ class WaveletTree:
 		# Iterate chars in code
 		for char in self.codes[c]:
 			# Update rank and node
-			rank = bitvector_rank(self.bitvector[L:R], self.ranks[L][char], char, rank)
-			L, R = self.child_dict[L][1] if char else self.child_dict[L][0] # 0 is left, 1 is right
+			rank = bitvector_rank(self.bitvector[L:R],
+						 self.ranks[L][char], char, rank)
+			L, R = self.child_dict[L][1] if char
+			else self.child_dict[L][0] # 0 is left, 1 is right
 		return rank
 
 
 ########################################################
 # Code to run
 ########################################################
-'''
-x = "mississippi"
+
+
+x = "AG$TAAC"
 wt = WaveletTree(x)
-print(wt.rank("m", 2))
-'''
+print(wt.child_dict)
+#print(wt.rank("A", 2))
+
+
+########################################################
+# For report
+########################################################
+
+
+def wt_bitvector_and_child_dict(self, x, n, codes):
+	wt_bitvector = bitarray()
+	child_dict = {}
+	# Queue of inner nodes - s.t. we run through them in level order
+	inner_nodes = [(x, 0, 0)] # (string, idx, level)
+	leaf_chars = 0 # for index correction
+	while inner_nodes:
+		s, idx, level = inner_nodes.pop(0)
+		s_bitvector, s0, s1 = split_node(s, codes, level)
+		wt_bitvector += s_bitvector
+		child_dict[idx] = {0: (None, None), 1: (None, None)}
+		# If left child is an inner node
+		if alphabet_size(s0) > 1:
+			i, j = self.left_child(s_bitvector, idx + n - leaf_chars)
+			child_dict[idx][0] = (i, j) # 0 is left
+			inner_nodes.append((s0, i, level+1))
+		else: # If left child is a leaf
+			leaf_chars += len(s0)
+		# If right child is an inner node
+		if alphabet_size(s1) > 1:
+			i, j = self.right_child(s_bitvector, idx + n - leaf_chars)
+			child_dict[idx][1] = (i, j) # 1 is right
+			inner_nodes.append((s1, i, level+1))
+		else: # If right child is a leaf
+			leaf_chars += len(s1)
+	return wt_bitvector, child_dict
+
+
+
 
