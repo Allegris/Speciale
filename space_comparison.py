@@ -1,8 +1,8 @@
 import sys
 import matplotlib.pyplot as plt
 from one_hot_encoding import one_hot_encoding, preprocess_ranks
-from wavelet_tree import WaveletTree
-from wavelet_tree_lvl import WaveletTree
+import wavelet_tree as w1
+import wavelet_tree_lvl as w2
 from bwt_search import construct_O, map_string_to_ints
 from shared import construct_sa_skew
 
@@ -57,7 +57,7 @@ if __name__ == "__main__":
 		# Wavelet tree - node representation
 		summ = 0
 		for _ in range(10):
-			wt = WaveletTree(x)
+			wt = w1.WaveletTree(x)
 			summ += get_size(wt)
 		#wt_node_ls.append(get_size(wt))
 		wt_node_ls.append(summ/10)
@@ -66,7 +66,7 @@ if __name__ == "__main__":
 		# Wavelet tree - level order representation
 		summ = 0
 		for _ in range(10):
-			wt2 = wavelet_tree(x)
+			wt2 = w2.WaveletTree(x)
 			summ += get_size(wt2)
 		wt_lvl_ls.append(summ/10)
 

@@ -50,7 +50,6 @@ Inputs are:
 def preprocess_ranks(ohe, n):
 	ranks = {char: [0] for char in ohe.keys()}
 	word_size = floor(log2(n))
-	print("AAA",n, word_size, n // word_size)
 	# Iterate over letters
 	for char in ohe.keys():
 		# Iterate over words
@@ -85,22 +84,10 @@ def rank_query(ohe, ranks, c, i):
 ########################################################
 # Code to run
 ########################################################
-'''
-
-def size_of_encoding(ohe, ranks):
-	return sys.getsizeof(ohe) + sys.getsizeof(ranks)
-
-
-#x = "mississippi$"
-x = "ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ123456789" #+ "A"*10000 + "B"*10000
-ohe = one_hot_encoding(x)
-ranks = preprocess_ranks(ohe, len(x))
-print(size_of_encoding(ohe, ranks))
-#print(rank_query(ohe, ranks, "i", 6))
 
 '''
-
 x = "AG$TAACAA"
 o = one_hot_encoding(x)
 print(o)
 print(preprocess_ranks(o, len(x)))
+'''
