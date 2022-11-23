@@ -121,8 +121,7 @@ class WaveletTree:
 			# Update rank and node
 			rank = bitvector_rank(self.bitvector[L:R],
 						 self.ranks[L][char], char, rank)
-			L, R = self.child_dict[L][1] if char
-			else self.child_dict[L][0] # 0 is left, 1 is right
+			L, R = self.child_dict[L][1] if char else self.child_dict[L][0] # 0 is left, 1 is right
 		return rank
 
 
@@ -130,18 +129,18 @@ class WaveletTree:
 # Code to run
 ########################################################
 
-
+'''
 x = "AG$TAAC"
 wt = WaveletTree(x)
 print(wt.child_dict)
 #print(wt.rank("A", 2))
-
+'''
 
 ########################################################
 # For report
 ########################################################
 
-
+'''
 def wt_bitvector_and_child_dict(self, x, n, codes):
 	wt_bitvector = bitarray()
 	child_dict = {}
@@ -169,6 +168,6 @@ def wt_bitvector_and_child_dict(self, x, n, codes):
 			leaf_chars += len(s1)
 	return wt_bitvector, child_dict
 
-
+'''
 
 
