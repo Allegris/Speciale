@@ -93,7 +93,7 @@ if __name__ == "__main__":
 	##### PLOTS #####
 
 	# ALl
-	plt.plot(ns, o_ls, color = "red", marker='o', label = "Occ", alpha = 0.6, linestyle = 'None') #alpha = 0.5,
+	plt.plot(ns, o_ls, color = "red", marker='o', label = "Occ", alpha = 0.6, linestyle = 'None')
 	plt.plot(ns, ohe_ls, color = "blue", marker='o', label = "OHE", alpha = 0.6, linestyle = 'None')
 	plt.plot(ns, wt_node_ls, color = "orange", marker='o', label = "WT", alpha = 0.9, linestyle = 'None')
 	plt.plot(ns, wt_lvl_ls, color = "green", marker='o', label = "WT_lvl", alpha = 0.6, linestyle = 'None')
