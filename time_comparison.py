@@ -6,6 +6,20 @@ from bwt_search import Occ
 from shared import construct_sa_skew, bwt
 
 
+
+def generate_queries(x):
+	n = len(x)
+	queries = []
+
+	for _ in range(n):
+		char_idx = randrange(0, n)
+		char = x[char_idx]
+		query_idx = randrange(0, n)
+		queries.append((char, query_idx))
+	return queries
+
+
+
 n = 100
 title = f"simulated_data\\simulated_DNA_n{n}.txt"
 file = open(title, "r")
@@ -16,15 +30,7 @@ x += "0"
 sa = construct_sa_skew(x)
 bwt_x = bwt(x, sa)
 
-queries = []
-
-for _ in range(n):
-	char_idx = randrange(0, n)
-	char = x[char_idx]
-	query_idx = randrange(0, n)
-	queries.append((char, query_idx))
-
-
+queries = generate_queries(bwt_x)
 
 # One hot encoding
 ohe = OneHotEncoding(bwt_x)
@@ -36,7 +42,7 @@ wt1 = w1.WaveletTree(bwt_x)
 wt2 = w2.WaveletTree(bwt_x)
 
 # Occ
-occ = Occ(x, sa)
+occ = Occ(bwt_x)
 
 for c, i in queries:
 	print(ohe.rank(c, i), wt1.rank(c, i), wt2.rank(c, i), occ.rank(c, i))

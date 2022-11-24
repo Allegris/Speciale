@@ -108,27 +108,28 @@ def map_string_to_ints(x):
 ########################################################
 
 class Occ:
-	def __init__(self, x, sa):
-		#x += "0" # sentinel needed by Skew
-		#sa = construct_sa_skew(x)
+	def __init__(self, x):
 		self.n_to_l, self.l_to_n, _ = map_string_to_ints(x)
-		self.table = self.construct_occ(x, sa)
+		self.table = self.construct_occ(x)
 
-	def construct_occ(self, x, sa):
+	def construct_occ(self, x):
 		alpha = get_alphabet(x)
-		occ = np.zeros((len(alpha), len(x)+1), dtype=int)
-		for r in range(len(alpha)):
-			for c in range(1, len(x)+1):
-				a = self.n_to_l[r]
-				occ[r, c] = occ[r, c-1] + (x[sa[c-1]-1] == a)
+		occ = {letter: [0] for letter in alpha}
+		for char in x:
+			for letter in alpha:
+				occ[letter].append(occ[letter][-1] + (char == letter))
 		return occ
 
 	def rank(self, c, i):
-		a = self.l_to_n[c]
-		return self.table[a, i]
+		return self.table[c][i]
 
 
 
 ########################################################
 # Code to run
 ########################################################
+'''
+x = "ABA"
+occ = Occ(x)
+print(occ.table)
+'''
