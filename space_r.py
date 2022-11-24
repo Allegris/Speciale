@@ -1,6 +1,6 @@
 import sys
 import matplotlib.pyplot as plt
-from one_hot_encoding import one_hot_encoding, preprocess_ranks
+from one_hot_encoding import OneHotEncoding
 import wavelet_tree as w1
 import wavelet_tree_lvl as w2
 from bwt_search import construct_O, map_string_to_ints
@@ -63,9 +63,8 @@ if __name__ == "__main__":
 		file.close()
 
 		# One hot encoding
-		ohe_table = one_hot_encoding(x)
-		ohe_ranks = preprocess_ranks(ohe_table, len(x))
-		s = get_size(ohe_table) + get_size(ohe_ranks)
+		ohe = OneHotEncoding(x)
+		s = get_size(ohe)
 		ohe_ls.append(s)
 		write_to_file("data_ohe.txt", n, s)
 

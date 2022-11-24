@@ -1,5 +1,6 @@
 import numpy as np
-from shared import get_alphabet
+from shared import get_alphabet, construct_sa_skew
+
 
 ########################################################
 # BW search with C and O tables
@@ -103,7 +104,31 @@ def map_string_to_ints(x):
 
 
 ########################################################
-# Code to run
+# Class for rank querying with Occ table
 ########################################################
 
+class Occ:
+	def __init__(self, x, sa):
+		#x += "0" # sentinel needed by Skew
+		#sa = construct_sa_skew(x)
+		self.n_to_l, self.l_to_n, _ = map_string_to_ints(x)
+		self.table = self.construct_occ(x, sa)
 
+	def construct_occ(self, x, sa):
+		alpha = get_alphabet(x)
+		occ = np.zeros((len(alpha), len(x)+1), dtype=int)
+		for r in range(len(alpha)):
+			for c in range(1, len(x)+1):
+				a = self.n_to_l[r]
+				occ[r, c] = occ[r, c-1] + (x[sa[c-1]-1] == a)
+		return occ
+
+	def rank(self, c, i):
+		a = self.l_to_n[c]
+		return self.table[a, i]
+
+
+
+########################################################
+# Code to run
+########################################################

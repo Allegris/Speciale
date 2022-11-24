@@ -1,5 +1,9 @@
 from random import randrange
-from one_hot_encoding import one_hot_encoding, preprocess_ranks
+from one_hot_encoding import OneHotEncoding
+import wavelet_tree as w1
+import wavelet_tree_lvl as w2
+from bwt_search import Occ
+from shared import construct_sa_skew, bwt
 
 
 n = 100
@@ -7,6 +11,10 @@ title = f"simulated_data\\simulated_DNA_n{n}.txt"
 file = open(title, "r")
 x = file.read()
 file.close()
+
+x += "0"
+sa = construct_sa_skew(x)
+bwt_x = bwt(x, sa)
 
 queries = []
 
@@ -17,14 +25,18 @@ for _ in range(n):
 	queries.append((char, query_idx))
 
 
-print(queries)
-
 
 # One hot encoding
-ohe_table = one_hot_encoding(x)
-ohe_ranks = preprocess_ranks(ohe_table, len(x))
-s = get_size(ohe_table) + get_size(ohe_ranks)
-ohe_ls.append(s)
-write_to_file("data_ohe.txt", n, s)
+ohe = OneHotEncoding(bwt_x)
+
+# WT
+wt1 = w1.WaveletTree(bwt_x)
+
+# WT level
+wt2 = w2.WaveletTree(bwt_x)
+
+# Occ
+occ = Occ(x, sa)
 
 for c, i in queries:
+	print(ohe.rank(c, i), wt1.rank(c, i), wt2.rank(c, i), occ.rank(c, i))
