@@ -1,6 +1,6 @@
 from bitarray import bitarray
 from shared import alphabet_size, bitvector_rank, preprocess_node_word_ranks, split_node, huffman_codes
-from line_profiler import LineProfiler
+#from line_profiler import LineProfiler
 
 
 ########################################################
@@ -12,7 +12,7 @@ class WaveletTree:
 		self.n = len(x)
 		self.codes = huffman_codes(x)
 		self.bitvector, self.child_dict = self.wt_bitvector_and_child_dict(x, self.n, self.codes)
-		self.ranks = self.all_node_ranks(self.bitvector, len(x), self.child_dict)
+		self.ranks = preprocess_node_word_ranks(self.bitvector) #self.all_node_ranks(self.bitvector, len(x), self.child_dict)
 
 	'''
 	Constructs a level order, Huffman-shaped wavelet tree of string x using
@@ -94,6 +94,7 @@ class WaveletTree:
 	for 0 and 1, respectively. Idx is the starting index of the "node" in the
 	bitvector for the entire wavelet tree, wt.
 	'''
+	'''
 	def all_node_ranks(self, wt, n, child_dict):
 		ranks = {idx: {0: [0], 1: [0]} for idx in child_dict.keys()}
 		ranks[0] = preprocess_node_word_ranks(wt[0:n]) # Root ranks
@@ -104,7 +105,7 @@ class WaveletTree:
 				if i and j: # If inner node, calculate word ranks
 					ranks[i] = preprocess_node_word_ranks(wt[i:j])
 		return ranks
-
+	'''
 	########################################################
 	# Rank query using wavelet tree
 	########################################################
@@ -119,8 +120,8 @@ class WaveletTree:
 		# Iterate chars in code
 		for char in self.codes[c]:
 			# Update rank and node
-			rank = bitvector_rank(self.bitvector[L:R],
-						 self.ranks[L][char], char, rank)
+			#rank = bitvector_rank(self.bitvector[L:R], self.ranks[L][char], char, rank)
+			rank = bitvector_rank(self.bitvector, self.ranks[char], char, L+rank) - bitvector_rank(self.bitvector, self.ranks[char], char, L)
 			L, R = self.child_dict[L][1] if char else self.child_dict[L][0] # 0 is left, 1 is right
 		return rank
 
@@ -132,7 +133,7 @@ class WaveletTree:
 
 
 
-
+'''
 #x = "AG$TAAC"
 
 title = f"simulated_data\\simulated_DNA_n5000000.txt"
@@ -148,7 +149,7 @@ lp.print_stats()
 
 #print(wt.child_dict)
 #print(wt.rank("A", 2))
-
+'''
 
 ########################################################
 # For report

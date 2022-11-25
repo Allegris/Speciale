@@ -1,5 +1,5 @@
 import numpy as np
-from shared import get_alphabet, construct_sa_skew
+from shared import get_alphabet
 
 
 ########################################################

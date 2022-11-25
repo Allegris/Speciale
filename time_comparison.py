@@ -6,9 +6,9 @@ import wavelet_tree as w1
 import wavelet_tree_lvl as w2
 from bwt_search import Occ
 from shared import construct_sa_skew, bwt
-import cProfile
-import pstats
-import io
+#import cProfile
+#import pstats
+#import io
 
 
 def generate_queries(x):
@@ -40,12 +40,13 @@ ohe_qt = []
 wt1_qt = []
 wt2_qt = []
 
-pr = cProfile.Profile()
-pr.enable()
-ns = list(range(1000, 10001, 1000)) # 1K
+#pr = cProfile.Profile()
+#pr.enable()
+
+#ns = list(range(1000, 10001, 1000)) # 1K
 #ns = list(range(1000, 10001, 1000)) #  10K
 #ns = list(range(10000, 100001, 10000)) # 100K
-#ns = list(range(50000, 1000001, 50000)) # 1M
+ns = list(range(50000, 1000001, 50000)) # 1M
 
 for n in ns:
 	print(n)
@@ -117,6 +118,8 @@ for n in ns:
 
 	#for c, i in queries:
 	#	#print(ohe.rank(c, i), wt1.rank(c, i), wt2.rank(c, i), occ.rank(c, i))
+
+'''
 pr.disable()
 s = io.StringIO()
 ps = pstats.Stats(pr, stream=s).sort_stats('tottime')
@@ -124,7 +127,7 @@ ps.print_stats()
 
 with open('res.txt', 'w+') as f:
 	f.write(s.getvalue())
-
+'''
 
 
 f = open("times.txt", "w")

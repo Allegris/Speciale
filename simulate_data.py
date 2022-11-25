@@ -39,8 +39,7 @@ def print_to_file(n):
 #ns = list(range(1000, 10001, 1000)) # 1K
 #ns = list(range(1000, 10001, 1000)) #  10K
 #ns = list(range(10000, 100001, 10000)) # 100K
-#ns = list(range(50000, 1000001, 50000)) # 1M
-ns = [5000000]
+ns = list(range(50000, 1000001, 50000)) # 1M
 
 for n in ns:
 	print_to_file(n)

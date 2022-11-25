@@ -50,6 +50,7 @@ if __name__ == "__main__":
 	#ns = list(range(1000, 10001, 1000)) #  10K
 	#ns = list(range(10000, 100001, 10000)) # 100K
 	ns = list(range(50000, 1000001, 50000)) # 1M
+
 	o_ls = []
 	ohe_ls = []
 	wt_node_ls = []

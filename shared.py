@@ -105,7 +105,7 @@ Finds the rank of a char c and an index i in a bitvector,
 by looking up in the word ranks and scanning the bits in the bitvector.
 '''
 def bitvector_rank(bitvector, word_ranks, c, i):
-	word_size = floor(log2(len(bitvector)))
+	word_size = floor(log2(len(bitvector))) #bit length, højst satte bit
 	word_no = (i // word_size)
 	scan_len = i % word_size
 	scan_start = word_no * word_size
