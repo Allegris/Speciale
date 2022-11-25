@@ -6,7 +6,9 @@ import wavelet_tree as w1
 import wavelet_tree_lvl as w2
 from bwt_search import Occ
 from shared import construct_sa_skew, bwt
-
+import cProfile
+import pstats
+import io
 
 
 def generate_queries(x):
@@ -38,10 +40,12 @@ ohe_qt = []
 wt1_qt = []
 wt2_qt = []
 
-
+pr = cProfile.Profile()
+pr.enable()
+ns = list(range(1000, 10001, 1000)) # 1K
 #ns = list(range(1000, 10001, 1000)) #  10K
 #ns = list(range(10000, 100001, 10000)) # 100K
-ns = list(range(50000, 1000001, 50000)) # 1M
+#ns = list(range(50000, 1000001, 50000)) # 1M
 
 for n in ns:
 	print(n)
@@ -76,6 +80,7 @@ for n in ns:
 	# WT level
 	start = time.time()
 	wt2 = w2.WaveletTree(bwt_x)
+	#print(n, ": ", get_size(wt2)/10**3)
 	end = time.time()
 	#print("WT2:", end - start)
 	wt2_pre.append(end - start)
@@ -112,6 +117,14 @@ for n in ns:
 
 	#for c, i in queries:
 	#	#print(ohe.rank(c, i), wt1.rank(c, i), wt2.rank(c, i), occ.rank(c, i))
+pr.disable()
+s = io.StringIO()
+ps = pstats.Stats(pr, stream=s).sort_stats('tottime')
+ps.print_stats()
+
+with open('res.txt', 'w+') as f:
+	f.write(s.getvalue())
+
 
 
 f = open("times.txt", "w")
@@ -128,10 +141,10 @@ f.write("WT2: " + str(wt2_qt) + "\n")
 f.close()
 
 
-plt.plot(ns, occ_pre, color = "red", marker='o', label = "Occ", alpha = 0.6)
-plt.plot(ns, ohe_pre, color = "blue", marker='o', label = "OHE", alpha = 0.6)
-plt.plot(ns, wt1_pre, color = "orange", marker='o', label = "WT", alpha = 0.9)
-plt.plot(ns, wt2_pre, color = "green", marker='o', label = "WT_lvl", alpha = 0.6)
+plt.plot(ns, occ_pre, color = "red", marker='o', label = "Occ", alpha = 0.6, linestyle = 'None')
+plt.plot(ns, ohe_pre, color = "blue", marker='o', label = "OHE", alpha = 0.6, linestyle = 'None')
+plt.plot(ns, wt1_pre, color = "orange", marker='o', label = "WT", alpha = 0.9, linestyle = 'None')
+plt.plot(ns, wt2_pre, color = "green", marker='o', label = "WT_lvl", alpha = 0.6, linestyle = 'None')
 plt.xlabel("n", fontsize = 13)
 plt.ylabel("Preprocessing time (sec)", fontsize = 13)
 plt.legend()
@@ -143,10 +156,10 @@ plt.clf() # Clear plot
 
 
 
-plt.plot(ns, occ_qt, color = "red", marker='o', label = "Occ", alpha = 0.6)
-plt.plot(ns, ohe_qt, color = "blue", marker='o', label = "OHE", alpha = 0.6)
-plt.plot(ns, wt1_qt, color = "orange", marker='o', label = "WT", alpha = 0.9)
-plt.plot(ns, wt2_qt, color = "green", marker='o', label = "WT_lvl", alpha = 0.6)
+plt.plot(ns, occ_qt, color = "red", marker='o', label = "Occ", alpha = 0.6, linestyle = 'None')
+plt.plot(ns, ohe_qt, color = "blue", marker='o', label = "OHE", alpha = 0.6, linestyle = 'None')
+plt.plot(ns, wt1_qt, color = "orange", marker='o', label = "WT", alpha = 0.9, linestyle = 'None')
+plt.plot(ns, wt2_qt, color = "green", marker='o', label = "WT_lvl", alpha = 0.6, linestyle = 'None')
 plt.xlabel("n", fontsize = 13)
 plt.ylabel("Rank query time (sec)", fontsize = 13)
 plt.legend()

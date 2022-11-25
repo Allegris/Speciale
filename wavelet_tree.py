@@ -1,5 +1,5 @@
 from shared import alphabet_size, bitvector_rank, preprocess_node_word_ranks, split_node, huffman_codes
-
+from line_profiler import LineProfiler
 
 ########################################################
 # Class for wavelet tree
@@ -57,7 +57,16 @@ x = "AG$TAAC"
 wt = WaveletTree(x)
 #print(wt.rank("A", 2))
 '''
+title = f"simulated_data\\simulated_DNA_n5000000.txt"
+file = open(title, "r")
+x = file.read()
+file.close()
 
+wt = WaveletTree(x)
+lp = LineProfiler()
+lp_wrapper = lp(wt.rank)
+lp_wrapper("A", 990000)
+lp.print_stats()
 
 
 ########################################################

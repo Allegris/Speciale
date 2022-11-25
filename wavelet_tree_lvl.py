@@ -1,5 +1,6 @@
 from bitarray import bitarray
 from shared import alphabet_size, bitvector_rank, preprocess_node_word_ranks, split_node, huffman_codes
+from line_profiler import LineProfiler
 
 
 ########################################################
@@ -12,7 +13,6 @@ class WaveletTree:
 		self.codes = huffman_codes(x)
 		self.bitvector, self.child_dict = self.wt_bitvector_and_child_dict(x, self.n, self.codes)
 		self.ranks = self.all_node_ranks(self.bitvector, len(x), self.child_dict)
-
 
 	'''
 	Constructs a level order, Huffman-shaped wavelet tree of string x using
@@ -48,7 +48,7 @@ class WaveletTree:
 		while inner_nodes:
 			s, idx, level = inner_nodes.pop(0)
 			s_bitvector, s0, s1 = split_node(s, codes, level)
-			wt_bitvector += s_bitvector
+			wt_bitvector.extend(s_bitvector)
 			# 0 is left, 1 is right
 			child_dict[idx] = {0: (None, None), 1: (None, None)}
 			# If left child is an inner node
@@ -125,16 +125,30 @@ class WaveletTree:
 		return rank
 
 
+
 ########################################################
 # Code to run
 ########################################################
 
-'''
-x = "AG$TAAC"
+
+
+
+#x = "AG$TAAC"
+
+title = f"simulated_data\\simulated_DNA_n5000000.txt"
+file = open(title, "r")
+x = file.read()
+file.close()
+
 wt = WaveletTree(x)
-print(wt.child_dict)
+lp = LineProfiler()
+lp_wrapper = lp(wt.rank)
+lp_wrapper("A", 990000)
+lp.print_stats()
+
+#print(wt.child_dict)
 #print(wt.rank("A", 2))
-'''
+
 
 ########################################################
 # For report
