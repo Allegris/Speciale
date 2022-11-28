@@ -1,5 +1,5 @@
 from bitarray import bitarray
-from shared import alphabet_size, bitvector_rank, preprocess_node_word_ranks, split_node, huffman_codes
+from shared import alphabet_size, bitvector_rank, preprocess_node_word_ranks, split_node, huffman_codes, preprocess_one_ranks, bitvector_rank_binary
 #from line_profiler import LineProfiler
 
 
@@ -12,7 +12,7 @@ class WaveletTree:
 		self.n = len(x)
 		self.codes = huffman_codes(x)
 		self.bitvector, self.child_dict = self.wt_bitvector_and_child_dict(x, self.n, self.codes)
-		self.ranks = preprocess_node_word_ranks(self.bitvector) #self.all_node_ranks(self.bitvector, len(x), self.child_dict)
+		self.ranks = preprocess_one_ranks(self.bitvector) #self.all_node_ranks(self.bitvector, len(x), self.child_dict)
 
 	'''
 	Constructs a level order, Huffman-shaped wavelet tree of string x using
@@ -121,7 +121,7 @@ class WaveletTree:
 		for char in self.codes[c]:
 			# Update rank and node
 			#rank = bitvector_rank(self.bitvector[L:R], self.ranks[L][char], char, rank)
-			rank = bitvector_rank(self.bitvector, self.ranks[char], char, L+rank) - bitvector_rank(self.bitvector, self.ranks[char], char, L)
+			rank = bitvector_rank_binary(self.bitvector, self.ranks, char, L+rank) - bitvector_rank_binary(self.bitvector, self.ranks, char, L)
 			L, R = self.child_dict[L][1] if char else self.child_dict[L][0] # 0 is left, 1 is right
 		return rank
 

@@ -2,6 +2,9 @@ from bitarray import bitarray
 from bitarray.util import huffman_code, canonical_huffman
 from math import floor, log2
 import skew
+from bitarray.util import count_n
+
+
 
 
 ########################################################
@@ -100,6 +103,14 @@ def preprocess_node_word_ranks(bitvector):
 		ranks[1].append(ranks[1][i] + word.count(1)) # Ones
 	return ranks
 
+def preprocess_one_ranks(bitvector):
+	ranks = [0]
+	word_size = floor(log2(len(bitvector)))
+	for i in range(len(bitvector) // word_size): # Iterate words
+		word = bitvector[i*word_size: (i+1)*word_size]
+		ranks.append(ranks[i] + word.count(1)) # Ones
+	return ranks
+
 '''
 Finds the rank of a char c and an index i in a bitvector,
 by looking up in the word ranks and scanning the bits in the bitvector.
@@ -112,6 +123,16 @@ def bitvector_rank(bitvector, word_ranks, c, i):
 	scan_end = scan_start + scan_len
 	# Look-up and scan (scan length may be 0)
 	return word_ranks[word_no] + bitvector[scan_start:scan_end].count(c)
+
+
+def bitvector_rank_binary(bitvector, one_ranks, c, i):
+	word_size = floor(log2(len(bitvector))) #bit length, højst satte bit
+	word_no = (i // word_size)
+	scan_len = i % word_size
+	scan_start = word_no * word_size
+	scan_end = scan_start + scan_len
+	word_rank = one_ranks[word_no] if c else word_no * word_size - one_ranks[word_no]
+	return word_rank + bitvector[scan_start:scan_end].count(c)
 
 
 ########################################################
