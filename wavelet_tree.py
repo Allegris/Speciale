@@ -1,4 +1,4 @@
-from shared import alphabet_size, bitvector_rank, preprocess_node_word_ranks, split_node, huffman_codes
+from shared import alphabet_size, bitvector_rank, split_node, huffman_codes, preprocess_one_ranks
 from line_profiler import LineProfiler
 
 ########################################################
@@ -21,7 +21,7 @@ class WaveletTree:
 		for char in self.codes[c]:
 			# Update rank and node
 			rank = bitvector_rank(node.bitvector,
-						 node.word_ranks[char], char, rank)
+						 node.word_ranks, char, rank)
 			node = node.right_child if char else node.left_child
 		return rank
 
@@ -36,7 +36,7 @@ class WaveletTreeNode:
 		# Construct node bitvector and split s in two parts (child nodes)
 		self.bitvector, s0, s1 = split_node(s, codes, level)
 		# Preprocess ranks
-		self.word_ranks = preprocess_node_word_ranks(self.bitvector)
+		self.word_ranks = preprocess_one_ranks(self.bitvector)
 		# Create children
 		self.left_child, self.right_child = None, None
 		# If left child is an inner node
@@ -57,6 +57,9 @@ x = "AG$TAAC"
 wt = WaveletTree(x)
 #print(wt.rank("A", 2))
 '''
+
+
+'''
 title = f"simulated_data\\simulated_DNA_n5000000.txt"
 file = open(title, "r")
 x = file.read()
@@ -67,7 +70,7 @@ lp = LineProfiler()
 lp_wrapper = lp(wt.rank)
 lp_wrapper("A", 990000)
 lp.print_stats()
-
+'''
 
 ########################################################
 # For report

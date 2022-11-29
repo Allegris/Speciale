@@ -1,5 +1,5 @@
 from bitarray import bitarray
-from shared import alphabet_size, bitvector_rank, preprocess_node_word_ranks, split_node, huffman_codes, preprocess_one_ranks, bitvector_rank_binary
+from shared import alphabet_size, bitvector_rank, split_node, huffman_codes, preprocess_one_ranks
 #from line_profiler import LineProfiler
 
 
@@ -121,7 +121,7 @@ class WaveletTree:
 		for char in self.codes[c]:
 			# Update rank and node
 			#rank = bitvector_rank(self.bitvector[L:R], self.ranks[L][char], char, rank)
-			rank = bitvector_rank_binary(self.bitvector, self.ranks, char, L+rank) - bitvector_rank_binary(self.bitvector, self.ranks, char, L)
+			rank = bitvector_rank(self.bitvector, self.ranks, char, L+rank) - bitvector_rank(self.bitvector, self.ranks, char, L)
 			L, R = self.child_dict[L][1] if char else self.child_dict[L][0] # 0 is left, 1 is right
 		return rank
 

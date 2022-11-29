@@ -27,7 +27,7 @@ def query_times(queries, ds):
 	for c, i in queries:
 		ds.rank(c, i)
 	end = time.time()
-	return end-start
+	return (end-start)/len(queries)
 
 
 occ_pre = []
@@ -50,7 +50,7 @@ ns = list(range(50000, 1000001, 50000)) # 1M
 
 for n in ns:
 	print(n)
-	title = f"simulated_data\\simulated_DNA_n{n}.txt"
+	title = f"simulated_data\\simulated_Big_n{n}.txt"
 	file = open(title, "r")
 	x = file.read()
 	file.close()
@@ -130,7 +130,7 @@ with open('res.txt', 'w+') as f:
 '''
 
 
-f = open("times.txt", "w")
+f = open("R\\TIME\\times.txt", "w")
 f.write("PREPROCESSING TIMES:\n")
 f.write("Occ: " + str(occ_pre) + "\n")
 f.write("Ohe: " + str(ohe_pre) + "\n")
@@ -144,35 +144,29 @@ f.write("WT2: " + str(wt2_qt) + "\n")
 f.close()
 
 
-plt.plot(ns, occ_pre, color = "red", marker='o', label = "Occ", alpha = 0.6, linestyle = 'None')
-plt.plot(ns, ohe_pre, color = "blue", marker='o', label = "OHE", alpha = 0.6, linestyle = 'None')
-plt.plot(ns, wt1_pre, color = "orange", marker='o', label = "WT", alpha = 0.9, linestyle = 'None')
-plt.plot(ns, wt2_pre, color = "green", marker='o', label = "WT_lvl", alpha = 0.6, linestyle = 'None')
+plt.plot(ns, occ_pre, color = "red", marker='o', label = "Occ", alpha = 0.6) #, linestyle = 'None'
+plt.plot(ns, ohe_pre, color = "blue", marker='o', label = "OHE", alpha = 0.6)
+plt.plot(ns, wt1_pre, color = "orange", marker='o', label = "WT", alpha = 0.9)
+plt.plot(ns, wt2_pre, color = "green", marker='o', label = "WT_lvl", alpha = 0.6)
 plt.xlabel("n", fontsize = 13)
 plt.ylabel("Preprocessing time (sec)", fontsize = 13)
 plt.legend()
 plt.tight_layout()
-plt.savefig("Time_preprocessing_all")
+plt.savefig("R\\TIME\\Time_preprocessing_all")
 plt.show()
 plt.clf() # Clear plot
 
 
 
 
-plt.plot(ns, occ_qt, color = "red", marker='o', label = "Occ", alpha = 0.6, linestyle = 'None')
-plt.plot(ns, ohe_qt, color = "blue", marker='o', label = "OHE", alpha = 0.6, linestyle = 'None')
-plt.plot(ns, wt1_qt, color = "orange", marker='o', label = "WT", alpha = 0.9, linestyle = 'None')
-plt.plot(ns, wt2_qt, color = "green", marker='o', label = "WT_lvl", alpha = 0.6, linestyle = 'None')
+plt.plot(ns, occ_qt, color = "red", marker='o', label = "Occ", alpha = 0.6)
+plt.plot(ns, ohe_qt, color = "blue", marker='o', label = "OHE", alpha = 0.6)
+plt.plot(ns, wt1_qt, color = "orange", marker='o', label = "WT", alpha = 0.9)
+plt.plot(ns, wt2_qt, color = "green", marker='o', label = "WT_lvl", alpha = 0.6)
 plt.xlabel("n", fontsize = 13)
 plt.ylabel("Rank query time (sec)", fontsize = 13)
 plt.legend()
 plt.tight_layout()
-plt.savefig("Time_query_all")
+plt.savefig("R\\TIME\\Time_query_all")
 plt.show()
 plt.clf() # Clear plot
-
-
-
-
-
-

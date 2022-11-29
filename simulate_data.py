@@ -18,6 +18,7 @@ print(len(alpha))
 probs = [1 / len(alpha)] * len(alpha) # equal probs
 '''
 
+
 x = "abcdefghijklmnopqrstuvxyzABCDEFGHIJKLMNOPQRSTUVXYZ"
 alpha = get_alphabet(x) # size 50
 probs = [1 / len(alpha)] * len(alpha) # equal probs
@@ -28,7 +29,7 @@ def generate_string(n):
 
 
 def print_to_file(n):
-	title = f"simulated_data\\simulated_Lorem_n{n}.txt"
+	title = f"simulated_data\\simulated_BIG_n{n}.txt"
 	file = open(title, "w")
 	file.write(generate_string(n))
 	file.close()

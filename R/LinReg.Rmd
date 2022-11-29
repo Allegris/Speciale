@@ -19,7 +19,7 @@ library(tidyverse)
 
 ```{r}
 
-df <- read_csv(file = "data_wt.csv")
+df <- read_csv(file = "SPACE/Large50/data_wt2.csv")
 #df
 fit <- lm(bytes ~ n, data=df)
 #summary(fit)

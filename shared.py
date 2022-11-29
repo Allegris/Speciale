@@ -89,20 +89,11 @@ def huffman_codes(x):
 
 '''
 Preprocesses node word ranks of a bitvector of length n.
-Each word is of length floor(log2(n)) (remainder is not in a word).
+Each word is of length floor(log2(n)).
 
-Returns a dict {0: [word_ranks], 1: [word_ranks]} where the lists contain
-the rank of each word for the given bit, e.g., {0: [0, 1, 2, 3], 1: [0, 2, 4, 6]}
+Returns a list of word ranks for 1
+(for 0, we will just subtract the number of ones from the index).
 '''
-def preprocess_node_word_ranks(bitvector):
-	ranks = {0: [0], 1: [0]}
-	word_size = floor(log2(len(bitvector)))
-	for i in range(len(bitvector) // word_size): # Iterate words
-		word = bitvector[i*word_size: (i+1)*word_size]
-		ranks[0].append(ranks[0][i] + word.count(0)) # Zeros
-		ranks[1].append(ranks[1][i] + word.count(1)) # Ones
-	return ranks
-
 def preprocess_one_ranks(bitvector):
 	ranks = [0]
 	word_size = floor(log2(len(bitvector)))
@@ -115,17 +106,7 @@ def preprocess_one_ranks(bitvector):
 Finds the rank of a char c and an index i in a bitvector,
 by looking up in the word ranks and scanning the bits in the bitvector.
 '''
-def bitvector_rank(bitvector, word_ranks, c, i):
-	word_size = floor(log2(len(bitvector))) #bit length, højst satte bit
-	word_no = (i // word_size)
-	scan_len = i % word_size
-	scan_start = word_no * word_size
-	scan_end = scan_start + scan_len
-	# Look-up and scan (scan length may be 0)
-	return word_ranks[word_no] + bitvector[scan_start:scan_end].count(c)
-
-
-def bitvector_rank_binary(bitvector, one_ranks, c, i):
+def bitvector_rank(bitvector, one_ranks, c, i):
 	word_size = floor(log2(len(bitvector))) #bit length, højst satte bit
 	word_no = (i // word_size)
 	scan_len = i % word_size
