@@ -50,7 +50,7 @@ ns = list(range(50000, 1000001, 50000)) # 1M
 
 for n in ns:
 	print(n)
-	title = f"simulated_data\\simulated_Big_n{n}.txt"
+	title = f"simulated_data\\simulated_DNA_n{n}.txt"
 	file = open(title, "r")
 	x = file.read()
 	file.close()
@@ -61,65 +61,48 @@ for n in ns:
 
 	queries = generate_queries(bwt_x)
 
-	#print("********************************")
 
-	#print("PREPROCESSING TIMES:")
 	# One hot encoding
 	start = time.time()
 	ohe = OneHotEncoding(bwt_x)
 	end = time.time()
-	#print("OHE:", end - start)
 	ohe_pre.append(end - start)
 
 	# WT
 	start = time.time()
 	wt1 = w1.WaveletTree(bwt_x)
 	end = time.time()
-	#print("WT1:", end - start)
 	wt1_pre.append(end - start)
 
 	# WT level
 	start = time.time()
 	wt2 = w2.WaveletTree(bwt_x)
-	#print(n, ": ", get_size(wt2)/10**3)
 	end = time.time()
-	#print("WT2:", end - start)
 	wt2_pre.append(end - start)
 
 	# Occ
 	start = time.time()
 	occ = Occ(bwt_x)
 	end = time.time()
-	#print("Occ:", end - start)
 	occ_pre.append(end - start)
 
 
-	#print("********************************")
-
-	#print("QUERY TIMES")
 
 	occ_time = query_times(queries, occ)
-	#print("Occ:", occ_time)
 	occ_qt.append(occ_time)
 
 	ohe_time = query_times(queries, ohe)
-	#print("OHE:", ohe_time)
 	ohe_qt.append(ohe_time)
 
 	wt1_time = query_times(queries, wt1)
-	#print("WT1:", wt1_time)
 	wt1_qt.append(wt1_time)
 
 	wt2_time = query_times(queries, wt2)
-	#print("WT2:", wt2_time)
 	wt2_qt.append(wt2_time)
 
-	#print("********************************")
-
-	#for c, i in queries:
-	#	#print(ohe.rank(c, i), wt1.rank(c, i), wt2.rank(c, i), occ.rank(c, i))
 
 '''
+# For profiling
 pr.disable()
 s = io.StringIO()
 ps = pstats.Stats(pr, stream=s).sort_stats('tottime')
@@ -130,7 +113,7 @@ with open('res.txt', 'w+') as f:
 '''
 
 
-f = open("R\\TIME\\times.txt", "w")
+f = open("Results\\TIME\\times.txt", "w")
 f.write("PREPROCESSING TIMES:\n")
 f.write("Occ: " + str(occ_pre) + "\n")
 f.write("Ohe: " + str(ohe_pre) + "\n")
@@ -150,9 +133,9 @@ plt.plot(ns, wt1_pre, color = "orange", marker='o', label = "WT", alpha = 0.9)
 plt.plot(ns, wt2_pre, color = "green", marker='o', label = "WT_lvl", alpha = 0.6)
 plt.xlabel("n", fontsize = 13)
 plt.ylabel("Preprocessing time (sec)", fontsize = 13)
-plt.legend()
+plt.legend(loc = 'upper left')
 plt.tight_layout()
-plt.savefig("R\\TIME\\Time_preprocessing_all")
+plt.savefig("Results\\TIME\\Time_preprocessing_all_DNA")
 plt.show()
 plt.clf() # Clear plot
 
@@ -165,8 +148,9 @@ plt.plot(ns, wt1_qt, color = "orange", marker='o', label = "WT", alpha = 0.9)
 plt.plot(ns, wt2_qt, color = "green", marker='o', label = "WT_lvl", alpha = 0.6)
 plt.xlabel("n", fontsize = 13)
 plt.ylabel("Rank query time (sec)", fontsize = 13)
-plt.legend()
+plt.legend(loc = 'upper left')
 plt.tight_layout()
-plt.savefig("R\\TIME\\Time_query_all")
+plt.savefig("R\\TIME\\Time_query_all_DNA")
 plt.show()
 plt.clf() # Clear plot
+

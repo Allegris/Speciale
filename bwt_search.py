@@ -21,8 +21,7 @@ def bw_search(bwt_x, p, sparse_sa, C, O, l_to_n):
 		else:
 			break
 	# Find and return corresponding match indices
-	#matches = [sa[i] for i in range(L, R)]
-	matches = [lookup_sparse_sa(sparse_sa, i, bwt_x, C, O, l_to_n, ) for i in range(L, R)]
+	matches = [lookup_sparse_sa(sparse_sa, i, bwt_x, C, O, l_to_n, ) for i in range(L, R)] # [sa[i] for i in range(L, R)]
 	return sorted(matches)
 
 
@@ -105,11 +104,11 @@ def map_string_to_ints(x):
 
 ########################################################
 # Class for rank querying with Occ table
+# (only used for experiments, not for pattern matching)
 ########################################################
 
 class Occ:
 	def __init__(self, x):
-		self.n_to_l, self.l_to_n, _ = map_string_to_ints(x)
 		self.table = self.construct_occ(x)
 
 	def construct_occ(self, x):

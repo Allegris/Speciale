@@ -1,9 +1,9 @@
 import sys
 import matplotlib.pyplot as plt
-from one_hot_encoding import one_hot_encoding, preprocess_ranks
+from one_hot_encoding import OneHotEncoding
 import wavelet_tree as w1
 import wavelet_tree_lvl as w2
-from bwt_search import construct_O, map_string_to_ints
+from bwt_search import Occ #, construct_O, map_string_to_ints
 from shared import construct_sa_skew
 
 
@@ -29,78 +29,100 @@ def get_size(obj, seen=None):
     return size
 
 
+def init_file(filename):
+	f = open(filename, "w")
+	f.write("\"n\"," + "\"bytes\"" + "\n")
+	f.close()
+
+
+def write_to_file(filename, n, s):
+	f = open(filename, "a")
+	f.write(str(n) + "," + str(s) + "\n")
+	#f.write("\"" + str(i+1) + "\"" + "," + str(n) + "," + str(s) + "\n")
+	f.close()
+
+
 if __name__ == "__main__":
-	#ns = [100, 1000, 10000, 100000, 1000000, 10000000]
-	#ns = [100000, 1000000, 10000000]
-	ns = list(range(500, 10001, 500))
+	init_file("data_ohe.txt")
+	init_file("data_wt.txt")
+	init_file("data_wt2.txt")
+	init_file("data_occ.txt")
+	#ns = list(range(1000, 10001, 1000)) # 1K
+	#ns = list(range(1000, 10001, 1000)) #  10K
+	#ns = list(range(10000, 100001, 10000)) # 100K
+	ns = list(range(50000, 1000001, 50000)) # 1M
+
 	o_ls = []
 	ohe_ls = []
 	wt_node_ls = []
 	wt_lvl_ls = []
 
-	for n in ns:
+	for i, n in enumerate(ns):
 		print("n", n)
-		title = f"simulated_data\\simulated_DNA_n{n}.txt"
+		title = f"simulated_data\\simulated_Big_n{n}.txt"
 		file = open(title, "r")
 		x = file.read()
 		file.close()
 
 		# One hot encoding
-		summ = 0
-		for _ in range(10):
-			ohe_table = one_hot_encoding(x)
-			ohe_ranks = preprocess_ranks(ohe_table, len(x))
-			ohe_size =  get_size(ohe_table) + get_size(ohe_ranks)
-			summ += ohe_size
-		ohe_ls.append(summ/10)
+		ohe = OneHotEncoding(x)
+		s = get_size(ohe)
+		ohe_ls.append(s)
+		write_to_file("data_ohe.txt", n, s)
 
 		# Wavelet tree - node representation
-		summ = 0
-		for _ in range(10):
-			wt = w1.WaveletTree(x)
-			summ += get_size(wt)
-		#wt_node_ls.append(get_size(wt))
-		wt_node_ls.append(summ/10)
-
+		wt1 = w1.WaveletTree(x)
+		s = get_size(wt1)
+		wt_node_ls.append(s)
+		write_to_file("data_wt.txt", n, s)
 
 		# Wavelet tree - level order representation
-		summ = 0
-		for _ in range(10):
-			wt2 = w2.WaveletTree(x)
-			summ += get_size(wt2)
-		wt_lvl_ls.append(summ/10)
+		wt2 = w2.WaveletTree(x)
+		s = get_size(wt2)
+		wt_lvl_ls.append(s)
+		write_to_file("data_wt2.txt", n, s)
 
-		# O table
-		x += "0" # Add sentinel to x - needed by Skew
-		sa = construct_sa_skew(x)
-		num_to_letter_dict, _, _ = map_string_to_ints(x)
-		summ = 0
-		for _ in range(10):
-			O = construct_O(x, sa, num_to_letter_dict)
-			summ += get_size(O)
-		#o_ls.append(get_size(O))
-		o_ls.append(summ/10)
+		# Occ table
+		occ = Occ(x)
+		s = get_size(occ)
+		o_ls.append(s)
+		write_to_file("data_occ.txt", n, s)
 
 
 	##### PLOTS #####
 
-	print("n:", ns)
-	print("occ:", o_ls)
-	print("ohe:", ohe_ls)
-	print("wt:", wt_node_ls)
-	plt.scatter(ns, o_ls, color = "red", s=50, alpha = 0.5)
-	plt.scatter(ns, ohe_ls, color = "orange", s=50, alpha = 0.5)
-	plt.scatter(ns, wt_node_ls, color = "blue", s=50, alpha = 0.5)
-	plt.scatter(ns, wt_lvl_ls, color = "green", s=50, alpha = 0.5)
-	#plt.ylim(0, 6*(10**(-6)))
-	#plt.xscale("log", basex = 10)
-	#plt.yscale("log", basey = 10)
+	# ALl
+	plt.plot(ns, o_ls, color = "red", marker='o', label = "Occ", alpha = 0.6) #, linestyle = 'None'
+	plt.plot(ns, ohe_ls, color = "blue", marker='o', label = "OHE", alpha = 0.6)
+	plt.plot(ns, wt_node_ls, color = "orange", marker='o', label = "WT", alpha = 0.9)
+	plt.plot(ns, wt_lvl_ls, color = "green", marker='o', label = "WT_lvl", alpha = 0.6)
 	plt.xlabel("n", fontsize = 13)
 	plt.ylabel("Memory usage (bytes)", fontsize = 13)
-	plt.savefig("Space_usage_random")
+	plt.legend()
+	plt.tight_layout()
+	plt.savefig("Results\\Space_comparison_all_Big")
 	plt.show()
 	plt.clf() # Clear plot
 
+	# Ohe, WT_node
+	plt.plot(ns, ohe_ls, color = "blue", marker='o', label = "OHE", alpha = 0.6)
+	plt.plot(ns, wt_node_ls, color = "orange", marker='o', label = "WT", alpha = 0.9)
+	plt.xlabel("n", fontsize = 13)
+	plt.ylabel("Memory usage (bytes)", fontsize = 13)
+	plt.legend()
+	plt.tight_layout()
+	plt.savefig("Results\\Space_comparison_ohe_wt_Big")
+	plt.show()
+	plt.clf() # Clear plot
 
-
+	# WT_node, WT_lvl
+	plt.plot(ns, wt_node_ls, color = "orange", marker='o', label = "WT", alpha = 0.9)
+	plt.plot(ns, wt_lvl_ls, color = "green", marker='o', label = "WT_lvl", alpha = 0.6)
+	plt.xlabel("n", fontsize = 13)
+	plt.ylabel("Memory usage (bytes)", fontsize = 13)
+	plt.legend()
+	plt.tight_layout()
+	plt.savefig("Results\\Space_comparison_wts_Big")
+	plt.show()
+	plt.clf() # Clear plot
 

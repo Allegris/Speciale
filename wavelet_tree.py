@@ -1,5 +1,5 @@
 from shared import alphabet_size, bitvector_rank, split_node, huffman_codes, preprocess_one_ranks
-from line_profiler import LineProfiler
+#from line_profiler import LineProfiler
 
 ########################################################
 # Class for wavelet tree

@@ -1,62 +1,42 @@
 import bwt_search as bwt_O
 import bwt_search_wt as bwt_wt
-import wavelet_tree as wt
-import wavelet_tree_lvl as wt_lvl
+import wavelet_tree as wt1
+import wavelet_tree_lvl as wt2
 from shared import construct_sa_skew, construct_sparse_sa, bwt
 from math import floor, log2
 
-'''
-# BWT example:
-x: AACGTAAACGTAAC$
-
-$AACGTAAACGTAAC  0
-AAACGTAAC$AACGT  1
-AAC$AACGTAAACGT  2
-AACGTAAACGTAAC$  3
-AACGTAAC$AACGTA  4
-AC$AACGTAAACGTA  5
-ACGTAAACGTAAC$A  6
-ACGTAAC$AACGTAA  7
-C$AACGTAAACGTAA  8
-CGTAAACGTAAC$AA  9
-CGTAAC$AACGTAAA  10
-GTAAACGTAAC$AAC  11
-GTAAC$AACGTAAAC  12
-TAAACGTAAC$AACG  13
-TAAC$AACGTAAACG  14
-
-btw(x) = CTT$AAAAAAACCGG
-'''
 
 x = "AACGTAAACGTAAC$"
 sa = construct_sa_skew(x)
 sparse_sa = construct_sparse_sa(sa, floor(log2(len(x))))
 bwt_x = bwt(x, sa)
 
+
 ##### BW search with O table #####
 num_to_letter_dict, letter_to_num_dict, _ = bwt_O.map_string_to_ints(x)
 C = bwt_O.construct_C(x)
 O = bwt_O.construct_O(x, sa, num_to_letter_dict)
+
 
 ##### BW search with wavelet tree rank query #####
 SENTINEL_idx = bwt_x.index("$")
 C_dict = bwt_wt.construct_C(x)
 
 # WT Node tree
-wt_obj = wt.WaveletTree(bwt_x.replace("$", "")) # remove sentinel
+w1 = wt1.WaveletTree(bwt_x.replace("$", "")) # remove sentinel
 # WT level order
-wt_lvl_obj = wt_lvl.WaveletTree(bwt_x.replace("$", "")) # remove sentinel
+w2 = wt2.WaveletTree(bwt_x.replace("$", "")) # remove sentinel
 
 
 
 def O_hits_AACGTAAACGTAAC(p):
 	return bwt_O.bw_search(bwt_x, p, sparse_sa, C, O, letter_to_num_dict)
 
-def wt_lvl_hits_AACGTAAACGTAAC(p):
-	return bwt_wt.bw_search(p, bwt_x, SENTINEL_idx, sparse_sa, C_dict, wt_lvl_obj)
-
 def wt_hits_AACGTAAACGTAAC(p):
-	return bwt_wt.bw_search(p, bwt_x, SENTINEL_idx, sparse_sa, C_dict, wt_obj)
+	return bwt_wt.bw_search(p, bwt_x, SENTINEL_idx, sparse_sa, C_dict, w1)
+
+def wt_lvl_hits_AACGTAAACGTAAC(p):
+	return bwt_wt.bw_search(p, bwt_x, SENTINEL_idx, sparse_sa, C_dict, w2)
 
 
 
@@ -121,9 +101,9 @@ SENTINEL_idx_mis = bwt_mis.index("$")
 C_dict_mis = bwt_wt.construct_C(mis)
 
 # WT Node tree
-wt_obj_mis = wt.WaveletTree(bwt_mis.replace("$", "")) # remove sentinel
+w1_mis = wt1.WaveletTree(bwt_mis.replace("$", "")) # remove sentinel
 # WT level order
-wt_obj_lvl_mis = wt_lvl.WaveletTree(bwt_mis.replace("$", "")) # remove sentinel
+w2_mis = wt2.WaveletTree(bwt_mis.replace("$", "")) # remove sentinel
 
 
 
@@ -131,10 +111,10 @@ def O_hits_mississippi(p):
 	return bwt_O.bw_search(bwt_mis, p, sparse_sa_mis, C_mis, O_mis, letter_to_num_dict_mis)
 
 def wt_lvl_hits_mississippi(p):
-	return bwt_wt.bw_search(p, bwt_mis, SENTINEL_idx_mis, sparse_sa_mis, C_dict_mis, wt_obj_lvl_mis)
+	return bwt_wt.bw_search(p, bwt_mis, SENTINEL_idx_mis, sparse_sa_mis, C_dict_mis, w1_mis)
 
 def wt_hits_mississippi(p):
-	return bwt_wt.bw_search(p, bwt_mis, SENTINEL_idx_mis, sparse_sa_mis, C_dict_mis, wt_obj_mis)
+	return bwt_wt.bw_search(p, bwt_mis, SENTINEL_idx_mis, sparse_sa_mis, C_dict_mis, w2_mis)
 
 
 

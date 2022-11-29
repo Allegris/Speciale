@@ -1,9 +1,15 @@
 
-SENTINEL = 0
+# Credit:
+# Astrid Christiansen
+# Project in Bioinformatics: "Finding tandem repeats in genomic data"
+# June 2022
+
 
 ################################################################################
 # SKEW ALGORITHM without central sentinel - COMPUTE SUFFIX ARRAY IN TIME O(N)
 ################################################################################
+
+SENTINEL = 0
 
 '''
 Computes the suffix array for a string in time O(n)

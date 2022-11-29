@@ -1,11 +1,7 @@
 from bitarray import bitarray
-from bitarray.util import huffman_code, canonical_huffman
+from bitarray.util import canonical_huffman #, huffman_code
 from math import floor, log2
 import skew
-from bitarray.util import count_n
-
-
-
 
 ########################################################
 # Suffix arrays

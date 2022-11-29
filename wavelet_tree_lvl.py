@@ -84,32 +84,6 @@ class WaveletTree:
 		return left_child_idx + bv.count(0), left_child_idx + len(bv)
 
 
-	########################################################
-	# Preprocess wavelet tree ranks
-	########################################################
-
-	'''
-	Preprocesses word ranks of every "node" in the (implicit) wavelet tree.
-	Returns a dict {idx: {0: [], 1: []}} where the lists contain the word ranks
-	for 0 and 1, respectively. Idx is the starting index of the "node" in the
-	bitvector for the entire wavelet tree, wt.
-	'''
-	'''
-	def all_node_ranks(self, wt, n, child_dict):
-		ranks = {idx: {0: [0], 1: [0]} for idx in child_dict.keys()}
-		ranks[0] = preprocess_node_word_ranks(wt[0:n]) # Root ranks
-		# Iterate over nodes
-		for children in child_dict.values():
-			for child in [0, 1]:
-				i, j = children[child]
-				if i and j: # If inner node, calculate word ranks
-					ranks[i] = preprocess_node_word_ranks(wt[i:j])
-		return ranks
-	'''
-	########################################################
-	# Rank query using wavelet tree
-	########################################################
-
 	'''
 	Rank query using a wavelet tree in level order.
 	'''
@@ -120,7 +94,6 @@ class WaveletTree:
 		# Iterate chars in code
 		for char in self.codes[c]:
 			# Update rank and node
-			#rank = bitvector_rank(self.bitvector[L:R], self.ranks[L][char], char, rank)
 			rank = bitvector_rank(self.bitvector, self.ranks, char, L+rank) - bitvector_rank(self.bitvector, self.ranks, char, L)
 			L, R = self.child_dict[L][1] if char else self.child_dict[L][0] # 0 is left, 1 is right
 		return rank
@@ -132,11 +105,15 @@ class WaveletTree:
 ########################################################
 
 
-
 '''
 #x = "AG$TAAC"
+#print(wt.child_dict)
+#print(wt.rank("A", 2))
+'''
 
-title = f"simulated_data\\simulated_DNA_n5000000.txt"
+'''
+# Profiling
+title = f"simulated_data\\simulated_DNA_n1000000.txt"
 file = open(title, "r")
 x = file.read()
 file.close()
@@ -146,9 +123,6 @@ lp = LineProfiler()
 lp_wrapper = lp(wt.rank)
 lp_wrapper("A", 990000)
 lp.print_stats()
-
-#print(wt.child_dict)
-#print(wt.rank("A", 2))
 '''
 
 ########################################################
@@ -182,7 +156,6 @@ def wt_bitvector_and_child_dict(self, x, n, codes):
 		else: # If right child is a leaf
 			leaf_chars += len(s1)
 	return wt_bitvector, child_dict
-
 '''
 
 

@@ -13,7 +13,6 @@ class OneHotEncoding:
 		self.ranks = self.preprocess_ranks(len(x))
 
 	'''
-	CONSTRUCT OHE MATRIX
 	Returns a dict {letter: bitarray} where the set bits correspond to the places
 	where the given letter appear in string x. E.g., for x = "mississippi$", it returns:
 	{'$': bitarray('000000000001'),
@@ -31,7 +30,6 @@ class OneHotEncoding:
 		return ohe
 
 	'''
-	PREPROCESS RANKS:
 	Returns a dict {letter: [word_ranks]} where the list contains the rank of each
 	word of x (x is split into log(n) words).
 	E.g. x = "mississippi$" will be split into 4 words of length 3:
@@ -41,12 +39,6 @@ class OneHotEncoding:
 	 'm': [1, 1, 1, 1],
 	 'p': [0, 0, 1, 2],
 	 's': [1, 3, 4, 4]}
-
-	Inputs are:
-		 Input string x is only given implicitly as input, in the form of:
-		 ohe: dict {letter: bitarray} where the set bits correspond to the places
-		      where the given letter appear in string x.
-		 n: length of x
 	'''
 	def preprocess_ranks(self, n):
 		ranks = {char: [0] for char in self.ohe.keys()}
@@ -62,29 +54,9 @@ class OneHotEncoding:
 		return ranks
 
 	'''
-	RANK QUERY
-	Returns the rank of a given letter and index in string x.
-
-	Inputs are:
-		 Input string x is only given implicitly as input, in the form of ohe and ranks:
-		 ohe: dict {letter: bitarray} where the set bits correspond to the places
-		      where the given letter appear in string x.
-		 ranks: dict {letter: [word_ranks]} where the list contains the rank of each word.
-		 c: query letter
-		 i: query index
+	Returns the rank of a given letter, c, and index, i, into string x.
 	'''
 	def rank(self, c, i):
 		# We query 1s in bitvector for c (set bits)
 		return bitvector_rank(self.ohe[c], self.ranks[c], 1, i)
 
-
-########################################################
-# Code to run
-########################################################
-
-'''
-x = "AG$TAACAA"
-o = one_hot_encoding(x)
-print(o)
-print(preprocess_ranks(o, len(x)))
-'''
