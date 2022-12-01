@@ -19,9 +19,10 @@ library(tidyverse)
 
 ```{r}
 
-df <- read_csv(file = "SPACE/Large50/data_wt2.csv")
+df <- read_csv(file = "SPACE/DNA/data_occ.csv")
 #df
-fit <- lm(bytes ~ n, data=df)
+#fit <- lm(bytes ~ n * log2(n), data=df) # For Occ only
+fit <- lm(bytes ~ n, data=df) # For OHE, WTs
 #summary(fit)
 coef(fit)
 

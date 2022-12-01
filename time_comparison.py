@@ -113,6 +113,10 @@ with open('res.txt', 'w+') as f:
 '''
 
 
+########################################################
+# Plots
+########################################################
+
 f = open("Results\\TIME\\times.txt", "w")
 f.write("PREPROCESSING TIMES:\n")
 f.write("Occ: " + str(occ_pre) + "\n")
@@ -138,8 +142,6 @@ plt.tight_layout()
 plt.savefig("Results\\TIME\\Time_preprocessing_all_DNA")
 plt.show()
 plt.clf() # Clear plot
-
-
 
 
 plt.plot(ns, occ_qt, color = "red", marker='o', label = "Occ", alpha = 0.6)
