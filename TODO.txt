@@ -1,0 +1,10 @@
+X Skrive introduktion
+X Skrive konklusion
+X Skrive om ingen sentinel
+- Se på det med at dividere hældningerne + skriv om det
+- Rettelser
+X Tjek abstract
+X Skriv acknowledgements
+- Tjek litteraturliste
+- Split sider hvor det passer
+- Ryd op i kode og filsystem, så det er klart til aflevering

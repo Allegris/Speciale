@@ -41,16 +41,16 @@ class OneHotEncoding:
 	 's': [1, 3, 4, 4]}
 	'''
 	def preprocess_ranks(self, n):
-		ranks = {char: [0] for char in self.ohe.keys()}
+		ranks = {letter: [0] for letter in self.ohe.keys()}
 		word_size = floor(log2(n))
 		# Iterate over letters
-		for char in self.ohe.keys():
+		for letter in self.ohe.keys():
 			# Iterate over words
 			for i in range(n // word_size):
 				# Count set bits in word
-				count = self.ohe[char][i*word_size : (i+1)*word_size].count(1)
-				# New word rank: Add count to previous word rank
-				ranks[char].append(ranks[char][i] + count)
+				count = self.ohe[letter][i*word_size : (i+1)*word_size].count(1)
+				# New word rank: Add count to current word rank
+				ranks[letter].append(ranks[letter][i] + count)
 		return ranks
 
 	'''

@@ -11,8 +11,8 @@ class WaveletTree:
 	def __init__(self, x):
 		self.n = len(x)
 		self.codes = huffman_codes(x)
-		self.bitvector, self.child_dict = self.wt_bitvector_and_child_dict(x, self.n, self.codes)
-		self.ranks = preprocess_one_ranks(self.bitvector) #self.all_node_ranks(self.bitvector, len(x), self.child_dict)
+		self.bitvector, self.child_dict = self.wt_bitvector_and_child_dict(x)
+		self.ranks = preprocess_one_ranks(self.bitvector)
 
 	'''
 	Constructs a level order, Huffman-shaped wavelet tree of string x using
@@ -36,7 +36,7 @@ class WaveletTree:
 	 'p': bitarray('111')}
 
 	'''
-	def wt_bitvector_and_child_dict(self, x, n, codes):
+	def wt_bitvector_and_child_dict(self, x):
 		wt_bitvector = bitarray()
 		child_dict = {} # {parent_idx: {0: left_interval, 1: right_interval}}
 		# Queue of inner nodes - s.t. we run through them in level order
@@ -47,20 +47,20 @@ class WaveletTree:
 		# While queue non-empty
 		while inner_nodes:
 			s, idx, level = inner_nodes.pop(0)
-			s_bitvector, s0, s1 = split_node(s, codes, level)
+			s_bitvector, s0, s1 = split_node(s, self.codes, level)
 			wt_bitvector.extend(s_bitvector)
 			# 0 is left, 1 is right
 			child_dict[idx] = {0: (None, None), 1: (None, None)}
 			# If left child is an inner node
 			if alphabet_size(s0) > 1:
-				i, j = self.left_child(s_bitvector, idx + n - leaf_chars)
+				i, j = self.left_child(s_bitvector, idx + self.n - leaf_chars)
 				child_dict[idx][0] = (i, j) # 0 is left
 				inner_nodes.append((s0, i, level+1))
 			else: # If left child is a leaf
 				leaf_chars += len(s0)
 			# If right child is an inner node
 			if alphabet_size(s1) > 1:
-				i, j = self.right_child(s_bitvector, idx + n - leaf_chars)
+				i, j = self.right_child(s_bitvector, idx + self.n - leaf_chars)
 				child_dict[idx][1] = (i, j) # 1 is right
 				inner_nodes.append((s1, i, level+1))
 			else: # If right child is a leaf
@@ -92,10 +92,11 @@ class WaveletTree:
 		L, R = 0, self.n
 		rank = i
 		# Iterate chars in code
-		for char in self.codes[c]:
+		for bit in self.codes[c]:
 			# Update rank and node
-			rank = bitvector_rank(self.bitvector, self.ranks, char, L+rank) - bitvector_rank(self.bitvector, self.ranks, char, L)
-			L, R = self.child_dict[L][1] if char else self.child_dict[L][0] # 0 is left, 1 is right
+			rank = bitvector_rank(self.bitvector, self.ranks, bit, L+rank) -\
+			 bitvector_rank(self.bitvector, self.ranks, bit, L)
+			L, R = self.child_dict[L][bit]
 		return rank
 
 

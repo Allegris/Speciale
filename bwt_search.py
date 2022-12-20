@@ -107,7 +107,29 @@ def map_string_to_ints(x):
 # (only used for experiments, not for pattern matching)
 ########################################################
 
+
 class Occ:
+	def __init__(self, x):
+		self.num_to_letter_dict, self.letter_to_num_dict, _ = map_string_to_ints(x)
+		self.table = self.construct_occ(x)
+
+	def construct_occ(self, x):
+		alpha = get_alphabet(x)
+		occ = np.zeros((len(alpha), len(x)+1), dtype=int)
+		for r in range(len(alpha)):
+			for c in range(1, len(x)+1):
+				letter = self.num_to_letter_dict[r]
+				occ[r, c] = occ[r, c-1] + (x[c-1] == letter)
+		return occ
+
+	def rank(self, c, i):
+		letter = self.letter_to_num_dict[c]
+		return self.table[letter][i]
+
+
+'''
+# I tried to implement Occ as a dict, but is uses much more space than the numpy array...
+class Occ_dict:
 	def __init__(self, x):
 		self.table = self.construct_occ(x)
 
@@ -121,8 +143,7 @@ class Occ:
 
 	def rank(self, c, i):
 		return self.table[c][i]
-
-
+'''
 
 ########################################################
 # Code to run

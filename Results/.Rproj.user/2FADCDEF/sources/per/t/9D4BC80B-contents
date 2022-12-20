@@ -21,14 +21,13 @@ library(tidyverse)
 
 df <- read_csv(file = "SPACE/DNA/data_occ.csv")
 #df
-#fit <- lm(bytes ~ n * log2(n), data=df) # For Occ only
-fit <- lm(bytes ~ n, data=df) # For OHE, WTs
+fit <- lm(bytes ~ n * log2(n), data=df) # For corrected Occ only
+#fit <- lm(bytes ~ n, data=df) # For OHE, WTs, and uncorrected Occ
 #summary(fit)
 coef(fit)
 
-ggplot(df, aes(x = n, y = bytes)) + 
+ggplot(df, aes(x = n, y = correctedBytes)) + 
   geom_point() +
-  stat_smooth(method = "lm") +
   theme_classic()
 
 

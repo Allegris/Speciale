@@ -120,7 +120,7 @@ def bitvector_rank(bitvector, one_ranks, c, i):
 Encodes string s using Huffman encoding in codes (index level in each code).
 
 Returns:
-	bin_s: The binary representation of s
+	bin_s: The binary encoding of s
 	s0: The part of s that corresponds to 0s
 	s1: The part of s that corresponds to 1s
 
@@ -128,18 +128,18 @@ E.g., for s = "mississippi" at level 0, it returns:
 	bitarray('00110110110') miiii sssspp
 '''
 def split_node(s, codes, level):
-	alpha = get_alphabet(s)
-	d = {letter: codes[letter][level] for letter in alpha}
-	# Binary representation of s
+	# Binary encoding of s
 	bin_s = bitarray()
 	# The part of s corresponding to zeros and ones, respectively
 	s0, s1 = "", ""
 	for char in s:
-		bin_s.append(d[char])
-		if d[char] == 0:
-			s0 += char
-		else:
+		# Encoding of char at this level
+		char_code = codes[char][level]
+		bin_s.append(char_code)
+		if char_code:
 			s1 += char
+		else:
+			s0 += char
 	return bin_s, s0, s1
 
 
