@@ -2,6 +2,7 @@ from bitarray import bitarray
 from bitarray.util import canonical_huffman #, huffman_code
 from math import floor, log2
 import skew
+import numpy as np
 
 ########################################################
 # Suffix arrays
@@ -91,11 +92,13 @@ Returns a list of word ranks for 1
 (for 0, we will just subtract the number of ones from the index).
 '''
 def preprocess_one_ranks(bitvector):
-	ranks = [0]
-	word_size = floor(log2(len(bitvector)))
+	no_of_words = ((len(bitvector)) // 32)+1# (len(bitvector)+31) // 32
+	ranks = np.zeros(no_of_words, dtype = np.int32) #[0]
+	word_size = 32 #floor(log2(len(bitvector)))
 	for i in range(len(bitvector) // word_size): # Iterate words
 		word = bitvector[i*word_size: (i+1)*word_size]
-		ranks.append(ranks[i] + word.count(1)) # Ones
+		#ranks.append(ranks[i] + word.count(1)) # Ones #change here - cannot append, but have index i
+		ranks[i+1] = ranks[i] + word.count(1)
 	return ranks
 
 '''
@@ -103,7 +106,7 @@ Finds the rank of a char c and an index i in a bitvector,
 by looking up in the word ranks and scanning the bits in the bitvector.
 '''
 def bitvector_rank(bitvector, one_ranks, c, i):
-	word_size = floor(log2(len(bitvector))) #bit length, højst satte bit
+	word_size = 32 #floor(log2(len(bitvector))) #bit length, højst satte bit
 	word_no = (i // word_size)
 	scan_len = i % word_size
 	scan_start = word_no * word_size
