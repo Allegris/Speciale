@@ -1,6 +1,7 @@
 from bitarray.util import zeros
 from math import log2, floor
 from shared import get_alphabet, bitvector_rank
+import numpy as np
 
 ########################################################
 # Class for One hot encoding
@@ -41,8 +42,10 @@ class OneHotEncoding:
 	 's': [1, 3, 4, 4]}
 	'''
 	def preprocess_ranks(self, n):
-		ranks = {letter: [0] for letter in self.ohe.keys()}
-		word_size = floor(log2(n))
+		no_of_words = (n // 32) + 1
+		#ranks = {letter: [0] for letter in self.ohe.keys()}
+		ranks = {letter: np.zeros(no_of_words, dtype = np.int32) for letter in self.ohe.keys()}
+		word_size = 32 #floor(log2(n))
 		# Iterate over letters
 		for letter in self.ohe.keys():
 			# Iterate over words
@@ -50,8 +53,10 @@ class OneHotEncoding:
 				# Count set bits in word
 				count = self.ohe[letter][i*word_size : (i+1)*word_size].count(1)
 				# New word rank: Add count to current word rank
-				ranks[letter].append(ranks[letter][i] + count)
+				#ranks[letter].append(ranks[letter][i] + count)
+				ranks[letter][i+1] = ranks[letter][i] + count
 		return ranks
+
 
 	'''
 	Returns the rank of a given letter, c, and index, i, into string x.

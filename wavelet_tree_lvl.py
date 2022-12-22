@@ -2,7 +2,6 @@ from bitarray import bitarray
 from shared import alphabet_size, bitvector_rank, split_node, huffman_codes, preprocess_one_ranks
 #from line_profiler import LineProfiler
 
-
 ########################################################
 # Construct level order wavelet tree
 ########################################################
@@ -13,6 +12,7 @@ class WaveletTree:
 		self.codes = huffman_codes(x)
 		self.bitvector, self.child_dict = self.wt_bitvector_and_child_dict(x)
 		self.ranks = preprocess_one_ranks(self.bitvector)
+
 
 	'''
 	Constructs a level order, Huffman-shaped wavelet tree of string x using

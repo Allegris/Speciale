@@ -92,13 +92,12 @@ Returns a list of word ranks for 1
 (for 0, we will just subtract the number of ones from the index).
 '''
 def preprocess_one_ranks(bitvector):
-	no_of_words = ((len(bitvector)) // 32)+1# (len(bitvector)+31) // 32
+	no_of_words = ((len(bitvector)) // 32) + 1 # (len(bitvector)+31) // 32
 	ranks = np.zeros(no_of_words, dtype = np.int32) #[0]
-	word_size = 32 #floor(log2(len(bitvector)))
+	word_size = 32 # floor(log2(len(bitvector)))
 	for i in range(len(bitvector) // word_size): # Iterate words
 		word = bitvector[i*word_size: (i+1)*word_size]
-		#ranks.append(ranks[i] + word.count(1)) # Ones #change here - cannot append, but have index i
-		ranks[i+1] = ranks[i] + word.count(1)
+		ranks[i+1] = ranks[i] + word.count(1) #ranks.append(ranks[i] + word.count(1)) # Ones
 	return ranks
 
 '''

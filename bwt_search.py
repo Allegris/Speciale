@@ -115,7 +115,7 @@ class Occ:
 
 	def construct_occ(self, x):
 		alpha = get_alphabet(x)
-		occ = np.zeros((len(alpha), len(x)+1), dtype=int)
+		occ = np.zeros((len(alpha), len(x)+1), dtype=np.int32)
 		for r in range(len(alpha)):
 			for c in range(1, len(x)+1):
 				letter = self.num_to_letter_dict[r]

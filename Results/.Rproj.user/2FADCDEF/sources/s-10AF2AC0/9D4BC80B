@@ -1,0 +1,28 @@
+{
+    "id": "9D4BC80B",
+    "path": "G:/My Drive/Bioinformatik/2022/SPECIALE/Speciale/Results/LinReg.Rmd",
+    "project_path": "LinReg.Rmd",
+    "type": "r_markdown",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1668104738024.0,
+    "source_on_save": false,
+    "relative_order": 1,
+    "properties": {
+        "tempName": "Untitled1",
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "24,66",
+        "scrollLine": "7",
+        "chunk_output_type": "console"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1670257605,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1670257605341,
+    "read_only": false,
+    "read_only_alternatives": []
+}
