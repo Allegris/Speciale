@@ -43,7 +43,7 @@ def write_to_file(filename, n, s):
 	#f.write("\"" + str(i+1) + "\"" + "," + str(n) + "," + str(s) + "\n")
 	f.close()
 
-dna_big = "DNA" # "DNA"
+dna_big = "Big" # "DNA"
 path = f"Results\\SPACE\\{dna_big}\\"
 
 if __name__ == "__main__":
@@ -53,8 +53,8 @@ if __name__ == "__main__":
 	init_file(path + "data_occ.txt")
 	#ns = list(range(1000, 10001, 1000)) # 1K
 	#ns = list(range(1000, 10001, 1000)) #  10K
-	ns = list(range(10000, 100001, 10000)) # 100K
-	#ns = list(range(50000, 1000001, 50000)) # 1M
+	#ns = list(range(10000, 100001, 10000)) # 100K
+	ns = list(range(50000, 1000001, 50000)) # 1M
 
 	o_ls = []
 	ohe_ls = []
@@ -92,7 +92,7 @@ if __name__ == "__main__":
 		occ = Occ(x) #Occ(x)
 		s = get_size(occ)
 		o_ls.append(s)
-		write_to_file(path + "data_occ_ls.txt", n, s)
+		write_to_file(path + "data_occ.txt", n, s)
 
 
 	##### PLOTS #####
