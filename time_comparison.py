@@ -50,7 +50,7 @@ ns = list(range(50000, 1000001, 50000)) # 1M
 
 for n in ns:
 	print(n)
-	title = f"simulated_data\\simulated_DNA_n{n}.txt"
+	title = f"simulated_data\\simulated_Big_n{n}.txt"
 	file = open(title, "r")
 	x = file.read()
 	file.close()
@@ -139,7 +139,7 @@ plt.xlabel("n", fontsize = 13)
 plt.ylabel("Preprocessing time (sec)", fontsize = 13)
 plt.legend(loc = 'upper left')
 plt.tight_layout()
-plt.savefig("Results\\TIME\\Time_preprocessing_all_DNA")
+plt.savefig("Results\\TIME\\Time_preprocessing_all_Big")
 plt.show()
 plt.clf() # Clear plot
 
@@ -152,7 +152,7 @@ plt.xlabel("n", fontsize = 13)
 plt.ylabel("Rank query time (sec)", fontsize = 13)
 plt.legend(loc = 'upper left')
 plt.tight_layout()
-plt.savefig("R\\TIME\\Time_query_all_DNA")
+plt.savefig("Results\\TIME\\Time_query_all_Big")
 plt.show()
 plt.clf() # Clear plot
 
