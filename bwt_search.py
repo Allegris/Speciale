@@ -7,7 +7,7 @@ from shared import get_alphabet
 ########################################################
 
 '''
-Pattern natch for p in x (x: implicitly as sa, n, C, O, and l_to_n)
+Pattern matches for p in x (x: implicitly as sa, n, C, O, and l_to_n)
 '''
 def bw_search(bwt_x, p, sparse_sa, C, O, l_to_n):
 	# Init L and R
@@ -21,7 +21,7 @@ def bw_search(bwt_x, p, sparse_sa, C, O, l_to_n):
 		else:
 			break
 	# Find and return corresponding match indices
-	matches = [lookup_sparse_sa(sparse_sa, i, bwt_x, C, O, l_to_n, ) for i in range(L, R)] # [sa[i] for i in range(L, R)]
+	matches = [lookup_sparse_sa(sparse_sa, i, bwt_x, C, O, l_to_n, ) for i in range(L, R)]
 	return sorted(matches)
 
 
@@ -41,7 +41,7 @@ def construct_C(x):
 
 
 '''
-Constructs O table for BW search
+Constructs O table (Occ) for BW search
 '''
 def construct_O(x, sa, n_to_l):
 	alpha = get_alphabet(x)
@@ -54,7 +54,7 @@ def construct_O(x, sa, n_to_l):
 
 
 '''
-Finds the SA value for index i, using the sparse SA.
+Finds the SA value for index i, using the sparse SA
 '''
 def lookup_sparse_sa(sparse_sa, i, bwt_x, C, O, l_to_n):
 	idx = i
@@ -104,7 +104,7 @@ def map_string_to_ints(x):
 
 ########################################################
 # Class for rank querying with Occ table
-# (only used for experiments, not for pattern matching)
+# (only used for space and time experiments, not for pattern matching)
 ########################################################
 
 
@@ -126,30 +126,3 @@ class Occ:
 		letter = self.letter_to_num_dict[c]
 		return self.table[letter][i]
 
-
-'''
-# I tried to implement Occ as a dict, but is uses much more space than the numpy array...
-class Occ_dict:
-	def __init__(self, x):
-		self.table = self.construct_occ(x)
-
-	def construct_occ(self, x):
-		alpha = get_alphabet(x)
-		occ = {letter: [0] for letter in alpha}
-		for char in x:
-			for letter in alpha:
-				occ[letter].append(occ[letter][-1] + (char == letter))
-		return occ
-
-	def rank(self, c, i):
-		return self.table[c][i]
-'''
-
-########################################################
-# Code to run
-########################################################
-'''
-x = "ABA"
-occ = Occ(x)
-print(occ.table)
-'''

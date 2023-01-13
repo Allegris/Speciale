@@ -3,11 +3,8 @@ import matplotlib.pyplot as plt
 from one_hot_encoding import OneHotEncoding
 import wavelet_tree as w1
 import wavelet_tree_lvl as w2
-from bwt_search import Occ #, construct_O, map_string_to_ints
-from shared import construct_sa_skew
-from math import log2, ceil
-from bitarray import bitarray
-import numpy as np
+from bwt_search import Occ
+
 
 # Credit: https://goshippo.com/blog/measure-real-size-any-python-object/
 def get_size(obj, seen=None):
@@ -31,10 +28,12 @@ def get_size(obj, seen=None):
     return size
 
 
+
 def init_file(filename):
 	f = open(filename, "w")
 	f.write("\"n\"," + "\"bytes\"" + "\n")
 	f.close()
+
 
 
 def write_to_file(filename, n, s):
@@ -42,6 +41,8 @@ def write_to_file(filename, n, s):
 	f.write(str(n) + "," + str(s) + "\n")
 	#f.write("\"" + str(i+1) + "\"" + "," + str(n) + "," + str(s) + "\n")
 	f.close()
+
+
 
 dna_big = "Big" # "DNA"
 path = f"Results\\SPACE\\{dna_big}\\"
@@ -51,10 +52,11 @@ if __name__ == "__main__":
 	init_file(path + "data_wt.txt")
 	init_file(path + "data_wt2.txt")
 	init_file(path + "data_occ.txt")
+
 	#ns = list(range(1000, 10001, 1000)) # 1K
-	#ns = list(range(1000, 10001, 1000)) #  10K
+	ns = list(range(1000, 10001, 1000)) #  10K
 	#ns = list(range(10000, 100001, 10000)) # 100K
-	ns = list(range(50000, 1000001, 50000)) # 1M
+	#ns = list(range(50000, 1000001, 50000)) # 1M
 
 	o_ls = []
 	ohe_ls = []
@@ -68,14 +70,13 @@ if __name__ == "__main__":
 		x = file.read()
 		file.close()
 
-
 		# One hot encoding
 		ohe = OneHotEncoding(x)
 		s = get_size(ohe)
 		ohe_ls.append(s)
 		write_to_file(path + "data_ohe.txt", n, s)
 
-		# Wavelet tree - node representation
+		# Wavelet tree - node object representation
 		wt1 = w1.WaveletTree(x)
 		s = get_size(wt1)
 		wt_node_ls.append(s)
@@ -87,16 +88,15 @@ if __name__ == "__main__":
 		wt_lvl_ls.append(s)
 		write_to_file(path + "data_wt2.txt", n, s)
 
-
 		# Occ table
-		occ = Occ(x) #Occ(x)
+		occ = Occ(x)
 		s = get_size(occ)
 		o_ls.append(s)
 		write_to_file(path + "data_occ.txt", n, s)
 
 
-	##### PLOTS #####
 
+	##### PLOTS #####
 
 	# ALl
 	plt.plot(ns, o_ls, color = "red", marker='o', label = "Occ", alpha = 0.6) #, linestyle = 'None'
@@ -125,7 +125,6 @@ if __name__ == "__main__":
 	plt.clf() # Clear plot
 
 
-
 	# WT_node, WT_lvl
 	plt.plot(ns, wt_node_ls, color = "orange", marker='o', label = "WT", alpha = 0.9)
 	plt.plot(ns, wt_lvl_ls, color = "green", marker='o', label = "WT_lvl", alpha = 0.6)
@@ -137,27 +136,4 @@ if __name__ == "__main__":
 	plt.show()
 	plt.clf() # Clear plot
 
-'''
 
-
-
-sizes = list(range(10000))
-bv_ls = []
-
-for i in sizes:
-	s = "1"*i
-	#bv = bitarray(s)
-	bv = np.zeros(i, dtype = np.int32)
-	bv_ls.append(get_size(bv))
-
-plt.plot(sizes, bv_ls, color = "blue", marker='o', alpha = 0.9)
-plt.xlabel("Bit vector size", fontsize = 13)
-plt.ylabel("Memory usage (bytes)", fontsize = 13)
-plt.tight_layout()
-plt.show()
-plt.clf() # Clear plot
-
-
-#print(get_size({0: (None, None), 1: (None, None)}) - get_size({}))
-
-'''

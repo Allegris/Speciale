@@ -6,9 +6,6 @@ import wavelet_tree as w1
 import wavelet_tree_lvl as w2
 from bwt_search import Occ
 from shared import construct_sa_skew, bwt
-#import cProfile
-#import pstats
-#import io
 
 
 def generate_queries(x):
@@ -40,13 +37,11 @@ ohe_qt = []
 wt1_qt = []
 wt2_qt = []
 
-#pr = cProfile.Profile()
-#pr.enable()
 
 #ns = list(range(1000, 10001, 1000)) # 1K
-#ns = list(range(1000, 10001, 1000)) #  10K
+ns = list(range(1000, 10001, 1000)) #  10K
 #ns = list(range(10000, 100001, 10000)) # 100K
-ns = list(range(50000, 1000001, 50000)) # 1M
+#ns = list(range(50000, 1000001, 50000)) # 1M
 
 for n in ns:
 	print(n)
@@ -62,13 +57,14 @@ for n in ns:
 	queries = generate_queries(bwt_x)
 
 
+	##### PREPROCESSING TIMES #####
 	# One hot encoding
 	start = time.time()
 	ohe = OneHotEncoding(bwt_x)
 	end = time.time()
 	ohe_pre.append(end - start)
 
-	# WT
+	# WT node object
 	start = time.time()
 	wt1 = w1.WaveletTree(bwt_x)
 	end = time.time()
@@ -87,35 +83,27 @@ for n in ns:
 	occ_pre.append(end - start)
 
 
-
-	occ_time = query_times(queries, occ)
-	occ_qt.append(occ_time)
-
+	##### QUERY TIMES #####
+	# One hot encoding
 	ohe_time = query_times(queries, ohe)
 	ohe_qt.append(ohe_time)
 
+	# WT node object
 	wt1_time = query_times(queries, wt1)
 	wt1_qt.append(wt1_time)
 
+	# WT level
 	wt2_time = query_times(queries, wt2)
 	wt2_qt.append(wt2_time)
 
-
-'''
-# For profiling
-pr.disable()
-s = io.StringIO()
-ps = pstats.Stats(pr, stream=s).sort_stats('tottime')
-ps.print_stats()
-
-with open('res.txt', 'w+') as f:
-	f.write(s.getvalue())
-'''
+	# Occ
+	occ_time = query_times(queries, occ)
+	occ_qt.append(occ_time)
 
 
-########################################################
-# Plots
-########################################################
+
+
+##### STORE RESULTS AND PLOTS #####
 
 f = open("Results\\TIME\\times.txt", "w")
 f.write("PREPROCESSING TIMES:\n")

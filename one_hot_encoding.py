@@ -1,10 +1,9 @@
 from bitarray.util import zeros
-from math import log2, floor
 from shared import get_alphabet, bitvector_rank
 import numpy as np
 
 ########################################################
-# Class for One hot encoding
+# Class for One Hot Encoding
 ########################################################
 
 class OneHotEncoding:
@@ -31,19 +30,13 @@ class OneHotEncoding:
 		return ohe
 
 	'''
-	Returns a dict {letter: [word_ranks]} where the list contains the rank of each
-	word of x (x is split into log(n) words).
-	E.g. x = "mississippi$" will be split into 4 words of length 3:
-	"mis sis sip pi$" and the ranks of the words will be:
-	{'$': [0, 0, 0, 1],
-	 'i': [1, 2, 3, 4],
-	 'm': [1, 1, 1, 1],
-	 'p': [0, 0, 1, 2],
-	 's': [1, 3, 4, 4]}
+	Returns a dict {letter: [word_ranks]} where the np arrays contain the rank
+	of each word of x (x is split into words of size 32).
 	'''
 	def preprocess_ranks(self, n):
 		word_size = 32
 		no_of_words = (n // word_size) + 1
+		# Initiate all-zero rank numpy arrays
 		ranks = {letter: np.zeros(no_of_words, dtype = np.int32) \
 		   for letter in self.ohe.keys()}
 		# Iterate over letters
@@ -61,6 +54,6 @@ class OneHotEncoding:
 	Returns the rank of a given letter, c, and index, i, into string x.
 	'''
 	def rank(self, c, i):
-		# We query 1s in bitvector for c (set bits)
+		# We query for 1's in bitvector for letter c
 		return bitvector_rank(self.ohe[c], self.ranks[c], 1, i)
 

@@ -5,7 +5,7 @@ from shared import get_alphabet, letter_count
 ########################################################
 
 '''
-Pattern match using wavelet tree of BWT(x)
+Pattern matching using wavelet tree of BWT(x)
 '''
 def bw_search(p, bwt_x, SENTINEL_idx, sparse_sa, C, wt):
 	L, R = 0, len(bwt_x)
@@ -15,7 +15,7 @@ def bw_search(p, bwt_x, SENTINEL_idx, sparse_sa, C, wt):
 			R = update_bwt_idx(R, SENTINEL_idx, C, c, wt)
 		else:
 			break
-	matches = [lookup_sparse_sa(i, bwt_x, SENTINEL_idx, sparse_sa, C, wt) for i in range(L, R)] #[sa[i] for i in range(L, R)]
+	matches = [lookup_sparse_sa(i, bwt_x, SENTINEL_idx, sparse_sa, C, wt) for i in range(L, R)]
 	return sorted(matches)
 
 
@@ -39,7 +39,7 @@ def construct_C(x):
 
 
 '''
-Finds the SA value for index i, using the sparse SA.
+Finds the SA value for index i, using the sparse SA
 '''
 def lookup_sparse_sa(i, bwt_x, SENTINEL_idx, sparse_sa, C, wt):
 	idx = i

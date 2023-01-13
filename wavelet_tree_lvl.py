@@ -1,6 +1,6 @@
 from bitarray import bitarray
 from shared import alphabet_size, bitvector_rank, split_node, huffman_codes, preprocess_one_ranks
-#from line_profiler import LineProfiler
+
 
 ########################################################
 # Construct level order wavelet tree
@@ -25,20 +25,14 @@ class WaveletTree:
 
 	E.g., for x = "mississippi", it returns:
 	bitarray('101101101101000011011')
-
+	and
 	{0: {0: (None, None), 1: (11, 18)},
 	11: {0: (None, None), 1: (18, 21)},
 	18: {0: (None, None), 1: (None, None)}}
-
-	{'i': bitarray('0'),
-	 's': bitarray('10'),
-	 'm': bitarray('110'),
-	 'p': bitarray('111')}
-
 	'''
 	def wt_bitvector_and_child_dict(self, x):
 		wt_bitvector = bitarray()
-		child_dict = {} # {parent_idx: {0: left_interval, 1: right_interval}}
+		child_dict = {} # {parent_idx: {0: left_child_idx, 1: right_child_idx}}
 		# Queue of inner nodes - s.t. we run through them in level order
 		inner_nodes = [(x, 0, 0)] # (string, idx, level)
 		# The indices of inner nodes should be corrected for the number
@@ -98,65 +92,4 @@ class WaveletTree:
 			 bitvector_rank(self.bitvector, self.ranks, bit, L)
 			L, R = self.child_dict[L][bit]
 		return rank
-
-
-
-########################################################
-# Code to run
-########################################################
-
-
-'''
-#x = "AG$TAAC"
-#print(wt.child_dict)
-#print(wt.rank("A", 2))
-'''
-
-'''
-# Profiling
-title = f"simulated_data\\simulated_DNA_n1000000.txt"
-file = open(title, "r")
-x = file.read()
-file.close()
-
-wt = WaveletTree(x)
-lp = LineProfiler()
-lp_wrapper = lp(wt.rank)
-lp_wrapper("A", 990000)
-lp.print_stats()
-'''
-
-########################################################
-# For report
-########################################################
-
-'''
-def wt_bitvector_and_child_dict(self, x, n, codes):
-	wt_bitvector = bitarray()
-	child_dict = {}
-	# Queue of inner nodes - s.t. we run through them in level order
-	inner_nodes = [(x, 0, 0)] # (string, idx, level)
-	leaf_chars = 0 # for index correction
-	while inner_nodes:
-		s, idx, level = inner_nodes.pop(0)
-		s_bitvector, s0, s1 = split_node(s, codes, level)
-		wt_bitvector += s_bitvector
-		child_dict[idx] = {0: (None, None), 1: (None, None)}
-		# If left child is an inner node
-		if alphabet_size(s0) > 1:
-			i, j = self.left_child(s_bitvector, idx + n - leaf_chars)
-			child_dict[idx][0] = (i, j) # 0 is left
-			inner_nodes.append((s0, i, level+1))
-		else: # If left child is a leaf
-			leaf_chars += len(s0)
-		# If right child is an inner node
-		if alphabet_size(s1) > 1:
-			i, j = self.right_child(s_bitvector, idx + n - leaf_chars)
-			child_dict[idx][1] = (i, j) # 1 is right
-			inner_nodes.append((s1, i, level+1))
-		else: # If right child is a leaf
-			leaf_chars += len(s1)
-	return wt_bitvector, child_dict
-'''
-
 

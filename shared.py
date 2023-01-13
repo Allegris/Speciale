@@ -1,6 +1,5 @@
 from bitarray import bitarray
 from bitarray.util import canonical_huffman #, huffman_code
-from math import floor, log2
 import skew
 import numpy as np
 
@@ -76,7 +75,7 @@ E.g., for x = "mississippi", it returns:
 def huffman_codes(x):
 	count = letter_count(x)
 	codes, _, _ = canonical_huffman(count) # lexicographical order, if equal count
-	#codes = huffman_code(count) # non-lexicographical order, uf equal count
+	#codes = huffman_code(count) # not necessarily lexicographical order, if equal count
 	return codes
 
 
@@ -86,26 +85,26 @@ def huffman_codes(x):
 
 '''
 Preprocesses node word ranks of a bitvector of length n.
-Each word is of length floor(log2(n)).
-
-Returns a list of word ranks for 1
-(for 0, we will just subtract the number of ones from the index).
+Each word is of length 32.
+Returns a list of word ranks for ones.
+(for zeros, we will just subtract the number of ones from the index).
 '''
 def preprocess_one_ranks(bitvector):
-	no_of_words = ((len(bitvector)) // 32) + 1 # (len(bitvector)+31) // 32
-	ranks = np.zeros(no_of_words, dtype = np.int32) #[0]
-	word_size = 32 # floor(log2(len(bitvector)))
-	for i in range(len(bitvector) // word_size): # Iterate words
+	no_of_words = ((len(bitvector)) // 32) + 1
+	ranks = np.zeros(no_of_words, dtype = np.int32)
+	word_size = 32
+	# Iterate words
+	for i in range(len(bitvector) // word_size):
 		word = bitvector[i*word_size: (i+1)*word_size]
-		ranks[i+1] = ranks[i] + word.count(1) #ranks.append(ranks[i] + word.count(1)) # Ones
+		ranks[i+1] = ranks[i] + word.count(1) # count ones
 	return ranks
 
 '''
-Finds the rank of a char c and an index i in a bitvector,
-by looking up in the word ranks and scanning the bits in the bitvector.
+Finds the rank of a letter c and an index i in a bitvector,
+by looking up in the word ranks and counting the remaining bits in the word.
 '''
 def bitvector_rank(bitvector, one_ranks, c, i):
-	word_size = 32 #floor(log2(len(bitvector))) #bit length, højst satte bit
+	word_size = 32
 	word_no = (i // word_size)
 	scan_len = i % word_size
 	scan_start = word_no * word_size
@@ -119,12 +118,12 @@ def bitvector_rank(bitvector, one_ranks, c, i):
 ########################################################
 
 '''
-Encodes string s using Huffman encoding in codes (index level in each code).
+Encodes string s using Huffman codes (at index level in each code).
 
 Returns:
 	bin_s: The binary encoding of s
-	s0: The part of s that corresponds to 0s
-	s1: The part of s that corresponds to 1s
+	s0: The part of s that corresponds to zeros
+	s1: The part of s that corresponds to ones
 
 E.g., for s = "mississippi" at level 0, it returns:
 	bitarray('00110110110') miiii sssspp
